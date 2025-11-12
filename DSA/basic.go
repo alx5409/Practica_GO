@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// 1. Rotate an array to the right by k steps.
+// 1. Rotate a slice to the right by k steps.
 func rotateArray(array []int, steps int) ([]int, error) {
 	rotatedArray := array
 	if steps <= 0 {
@@ -18,7 +18,7 @@ func rotateArray(array []int, steps int) ([]int, error) {
 	return rotatedArray, nil
 }
 
-// 2. Find the longest common prefix among an array of strings.
+// 2. Find the longest common prefix among a slice of strings.
 func longest_common_prefix(stringSlice []string) (string, error) {
 	prefix := ""
 	if len(stringSlice) == 0 {
