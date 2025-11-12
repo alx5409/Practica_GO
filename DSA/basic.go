@@ -3,6 +3,7 @@ package dsa
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // 1. Rotate a slice to the right by k steps.
@@ -129,6 +130,14 @@ func findMajorityElement(slice []int) int {
 }
 
 // 11. Use a map to count the frequency of words in a paragraph.
+func wordFrecuency(paragraph string) map[string]int {
+	words := strings.Fields(paragraph)
+	wordCounter := make(map[string]int)
+	for _, word := range words {
+		wordCounter[word]++
+	}
+	return wordCounter
+}
 
 // 12. Implement binary search on a sorted array.
 
