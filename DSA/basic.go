@@ -19,11 +19,32 @@ func rotateArray(array []int, steps int) ([]int, error) {
 }
 
 // 2. Find the longest common prefix among a slice of strings.
+func character_position_is_in_every_string(stringSlice []string, char rune, position int) bool {
+	if len(stringSlice) == 0 {
+		return false
+	}
+	for _, wordString := range stringSlice {
+		word := []rune(wordString)
+		if word[position] != char {
+			return false
+		}
+	}
+	return true
+}
+
 func longest_common_prefix(stringSlice []string) (string, error) {
 	prefix := ""
 	if len(stringSlice) == 0 {
 		er := errors.New("There are no strings")
 		return prefix, er
+	}
+	firstString := stringSlice[0]
+	firstWord := []rune(firstString)
+	for index, char := range firstWord {
+		if !(character_position_is_in_every_string(stringSlice, char, index)) {
+			break
+		}
+		prefix += string(char)
 	}
 	return prefix, nil
 }
