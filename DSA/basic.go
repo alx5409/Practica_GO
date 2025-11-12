@@ -109,7 +109,24 @@ func firstNonRepeatedChar(sentence string) (rune, error) {
 	return 0, nil // Null character
 }
 
-// 10. Implement a function to find the majority element in an array (element that appears more than n/2 times).
+// 10. Implement a function to find the majority element in an slice (element that appears more than n/2 times).
+func countElements(slice []int) map[int]int {
+	hmap := make(map[int]int)
+	for _, element := range slice {
+		hmap[element]++
+	}
+	return hmap
+}
+func findMajorityElement(slice []int) int {
+	n := len(slice)
+	elementCounter := countElements(slice)
+	for key, value := range elementCounter {
+		if value > n/2 {
+			return key
+		}
+	}
+	return 0
+}
 
 // 11. Use a map to count the frequency of words in a paragraph.
 
