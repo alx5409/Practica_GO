@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func rotateArray(array [10]int, steps int) ([10]int, error) {
+func rotateArray(array []int, steps int) ([]int, error) {
 	rotatedArray := array
 	if steps <= 0 {
 		er := errors.New("The number of steps should be positive.")
