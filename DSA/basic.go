@@ -50,6 +50,50 @@ func longest_common_prefix(stringSlice []string) (string, error) {
 }
 
 // 3. Implement a function to check if two strings are anagrams.
+func countLetters(word string) (map[rune]int, error) {
+	letterCounter := make(map[rune]int)
+	if len(word) == 0 {
+		er := errors.New("Empty string")
+		return letterCounter, er
+	}
+	runes := []rune(word)
+	for _, char := range runes {
+		letterCounter[char]++
+	}
+	return letterCounter, nil
+}
+
+func areMapEqual(map1 map[rune]int, map2 map[rune]int) bool {
+	for key1, value1 := range map1 {
+		value2, ok := map2[key1]
+		if !ok {
+			return false
+		}
+		if value1 != value2 {
+			return false
+		}
+	}
+	for key2, value2 := range map2 {
+		value1, ok := map1[key2]
+		if !ok {
+			return false
+		}
+		if value1 != value2 {
+			return false
+		}
+
+	}
+	return true
+}
+
+func areAnagrams(firstWord string, secondWord string) bool {
+	firstLetterCounter, _ := countLetters(firstWord)
+	secondLetterCounter, _ := countLetters(secondWord)
+	if !areMapEqual(firstLetterCounter, secondLetterCounter) {
+		return false
+	}
+	return true
+}
 
 // 4. Find the first non-repeating character in a string.
 
