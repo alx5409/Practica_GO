@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// 1. Rotate an array to the right by k steps.
 func rotateArray(array []int, steps int) ([]int, error) {
 	rotatedArray := array
 	if steps <= 0 {
@@ -18,6 +19,14 @@ func rotateArray(array []int, steps int) ([]int, error) {
 }
 
 // 2. Find the longest common prefix among an array of strings.
+func longest_common_prefix(stringSlice []string) (string, error) {
+	prefix := ""
+	if len(stringSlice) == 0 {
+		er := errors.New("There are no strings")
+		return prefix, er
+	}
+	return prefix, nil
+}
 
 // 3. Implement a function to check if two strings are anagrams.
 
