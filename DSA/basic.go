@@ -96,16 +96,18 @@ func areAnagrams(firstWord string, secondWord string) bool {
 }
 
 // 4. Find the first non-repeating character in a string.
-
-// 5. Implement a singly linked list and write a function to reverse it.
-
-// 6. Detect a cycle in a linked list.
-
-// 7. Implement a stack and use it to check for balanced parentheses in a string.
-
-// 8. Implement a queue and use it to simulate a simple task scheduler.
-
-// 9. Find the intersection node of two singly linked lists.
+func firstNonRepeatedChar(sentence string) (rune, error) {
+	letterCounter, er := countLetters(sentence)
+	if er != nil {
+		return 0, er // Null character
+	}
+	for _, char := range sentence {
+		if letterCounter[char] == 1 {
+			return char, nil
+		}
+	}
+	return 0, nil // Null character
+}
 
 // 10. Implement a function to find the majority element in an array (element that appears more than n/2 times).
 
@@ -114,8 +116,6 @@ func areAnagrams(firstWord string, secondWord string) bool {
 // 12. Implement binary search on a sorted array.
 
 // 13. Find the kth largest element in an array.
-
-// 14. Implement a function to merge two sorted linked lists.
 
 // 15. Implement a circular queue with enqueue and dequeue operations.
 func main() {
