@@ -139,9 +139,46 @@ func wordFrecuency(paragraph string) map[string]int {
 	return wordCounter
 }
 
-// 12. Implement binary search on a sorted array.
+// 12. Implement binary search on a sorted slice.
+func minimum(slice []int) int {
+	min := slice[0]
+	for _, value := range slice {
+		if min > value {
+			min = value
+		}
+	}
+	return min
+}
 
-// 13. Find the kth largest element in an array.
+func maximum(slice []int) int {
+	max := slice[0]
+	for _, value := range slice {
+		if max < value {
+			max = value
+		}
+	}
+	return max
+}
+func binarySearch(sortedSlice []int, target int) (int, error) {
+	first := 0
+	last := len(sortedSlice) - 1
+	for first <= last {
+		mid := first + (last-first)/2
+		if sortedSlice[mid] == target {
+			return mid, nil
+		}
+		if sortedSlice[mid] < target {
+			first = mid + 1
+			continue
+		}
+		last = mid - 1
+
+	}
+	err := errors.New("Target not found")
+	return -1, err
+}
+
+// 13. Find the kth largest element in an slice.
 
 // 15. Implement a circular queue with enqueue and dequeue operations.
 func main() {
