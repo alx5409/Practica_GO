@@ -3,6 +3,7 @@ package dsa
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -179,6 +180,15 @@ func binarySearch(sortedSlice []int, target int) (int, error) {
 }
 
 // 13. Find the kth largest element in an slice.
+func findLargestKElement(slice []int, k int) (int, error) {
+	if k < 0 || k > len(slice)-1 {
+		return 0, errors.New("Invalid k")
+	}
+	sortedSlice := make([]int, len(slice))
+	copy(sortedSlice, slice)
+	sort.Slice(sortedSlice, func(i, j int) bool { return sortedSlice[i] > sortedSlice[j] })
+	return sortedSlice[k], nil
+}
 
 // 15. Implement a circular queue with enqueue and dequeue operations.
 func main() {
