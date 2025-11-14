@@ -136,6 +136,18 @@ func (l *LinkedList) clear() {
 }
 
 // 9. Find the length of the linked list.
+func (l LinkedList) len() int {
+	counter := 0
+	if l.isEmpty() {
+		return counter
+	}
+	node := l.head
+	for node != nil {
+		counter++
+		node = node.next
+	}
+	return counter
+}
 
 // 10. Find the middle node of the linked list.
 
