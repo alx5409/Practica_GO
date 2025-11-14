@@ -48,6 +48,13 @@ func (l *LinkedList) insertBack(value int) {
 }
 
 // 4. Insert a node at a position in the linked list.
+func (l *LinkedList) insertAfter(value int, position *Node) {
+	newNode := &Node{value: value, next: position.next}
+	position.next = newNode
+	if l.tail == position {
+		l.tail = newNode
+	}
+}
 
 // 5. Delete a node at the beginning of the linked list.
 
