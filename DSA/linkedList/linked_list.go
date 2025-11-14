@@ -92,7 +92,39 @@ func (l *LinkedList) deleteBack() error {
 	return nil
 }
 
-// 7. Delete a node by value.
+// 7. Delete a node the first node with value.
+func (l *LinkedList) deleteFirstNodeWithValue(value int) error {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return err
+	}
+	node := l.head
+	for node.value != value {
+		node = node.next
+		// If value not found
+		if node == nil {
+			err := errors.New("Value not found in the linked list")
+			return err
+		}
+	}
+	// If the node to be deleted is the head
+	if node == l.head {
+		l.deleteFront()
+		return nil
+	}
+	// If the node to be deleted is the tail
+	if node == l.tail {
+		l.deleteBack()
+		return nil
+	}
+	// If the node is in between
+	prevNode := l.head
+	for prevNode.next != node {
+		prevNode = prevNode.next
+	}
+	prevNode.next = node.next
+	return nil
+}
 
 // 8. Clear a linked list.
 
