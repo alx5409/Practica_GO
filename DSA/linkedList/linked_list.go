@@ -150,6 +150,24 @@ func (l LinkedList) len() int {
 }
 
 // 10. Find the middle node of the linked list.
+func (l LinkedList) middleNode() (*Node, error) {
+	middlePos := l.len() / 2
+	counter := 0
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return nil, err
+	}
+	node := l.head
+	for node != nil {
+		if counter == middlePos {
+			return node, nil
+		}
+		counter++
+		node = node.next
+	}
+	err := errors.New("The middle node was not found")
+	return nil, err
+}
 
 // 11. Convert a linked list to a slice.
 
