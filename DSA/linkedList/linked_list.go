@@ -1,6 +1,7 @@
 package linkedList
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -57,8 +58,39 @@ func (l *LinkedList) insertAfter(value int, position *Node) {
 }
 
 // 5. Delete a node at the beginning of the linked list.
+func (l *LinkedList) deleteFront() error {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return err
+	}
+	l.head = l.head.next
+	// If the head is removed and the list becomes empty
+	if l.head == nil {
+		l.tail = nil
+	}
+	return nil
+}
 
 // 6. Delete a node at the end of the linked list.
+func (l *LinkedList) deleteBack() error {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return err
+	}
+	// If only one node
+	if l.head == l.tail {
+		l.head = nil
+		l.tail = nil
+		return nil
+	}
+	node := l.head
+	for node.next != l.tail {
+		node = node.next
+	}
+	node.next = nil
+	l.tail = node
+	return nil
+}
 
 // 7. Delete a node by value.
 
