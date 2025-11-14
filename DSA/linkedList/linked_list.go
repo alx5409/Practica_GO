@@ -170,10 +170,42 @@ func (l LinkedList) middleNode() (*Node, error) {
 }
 
 // 11. Convert a linked list to a slice.
+func (l LinkedList) toSlice() ([]int, error) {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return nil, err
+	}
+	slice := []int{}
+	node := l.head
+	for node != nil {
+		slice = append(slice, node.value)
+		node = node.next
+	}
+	return slice, nil
+}
 
 // 12. Create a linked list from a slice.
+func sliceToLinkedList(slice []int) LinkedList {
+	l := LinkedList{}
+	for _, value := range slice {
+		l.insertBack(value)
+	}
+	return l
+}
 
 // 13. Print all elements of the linked list.
+func (l LinkedList) printElements() error {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return err
+	}
+	node := l.head
+	for node != nil {
+		fmt.Println(node.value)
+		node = node.next
+	}
+	return nil
+}
 
 // 14. Sort a linked list.
 
