@@ -36,6 +36,16 @@ func (l *LinkedList) insertFront(value int) {
 }
 
 // 3. Insert a node at the end of the linked list.
+func (l *LinkedList) insertBack(value int) {
+	newNode := &Node{value: value}
+	// If the list is empty
+	if l.tail == nil {
+		l.head = newNode
+		l.tail = newNode
+	}
+	l.tail.next = newNode
+	l.tail = newNode
+}
 
 // 4. Insert a node at a position in the linked list.
 
