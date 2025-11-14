@@ -127,6 +127,13 @@ func (l *LinkedList) deleteFirstNodeWithValue(value int) error {
 }
 
 // 8. Clear a linked list.
+func (l *LinkedList) clear() {
+	if l.isEmpty() {
+		return
+	}
+	l.head = nil
+	l.tail = nil
+}
 
 // 9. Find the length of the linked list.
 
