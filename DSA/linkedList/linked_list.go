@@ -284,7 +284,39 @@ func (l *LinkedList) hasCycle() bool {
 
 // 18. Find the intersection node of two singly linked lists.
 
-// 19. Implement a function to merge two sorted linked lists.
+// 19. Implement a function to merge alternatelively two linked lists.
+func (l *LinkedList) merge(l2 *LinkedList) error {
+	if l.isEmpty() {
+		err := errors.New("Linked list is empty")
+		return err
+	}
+	if l2.isEmpty() {
+		err := errors.New("Linked lists trying to merge is empty")
+		return err
+	}
+	node1 := l.head
+	node2 := l2.head
+	for node1 != nil && node2 != nil {
+		nextNode1 := node1.next
+		nextNode2 := node2.next
+
+		node1.next = node2
+
+		if nextNode1 == nil {
+			l.tail = node2
+		}
+		node2.next = nextNode1
+
+		node1 = nextNode1
+		node2 = nextNode2
+
+		if node2 == nil {
+			l.tail.next = node2
+			l.tail = l2.tail
+		}
+	}
+	return nil
+}
 
 // 20. Implement a stack and use it to check for balanced parentheses in a string.
 
