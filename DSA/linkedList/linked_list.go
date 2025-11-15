@@ -252,6 +252,18 @@ func (l *LinkedList) reverse() error {
 }
 
 // 16. Concatenate two linked lists
+func (l1 *LinkedList) concat(l2 *LinkedList) {
+	if l2.isEmpty() {
+		return
+	}
+	if l1.isEmpty() {
+		l1.head = l2.head
+		l1.tail = l2.tail
+		return
+	}
+	l1.tail.next = l2.head
+	l1.tail = l2.tail
+}
 
 // 17. Detect a cycle in a linked list.
 
