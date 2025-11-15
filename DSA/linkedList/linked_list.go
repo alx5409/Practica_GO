@@ -207,9 +207,39 @@ func (l LinkedList) printElements() error {
 	return nil
 }
 
+func swapValues(node1 *Node, node2 *Node) error {
+	if node1 == nil || node2 == nil {
+		err := errors.New("One of the pointers is nil")
+		return err
+	}
+	node1.value, node2.value = node2.value, node1.value
+	return nil
+}
+
 // 14. Sort a linked list.
+func (l *LinkedList) sort() error {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return err
+	}
+	for nodei := l.head; nodei != nil; nodei = nodei.next {
+		for nodej := nodei.next; nodej != nil; nodej = nodej.next {
+			if nodei.value > nodej.value {
+				swapValues(nodei, nodej)
+			}
+		}
+	}
+	return nil
+}
 
 // 15. Reverse a linked list
+func (l *LinkedList) reverse() error {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return err
+	}
+	return nil
+}
 
 // 16. Concatenate two linked lists
 
