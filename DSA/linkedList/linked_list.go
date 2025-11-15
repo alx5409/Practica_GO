@@ -207,13 +207,80 @@ func (l LinkedList) printElements() error {
 	return nil
 }
 
+func swapValues(node1 *Node, node2 *Node) error {
+	if node1 == nil || node2 == nil {
+		err := errors.New("One of the pointers is nil")
+		return err
+	}
+	node1.value, node2.value = node2.value, node1.value
+	return nil
+}
+
 // 14. Sort a linked list.
+func (l *LinkedList) sort() error {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return err
+	}
+	for nodei := l.head; nodei != nil; nodei = nodei.next {
+		for nodej := nodei.next; nodej != nil; nodej = nodej.next {
+			if nodei.value > nodej.value {
+				swapValues(nodei, nodej)
+			}
+		}
+	}
+	return nil
+}
 
 // 15. Reverse a linked list
+func (l *LinkedList) reverse() error {
+	if l.isEmpty() {
+		err := errors.New("The linked list is empty")
+		return err
+	}
+	// Initialize three pointers
+	var prev *Node = nil
+	current := l.head
+	l.tail = l.head
+	for current != nil {
+		next := current.next
+		current.next = prev
+		prev = current
+		current = next
+	}
+	return nil
+}
 
 // 16. Concatenate two linked lists
+func (l1 *LinkedList) concat(l2 *LinkedList) {
+	if l2.isEmpty() {
+		return
+	}
+	if l1.isEmpty() {
+		l1.head = l2.head
+		l1.tail = l2.tail
+		return
+	}
+	l1.tail.next = l2.head
+	l1.tail = l2.tail
+}
 
 // 17. Detect a cycle in a linked list.
+func (l *LinkedList) hasCycle() bool {
+	if l.isEmpty() {
+		return false
+	}
+	visitedNodes := make(map[*Node]bool) // If a node has been visited changes to true
+	node := l.head
+	for node != nil {
+		if visitedNodes[node] {
+			return true
+		}
+		visitedNodes[node] = true
+		node = node.next
+	}
+	return false
+}
 
 // 18. Find the intersection node of two singly linked lists.
 
