@@ -238,6 +238,16 @@ func (l *LinkedList) reverse() error {
 		err := errors.New("The linked list is empty")
 		return err
 	}
+	// Initialize three pointers
+	var prev *Node = nil
+	current := l.head
+	l.tail = l.head
+	for current != nil {
+		next := current.next
+		current.next = prev
+		prev = current
+		current = next
+	}
 	return nil
 }
 
