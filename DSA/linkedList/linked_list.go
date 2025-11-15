@@ -266,6 +266,21 @@ func (l1 *LinkedList) concat(l2 *LinkedList) {
 }
 
 // 17. Detect a cycle in a linked list.
+func (l *LinkedList) hasCycle() bool {
+	if l.isEmpty() {
+		return false
+	}
+	visitedNodes := make(map[*Node]bool) // If a node has been visited changes to true
+	node := l.head
+	for node != nil {
+		if visitedNodes[node] {
+			return true
+		}
+		visitedNodes[node] = true
+		node = node.next
+	}
+	return false
+}
 
 // 18. Find the intersection node of two singly linked lists.
 
