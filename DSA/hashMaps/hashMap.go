@@ -80,16 +80,79 @@ func findValue(hmap map[string]int) {
 }
 
 // 12. Count the frequency of each element in a slice using a hash map.
+func countFrecuency[T comparable](slice []T) map[T]int {
+	hashMap := make(map[T]int)
+	for _, element := range slice {
+		hashMap[element]++
+	}
+	return hashMap
+}
 
 // 13. Find the first non-repeating element in a slice using a hash map.
+func firstNonRepeatingElement[T comparable](slice []T) (T, error) {
+	frecuency := make(map[T]int)
+	for _, element := range slice {
+		frecuency[element]++
+	}
+	for _, element := range slice {
+		if frecuency[element] == 1 {
+			return element, nil
+		}
+	}
+	err := errors.New("Element not found")
+	var zero T
+	return zero, err
+}
 
-// 14. Merge two hash maps into one.
+// 14. Merge two hash maps into one. If a collision happens, second map overrides the first one
+func mergeHashMaps[T comparable, U any](hmap1 map[T]U, hmap2 map[T]U) map[T]U {
+	mergedMap := hmap1
+	for key, value := range hmap2 {
+		mergedMap[key] = value
+	}
+	return mergedMap
+}
 
 // 15. Find the intersection of two hash maps (keys present in both).
+type Pair[U any] struct {
+	Value1 U
+	Value2 U
+}
 
-// 16. Find the union of two hash maps (all unique keys).
+func intersectionOfMaps[T comparable, U any](hmap1 map[T]U, hmap2 map[T]U) map[T]Pair[U] {
+	intersection := make(map[T]Pair[U])
+	for key, value1 := range hmap1 {
+		if value2, ok := hmap2[key]; ok {
+			intersection[key] = Pair[U]{value1, value2}
+		}
+	}
+	return intersection
+}
+
+// 16. Find the union of two hash maps (keys that are unique to each map).
+func unionOfMaps[T comparable, U any](hmap1 map[T]U, hmap2 map[T]U) map[T]U {
+	union := make(map[T]U)
+	for key, value1 := range hmap1 {
+		if _, ok := hmap2[key]; !ok {
+			union[key] = value1
+		}
+	}
+	for key, value2 := range hmap2 {
+		if _, ok := hmap1[key]; !ok {
+			union[key] = value2
+		}
+	}
+	return union
+}
 
 // 17. Reverse the key-value pairs in a hash map (values become keys).
+func reverseMap[T comparable, U comparable](hmap map[T]U) map[U]T {
+	reversedMap := make(map[U]T)
+	for key, value := range hmap {
+		reversedMap[value] = key
+	}
+	return reversedMap
+}
 
 // 18. Find the key with the maximum value in the hash map.
 
