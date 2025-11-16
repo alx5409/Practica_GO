@@ -3,6 +3,7 @@ package linkedList
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 // 1. Implement a singly linked list
@@ -43,6 +44,7 @@ func (l *LinkedList) insertBack(value int) {
 	if l.tail == nil {
 		l.head = newNode
 		l.tail = newNode
+		return
 	}
 	l.tail.next = newNode
 	l.tail = newNode
@@ -318,10 +320,102 @@ func (l *LinkedList) merge(l2 *LinkedList) error {
 	return nil
 }
 
-// 20. Implement a stack and use it to check for balanced parentheses in a string.
+// 20. Implement a function to merge two sorted linked list preserving the order.
+func (l LinkedList) isSortedAscend() bool {
+	if l.isEmpty() {
+		return true
+	}
+	node := l.head
+	for node != l.tail {
+		if node.value >= node.next.value {
+			return false
+		}
+	}
+	return true
+}
 
-// 21. Implement a queue and use it to simulate a simple task scheduler.
+func mergeSortedLinkedLists(l1 *LinkedList, l2 *LinkedList) (LinkedList, error) {
+	if !l1.isSortedAscend() || !l2.isSortedAscend() {
+		err := errors.New("Linked lists are not sorted")
+		return LinkedList{}, err
+	}
+	node1 := l1.head
+	node2 := l2.head
+	result := LinkedList{}
+	for node1 != nil && node2 != nil {
+		if node1.value < node2.value {
+			result.insertBack(node1.value)
+			node1 = node1.next
+			continue
+		}
+		result.insertBack(node2.value)
+		node2 = node2.next
+	}
+	// Append the remaining nodes after one list is exhausted
+	for node1 != nil {
+		result.insertBack(node1.value)
+		node1 = node1.next
+	}
+	for node2 != nil {
+		result.insertBack(node2.value)
+		node2 = node2.next
+	}
+	return result, nil
+}
 
-func main() {
-	fmt.Println("Linky")
+// 21. Implement a stack and use it to check for balanced parentheses in a string.
+type StackNode struct {
+	linkedList LinkedList
+}
+
+func checkBalancedParenthesis(input string) bool {
+	parenthesisLinkedList := LinkedList{}
+	balanceStack := StackNode{parenthesisLinkedList}
+	if len(input) == 0 {
+		return false
+	}
+	for _, char := range []rune(input) {
+		if char == '(' {
+			parenthesisLinkedList.insertBack(1)
+			continue
+		}
+		if char == ')' {
+			er := parenthesisLinkedList.deleteBack()
+			if er != nil {
+				return false
+			}
+		}
+	}
+	return balanceStack.linkedList.isEmpty()
+}
+
+// 22. Implement a queue and use it to simulate a simple task scheduler.
+type Queue struct {
+	linkedList LinkedList
+}
+
+func convertTaskToInt(task string) (int, error) {
+	num, err := strconv.Atoi(task)
+	if err != nil {
+		return 0, err
+	}
+	return num, nil
+}
+
+func (q *Queue) addTask(task string) error {
+	num, err := convertTaskToInt(task)
+	if err != nil {
+		return errors.New("Could not convert task at adding task")
+	}
+	q.linkedList.insertBack(num)
+	return nil
+}
+
+// Only can remove the oldest task, as a Queue FIFO
+func (q *Queue) removeTask() error {
+	err := q.linkedList.deleteFront()
+	if err != nil {
+		return errors.New("Could not delete the task")
+	}
+	return nil
 }
