@@ -146,7 +146,7 @@ func unionOfMaps[T comparable, U any](hmap1 map[T]U, hmap2 map[T]U) map[T]U {
 }
 
 // 17. Reverse the key-value pairs in a hash map (values become keys).
-func reverseMap[T comparable, U comparable](hmap map[T]U) map[U]T {
+func reverseMap[T, U comparable](hmap map[T]U) map[U]T {
 	reversedMap := make(map[U]T)
 	for key, value := range hmap {
 		reversedMap[value] = key
@@ -155,10 +155,49 @@ func reverseMap[T comparable, U comparable](hmap map[T]U) map[U]T {
 }
 
 // 18. Find the key with the maximum value in the hash map.
+func maxValueInMap[T comparable](hmap map[T]float64) T {
+	var keyMax T
+	first := true
+	var max float64
+	for key, value := range hmap {
+		if first {
+			max = value
+			keyMax = key
+			first = false
+		} else if value > max {
+			max = value
+			keyMax = key
+		}
+	}
+	return keyMax
+}
 
 // 19. Find the key with the minimum value in the hash map.
+func minValueInMap[T comparable](hmap map[T]float64) T {
+	var keyMin T
+	first := true
+	var min float64
+	for key, value := range hmap {
+		if first {
+			min = value
+			keyMin = key
+			first = false
+		} else if value < min {
+			min = value
+			keyMin = key
+		}
+	}
+	return keyMin
+}
 
 // 20. Remove all entries with a specific value from the hash map.
+func removeEntriesWithValue[T, U comparable](hmap map[T]U, value U) {
+	for key, val := range hmap {
+		if val == value {
+			delete(hmap, key)
+		}
+	}
+}
 
 // 21. Group strings by their length using a hash map.
 
