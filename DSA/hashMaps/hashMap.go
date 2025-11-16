@@ -1,6 +1,9 @@
 package hashMaps
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // 1. Create a hash map to store integer keys and values.
 var intmapintvalue map[int]int
@@ -31,16 +34,50 @@ func valueWithKey(hmap map[string]int, key string) int {
 }
 
 // 6. Update the value for an existing key.
+func updateValueWithKey(hmap map[string]int, key string, newValue int) error {
+	if !isKeyInMap(hmap, key) {
+		return errors.New("Key not found")
+	}
+	hmap[key] = newValue
+	return nil
+}
 
 // 7. Find the number of key-value pairs in the hash map.
+func size(hmap map[string]int) int {
+	counter := 0
+	for key, _ := range hmap {
+		counter++
+	}
+	return counter
+}
 
 // 8. Iterate over all key-value pairs in the hash map.
+func printKeyValue(hmap map[string]int) {
+	for key, value := range hmap {
+		fmt.Println("Key: ", key, " Value: ", value)
+	}
+}
 
 // 9. Clear all entries in the hash map.
+func clearEntries(hmap map[string]int) {
+	for k := range hmap {
+		delete(hmap, k)
+	}
+}
 
 // 10. Find all keys in the hash map.
+func findKeys(hmap map[string]int) {
+	for key := range hmap {
+		fmt.Println("Key = ", key)
+	}
+}
 
 // 11. Find all values in the hash map.
+func findValue(hmap map[string]int) {
+	for _, value := range hmap {
+		fmt.Println("Value = ", value)
+	}
+}
 
 // 12. Count the frequency of each element in a slice using a hash map.
 
