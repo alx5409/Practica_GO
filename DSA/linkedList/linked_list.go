@@ -298,6 +298,7 @@ func (l *LinkedList) merge(l2 *LinkedList) error {
 	}
 	node1 := l.head
 	node2 := l2.head
+
 	for node1 != nil && node2 != nil {
 		nextNode1 := node1.next
 		nextNode2 := node2.next
@@ -306,16 +307,12 @@ func (l *LinkedList) merge(l2 *LinkedList) error {
 
 		if nextNode1 == nil {
 			l.tail = node2
+			break
 		}
 		node2.next = nextNode1
 
 		node1 = nextNode1
 		node2 = nextNode2
-
-		if node2 == nil {
-			l.tail.next = node2
-			l.tail = l2.tail
-		}
 	}
 	return nil
 }
@@ -327,7 +324,7 @@ func (l LinkedList) isSortedAscend() bool {
 	}
 	node := l.head
 	for node != l.tail {
-		if node.value >= node.next.value {
+		if node.value > node.next.value {
 			return false
 		}
 	}
