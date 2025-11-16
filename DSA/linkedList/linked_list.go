@@ -285,6 +285,24 @@ func (l *LinkedList) hasCycle() bool {
 }
 
 // 18. Find the intersection node of two singly linked lists.
+func intersection(l1 LinkedList, l2 LinkedList) (LinkedList, error) {
+	result := LinkedList{}
+	linkedListMap := make(map[*Node]bool)
+	node := l1.head
+	for node != nil {
+		linkedListMap[node] = true
+		node = node.next
+	}
+	node2 := l2.head
+	for node2 != nil {
+		if linkedListMap[node2] {
+			result.head = node2
+			return result, nil
+		}
+	}
+	err := errors.New("Not found")
+	return result, err
+}
 
 // 19. Implement a function to merge alternatelively two linked lists.
 func (l *LinkedList) merge(l2 *LinkedList) error {
