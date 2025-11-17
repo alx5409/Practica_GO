@@ -314,6 +314,13 @@ func findAllKeysByValues[K, V comparable](hmap map[K]V, value V) []K {
 }
 
 // 28. Swap keys and values in a hash map (assume values are unique).
+func swapKeysToValues[K, V comparable](hmap map[K]V) map[V]K {
+	swappedMap := make(map[V]K)
+	for key, value := range hmap {
+		swappedMap[value] = key
+	}
+	return swappedMap
+}
 
 // 29. Implement a hash map to store student grades (name to grade).
 
