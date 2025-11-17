@@ -209,6 +209,18 @@ func groupByLength(stringSlice []string) map[int][]string {
 }
 
 // 22. Implement a simple cache using a hash map.
+type SimpleCache[K comparable, V any] struct {
+	data map[K]V
+}
+
+func NewSimpleCache[K comparable, V any]() *SimpleCache[K, V] {
+	return &SimpleCache[K, V]{data: make(map[K]V)}
+}
+
+func (c *SimpleCache[K, V]) Get(key K) (V, bool) {
+	val, ok := c.data[key]
+	return val, ok
+}
 
 // 23. Check if two slices are anagrams using a hash map.
 func areAnagrams[T comparable](slice1 []T, slice2 []T) bool {
@@ -249,6 +261,12 @@ func duplicateValuesInMap[T, U comparable](hmap map[T]U) []U {
 }
 
 // 25. Implement a hash map with custom struct keys.
+type CustomStruct struct {
+	name string
+	age  int
+}
+
+var personMap map[CustomStruct]int
 
 // 26. Implement a hash map to count word occurrences in a string.
 
