@@ -3,6 +3,7 @@ package hashMaps
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // 1. Create a hash map to store integer keys and values.
@@ -292,6 +293,14 @@ type CustomStruct struct {
 var personMap map[CustomStruct]int
 
 // 26. Implement a hash map to count word occurrences in a string.
+func countWordOcurrences(phrase string, word string) int {
+	words := strings.Split(phrase, " ")
+	count := make(map[string]int)
+	for _, w := range words {
+		count[w]++
+	}
+	return count[word]
+}
 
 // 27. Find all keys with a specific value.
 
