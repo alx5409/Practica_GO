@@ -3,6 +3,7 @@ package hashMaps
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // 1. Create a hash map to store integer keys and values.
@@ -292,14 +293,74 @@ type CustomStruct struct {
 var personMap map[CustomStruct]int
 
 // 26. Implement a hash map to count word occurrences in a string.
+func countWordOcurrences(phrase string, word string) int {
+	words := strings.Split(phrase, " ")
+	count := make(map[string]int)
+	for _, w := range words {
+		count[w]++
+	}
+	return count[word]
+}
 
 // 27. Find all keys with a specific value.
+func findAllKeysByValues[K, V comparable](hmap map[K]V, value V) []K {
+	var keys []K
+	for key, val := range hmap {
+		if val == value {
+			keys = append(keys, key)
+		}
+	}
+	return keys
+}
 
 // 28. Swap keys and values in a hash map (assume values are unique).
+func swapKeysToValues[K, V comparable](hmap map[K]V) map[V]K {
+	swappedMap := make(map[V]K)
+	for key, value := range hmap {
+		swappedMap[value] = key
+	}
+	return swappedMap
+}
 
-// 29. Implement a hash map to store student grades (name to grade).
+// 29. Implement a hash map to store student grades (studentName to grade).
+type studentName string
+type grade float64
+
+func storeStudentGrades() map[studentName]grade {
+	studentGrades := make(map[studentName]grade)
+	exitCommand := "exit"
+	for {
+		fmt.Println("Write exit and press enter to leave")
+		fmt.Println("Give me the name of the student: ")
+		var name studentName
+		fmt.Scanln(&name)
+		if string(name) == exitCommand {
+			break
+		}
+		fmt.Println("Give me the grade of the student: ", name)
+		var grade grade
+		fmt.Scanln(&grade)
+		studentGrades[name] = grade
+	}
+	return studentGrades
+}
 
 // 30. Find the most frequent value in a hash map.
+func mostFrecuentValueInMap[K, V comparable](hmap map[K]V) V {
+	counter := make(map[V]int)
+	for _, value := range hmap {
+		counter[value]++
+	}
+	max := 0
+	var mostFrecuentValue V
+	for key, value := range counter {
+		if max < value {
+			max = value
+			mostFrecuentValue = key
+		}
+	}
+	return mostFrecuentValue
+}
 
 // 31. Implement an LRU (Least Recently Used) cache using a hash map and a doubly linked list.
 
