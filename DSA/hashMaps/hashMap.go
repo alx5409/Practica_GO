@@ -217,9 +217,32 @@ func NewSimpleCache[K comparable, V any]() *SimpleCache[K, V] {
 	return &SimpleCache[K, V]{data: make(map[K]V)}
 }
 
-func (c *SimpleCache[K, V]) Get(key K) (V, bool) {
+func (c SimpleCache[K, V]) Get(key K) (V, bool) {
 	val, ok := c.data[key]
 	return val, ok
+}
+
+func (c *SimpleCache[K, V]) Set(key K, value V) {
+	c.data[key] = value
+}
+
+func (c *SimpleCache[K, V]) Delete(key K) error {
+	_, ok := c.data[key]
+	if !ok {
+		return errors.New("Key not found")
+	}
+	delete(c.data, key)
+	return nil
+}
+
+func (c *SimpleCache[K, V]) Clear() {
+	for key := range c.data {
+		delete(c.data, key)
+	}
+}
+
+func (c SimpleCache[K, V]) Size() int {
+	return len(c.data)
 }
 
 // 23. Check if two slices are anagrams using a hash map.
