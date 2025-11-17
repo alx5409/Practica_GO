@@ -322,7 +322,28 @@ func swapKeysToValues[K, V comparable](hmap map[K]V) map[V]K {
 	return swappedMap
 }
 
-// 29. Implement a hash map to store student grades (name to grade).
+// 29. Implement a hash map to store student grades (studentName to grade).
+type studentName string
+type grade float64
+
+func storeStudentGrades() map[studentName]grade {
+	studentGrades := make(map[studentName]grade)
+	exitCommand := "exit"
+	for {
+		fmt.Println("Write exit and press enter to leave")
+		fmt.Println("Give me the name of the student: ")
+		var name studentName
+		fmt.Scanln(&name)
+		if string(name) == exitCommand {
+			break
+		}
+		fmt.Println("Give me the grade of the student: ", name)
+		var grade grade
+		fmt.Scanln(&grade)
+		studentGrades[name] = grade
+	}
+	return studentGrades
+}
 
 // 30. Find the most frequent value in a hash map.
 
