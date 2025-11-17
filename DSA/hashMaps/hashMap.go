@@ -303,6 +303,15 @@ func countWordOcurrences(phrase string, word string) int {
 }
 
 // 27. Find all keys with a specific value.
+func findAllKeysByValues[K, V comparable](hmap map[K]V, value V) []K {
+	var keys []K
+	for key, val := range hmap {
+		if val == value {
+			keys = append(keys, key)
+		}
+	}
+	return keys
+}
 
 // 28. Swap keys and values in a hash map (assume values are unique).
 
