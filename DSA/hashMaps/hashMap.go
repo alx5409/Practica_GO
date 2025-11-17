@@ -200,12 +200,53 @@ func removeEntriesWithValue[T, U comparable](hmap map[T]U, value U) {
 }
 
 // 21. Group strings by their length using a hash map.
+func groupByLength(stringSlice []string) map[int][]string {
+	groups := make(map[int][]string)
+	for _, element := range stringSlice {
+		groups[len(element)] = append(groups[len(element)], element)
+	}
+	return groups
+}
 
 // 22. Implement a simple cache using a hash map.
 
 // 23. Check if two slices are anagrams using a hash map.
+func areAnagrams[T comparable](slice1 []T, slice2 []T) bool {
+	frecuency1 := make(map[T]int)
+	frecuency2 := make(map[T]int)
+	for _, val := range slice1 {
+		frecuency1[val]++
+	}
+	for _, val := range slice2 {
+		frecuency2[val]++
+	}
+	for key, value := range frecuency1 {
+		if frecuency2[key] != value {
+			return false
+		}
+	}
+	for key, value := range frecuency2 {
+		if frecuency1[key] != value {
+			return false
+		}
+	}
+	return true
+}
 
 // 24. Find duplicate values in a hash map.
+func duplicateValuesInMap[T, U comparable](hmap map[T]U) []U {
+	var result []U
+	count := make(map[U]int)
+	for _, value := range hmap {
+		count[value]++
+	}
+	for value, c := range count {
+		if c > 1 {
+			result = append(result, value)
+		}
+	}
+	return result
+}
 
 // 25. Implement a hash map with custom struct keys.
 
