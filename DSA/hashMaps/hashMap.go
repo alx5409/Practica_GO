@@ -346,6 +346,21 @@ func storeStudentGrades() map[studentName]grade {
 }
 
 // 30. Find the most frequent value in a hash map.
+func mostFrecuentValueInMap[K, V comparable](hmap map[K]V) V {
+	counter := make(map[V]int)
+	for _, value := range hmap {
+		counter[value]++
+	}
+	max := 0
+	var mostFrecuentValue V
+	for key, value := range counter {
+		if max < value {
+			max = value
+			mostFrecuentValue = key
+		}
+	}
+	return mostFrecuentValue
+}
 
 // 31. Implement an LRU (Least Recently Used) cache using a hash map and a doubly linked list.
 
