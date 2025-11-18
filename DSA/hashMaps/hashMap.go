@@ -371,13 +371,138 @@ type DoubleLinkedNode[V comparable] struct {
 
 type DoubleLinkedList[V comparable] struct {
 	head *DoubleLinkedNode[V]
-	tail *DoubleLinkedList[V]
+	tail *DoubleLinkedNode[V]
 }
 
 type LRU[K, V comparable] struct {
-	data     map[K]*DoubleLinkedList[V]
-	history  DoubleLinkedList[V]
+	data     map[K]*DoubleLinkedNode[V]
+	history  *DoubleLinkedList[V]
 	capacity int
+}
+
+// Move a node to the front of the doubly linked list
+func moveNodeToFront[V comparable](node *DoubleLinkedNode[V], list *DoubleLinkedList[V]) bool {
+	if node == nil || list.head == node {
+		return true
+	}
+	// Remove node from its current position
+	if node.prev != nil {
+		node.prev.next = node.next
+	}
+	if node.next != nil {
+		node.next.prev = node.prev
+	}
+	// If node was tail, update tail
+	if list.tail == node {
+		list.tail = node.prev
+	}
+	// Insert node at the front
+	node.prev = nil
+	node.next = list.head
+	if list.head != nil {
+		list.head.prev = node
+	}
+	list.head = node
+	// If list was empty or had one node, update tail
+	if list.tail == nil {
+		list.tail = node
+	}
+	return true
+}
+
+func (l *DoubleLinkedList[V]) insertNodeAtFront(val V) {
+	newNode := &DoubleLinkedNode[V]{value: val}
+	newNode.next = l.head
+	if l.head != nil {
+		l.head.prev = newNode
+	}
+	l.head = newNode
+	if l.tail == nil {
+		l.tail = newNode
+	}
+}
+
+func (l *DoubleLinkedList[V]) insertNodeAtBack(val V) {
+	newNode := &DoubleLinkedNode[V]{value: val}
+	newNode.prev = l.tail
+	newNode.next = nil
+	if l.tail != nil {
+		l.tail.next = newNode
+	}
+	l.tail = newNode
+	if l.tail != nil {
+		l.tail = newNode
+	}
+}
+
+func (l *DoubleLinkedList[V]) removeNode(node *DoubleLinkedNode[V]) error {
+	if node == nil {
+		return errors.New("Node is nil")
+	}
+	// Update previous node's next pointer
+	if node.prev != nil {
+		node.prev.next = node.next
+	} else {
+		// Node is head
+		l.head = node.next
+	}
+	// Update next node's prev pointer
+	if node.next != nil {
+		node.next.prev = node.prev
+	} else {
+		// Node is tail
+		l.tail = node.prev
+	}
+	node.prev = nil
+	node.next = nil
+	return nil
+}
+
+// Retrieve a value by key and mark it as recently used
+func (l *LRU[K, V]) Get(key K) (V, bool) {
+	node, ok := l.data[key]
+	if !ok {
+		var zero V
+		return zero, false
+	}
+	moveNodeToFront(node, l.history)
+	return node.value, true
+}
+
+// Insert or update a value and mark it as recently used
+func (l *LRU[K, V]) Set(key K, value V) error {
+	// If the maximum cache capacity has been reached delete the tail and put the new item there
+	if len(l.data) >= l.capacity {
+		l.history.insertNodeAtBack(value)
+		l.data[key] = l.history.tail
+	}
+	return nil
+}
+
+// Remove a key-value pair form the cache
+func (l *LRU[K, V]) Delete(key K) error {
+	node, ok := l.data[key]
+	if !ok {
+		return errors.New("Key not found")
+	}
+	l.history.removeNode(node)
+	delete(l.data, key)
+	return nil
+}
+
+// Clear the cache
+func (l *LRU[K, V]) Clear() {
+	// Clear the data
+	for data := range l.data {
+		delete(l.data, data)
+	}
+	// Clear the history
+	l.history.head = nil
+	l.history.tail = nil
+}
+
+func (l *LRU[K, V]) Size() int {
+	return len(l.data)
 }
 
 // 32. Given a slice of integers, find all pairs that sum to a target value using a hash map.
