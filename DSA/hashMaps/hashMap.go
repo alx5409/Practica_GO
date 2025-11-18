@@ -507,6 +507,36 @@ func (l *LRU[K, V]) Size() int {
 
 // 32. Given a slice of integers, find all pairs that sum to a target value using a hash map.
 
+// Function that returns the first 2 numbers that sums a given cuantity
+func twoSums(slice []int, sum int) (Pair[int], error) {
+	hmap := make(map[int]int)
+	for _, number := range slice {
+		complement := sum - number
+		if val, ok := hmap[complement]; ok {
+			return Pair[int]{val, number}, nil
+		}
+		hmap[number] = number
+	}
+	return Pair[int]{}, errors.New("No pairs found")
+}
+
+// Function that solver the exercise 32
+func allPairsWithSum(slice []int, sum int) ([]Pair[int], error) {
+	var pairsWithSum []Pair[int]
+	hmap := make(map[int]int)
+	for _, number := range slice {
+		complement := sum - number
+		if val, ok := hmap[complement]; ok {
+			pairsWithSum = append(pairsWithSum, Pair[int]{number, val})
+		}
+		hmap[number] = number
+	}
+	if len(pairsWithSum) == 0 {
+		return pairsWithSum, errors.New("No pairs were found")
+	}
+	return pairsWithSum, nil
+}
+
 // 33. Find the longest consecutive sequence in a slice using a hash map.
 
 // 34. Given two slices, find the elements that appear in both more than once using hash maps.
