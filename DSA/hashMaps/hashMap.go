@@ -363,6 +363,22 @@ func mostFrecuentValueInMap[K, V comparable](hmap map[K]V) V {
 }
 
 // 31. Implement an LRU (Least Recently Used) cache using a hash map and a doubly linked list.
+type DoubleLinkedNode[V comparable] struct {
+	value V
+	prev  *DoubleLinkedNode[V]
+	next  *DoubleLinkedNode[V]
+}
+
+type DoubleLinkedList[V comparable] struct {
+	head *DoubleLinkedNode[V]
+	tail *DoubleLinkedList[V]
+}
+
+type LRU[K, V comparable] struct {
+	data     map[K]*DoubleLinkedList[V]
+	history  DoubleLinkedList[V]
+	capacity int
+}
 
 // 32. Given a slice of integers, find all pairs that sum to a target value using a hash map.
 
