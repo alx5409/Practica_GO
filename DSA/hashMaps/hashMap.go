@@ -537,7 +537,67 @@ func allPairsWithSum(slice []int, sum int) ([]Pair[int], error) {
 	return pairsWithSum, nil
 }
 
-// 33. Find the longest consecutive sequence in a slice using a hash map.
+// 33. Find the longest consecutive sequence (eg: 1 , 2, 3) in a slice using a hash map.
+func naiveConsecutiveSequence(slice []int) []int {
+	maxLength := 0
+	maxIndex := 0
+	for i, _ := range slice {
+		counter := 0
+		for j := i; j < len(slice)-1; j++ {
+			if slice[j+1] != 1+slice[j] {
+				break
+			}
+			counter++
+		}
+		if counter > maxLength {
+			maxLength = counter
+			maxIndex = i
+		}
+	}
+	// If the slice is not empty and has max consecutive secuence of 0
+	if maxLength == 0 && len(slice) > 0 {
+		return []int{slice[0]}
+	}
+	return slice[maxIndex : maxIndex+maxLength+1]
+}
+
+func maxValueInIntMap[T comparable](hmap map[T]int) T {
+	var keyMax T
+	first := true
+	var max int
+	for key, value := range hmap {
+		if first {
+			max = value
+			keyMax = key
+			first = false
+		} else if value > max {
+			max = value
+			keyMax = key
+		}
+	}
+	return keyMax
+}
+
+func longestConsecutiveSequence(slice []int) []int {
+	if len(slice) == 0 {
+		return []int{}
+	}
+	if len(slice) == 1 {
+		return slice
+	}
+	numpMap := make(map[int]int)
+	for position, _ := range slice {
+		for i := position; i < len(slice)-1; i++ {
+			if slice[i+1] != slice[i]+1 {
+				break
+			}
+			numpMap[position]++
+		}
+	}
+	startPosition := maxValueInIntMap(numpMap)
+	maxLength := numpMap[startPosition]
+	return slice[startPosition : startPosition+maxLength+1]
+}
 
 // 34. Given two slices, find the elements that appear in both more than once using hash maps.
 
