@@ -3,6 +3,7 @@ package hashMaps
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"strings"
 )
 
@@ -619,6 +620,46 @@ func findMostCommon[T comparable](slice1 []T, slice2 []T) []T {
 }
 
 // 35. Implement a hash map that supports constant time get, set, and delete, and can return a random key in constant time.
+type FastMap[K comparable, V any] struct {
+	data     map[K]V
+	keys     []K
+	keyIndex map[K]int
+}
+
+func (m FastMap[K, V]) Get(key K) V {
+	return m.data[key]
+}
+
+func (m *FastMap[K, V]) Set(key K, value V) {
+	if _, exists := m.data[key]; exists {
+		m.data[key] = value
+		return
+	}
+	m.data[key] = value
+	m.keys = append(m.keys, key)
+	m.keyIndex[key] = len(m.keys) - 1
+}
+
+func (m *FastMap[K, V]) Delete(key K) {
+	index, exists := m.keyIndex[key]
+	if !exists {
+		return
+	}
+	lastIndex := len(m.keys) - 1
+	lastKey := m.keys[lastIndex]
+	// Swap the key to delete with the last key
+	m.keys[index] = lastKey
+	m.keyIndex[lastKey] = index
+	// Remove the last key
+	m.keys = m.keys[:lastIndex]
+	delete(m.keyIndex, key)
+	delete(m.data, key)
+}
+
+func (m FastMap[K, V]) GetRandomKey() K {
+	randomIndex := rand.Intn(len(m.keys))
+	return m.keys[randomIndex]
+}
 
 // 36. Given a slice of strings, group all anagrams together using a hash map.
 
