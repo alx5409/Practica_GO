@@ -600,6 +600,23 @@ func longestConsecutiveSequence(slice []int) []int {
 }
 
 // 34. Given two slices, find the elements that appear in both more than once using hash maps.
+func findMostCommon[T comparable](slice1 []T, slice2 []T) []T {
+	hmap1 := make(map[T]int)
+	hmap2 := make(map[T]int)
+	var result []T
+	for _, key := range slice1 {
+		hmap1[key]++
+	}
+	for _, key := range slice2 {
+		hmap2[key]++
+	}
+	for key := range hmap1 {
+		if hmap1[key] > 1 && hmap2[key] > 1 {
+			result = append(result, key)
+		}
+	}
+	return result
+}
 
 // 35. Implement a hash map that supports constant time get, set, and delete, and can return a random key in constant time.
 
