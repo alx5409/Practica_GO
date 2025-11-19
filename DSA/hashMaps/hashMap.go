@@ -676,19 +676,47 @@ func groupAnagrams(slice []string) map[string][]string {
 }
 
 // 37. Implement a hash map to track the frequency of rolling window elements in a slice.
-func frecuencyRollingWindow[T comparable](slice []T, windowSize int) []map[T]int {
-	var frecuencies []map[T]int
+func frequencyRollingWindow[T comparable](slice []T, windowSize int) []map[T]int {
+	var frequencies []map[T]int
 	for i := 0; i < len(slice)-windowSize; i++ {
-		frecuency := make(map[T]int)
+		frequency := make(map[T]int)
 		for j := 0; j < windowSize; j++ {
-			frecuency[j]++
+			frequency[slice[j]]++
 		}
-		frecuencies = append(frecuencies, frecuency)
+		frequencies = append(frequencies, frequency)
 	}
-	return frecuencies
+	return frequencies
 }
 
 // 38. Given a slice of integers, find the length of the smallest subarray with the same degree as the original slice using a hash map.
+func maxFrecuency[T comparable](slice []T) int {
+	hmap := countFrecuency(slice)
+	return hmap[maxValueInIntMap(hmap)]
+
+}
+
+func findLengthSmallestSubarrayWithSameDegree[T comparable](slice []T) int {
+	degree := maxFrecuency(slice)
+	frequency := countFrecuency(slice)
+	firstIndex := make(map[T]int)
+	lastIndex := make(map[T]int)
+	for i, num := range slice {
+		if _, ok := firstIndex[num]; ok {
+			firstIndex[num] = i
+		}
+		lastIndex[num] = i
+	}
+	minLength := len(slice)
+	for num, count := range frequency {
+		if count == degree {
+			length := lastIndex[num] - firstIndex[num] + 1
+			if length < minLength {
+				minLength = length
+			}
+		}
+	}
+	return minLength
+}
 
 // 39. Implement a hash map to store and retrieve hierarchical data (e.g., parent-child relationships).
 
