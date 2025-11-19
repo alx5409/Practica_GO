@@ -676,12 +676,80 @@ func groupAnagrams(slice []string) map[string][]string {
 }
 
 // 37. Implement a hash map to track the frequency of rolling window elements in a slice.
+func frequencyRollingWindow[T comparable](slice []T, windowSize int) []map[T]int {
+	var frequencies []map[T]int
+	for i := 0; i < len(slice)-windowSize; i++ {
+		frequency := make(map[T]int)
+		for j := 0; j < windowSize; j++ {
+			frequency[slice[j]]++
+		}
+		frequencies = append(frequencies, frequency)
+	}
+	return frequencies
+}
 
 // 38. Given a slice of integers, find the length of the smallest subarray with the same degree as the original slice using a hash map.
+func maxFrecuency[T comparable](slice []T) int {
+	hmap := countFrecuency(slice)
+	return hmap[maxValueInIntMap(hmap)]
+
+}
+
+func findLengthSmallestSubarrayWithSameDegree[T comparable](slice []T) int {
+	degree := maxFrecuency(slice)
+	frequency := countFrecuency(slice)
+	firstIndex := make(map[T]int)
+	lastIndex := make(map[T]int)
+	for i, num := range slice {
+		if _, ok := firstIndex[num]; ok {
+			firstIndex[num] = i
+		}
+		lastIndex[num] = i
+	}
+	minLength := len(slice)
+	for num, count := range frequency {
+		if count == degree {
+			length := lastIndex[num] - firstIndex[num] + 1
+			if length < minLength {
+				minLength = length
+			}
+		}
+	}
+	return minLength
+}
 
 // 39. Implement a hash map to store and retrieve hierarchical data (e.g., parent-child relationships).
 
 // 40. Given a slice of integers, find the subarray with sum zero using a hash map.
+
+// Generic type for numbers
+type Number interface {
+	~int | ~int32 | ~int64 | ~float32 | ~float64
+}
+
+func sliceSum[T Number](slice []T) T {
+	var sum T
+	for _, value := range slice {
+		sum += value
+	}
+	return sum
+}
+
+func findSubarrayWithZeroSum(slice []int) []int {
+	sumIndex := make(map[int]int)
+	sum := 0
+	for i, value := range slice {
+		sum += value
+		if sum == 0 {
+			return slice[:i+1]
+		}
+		if prevIndex, ok := sumIndex[sum]; ok {
+			return slice[prevIndex : i+1]
+		}
+		sumIndex[sum] = i
+	}
+	return nil
+}
 
 // 41. Implement a hash map to efficiently support prefix search for strings.
 
