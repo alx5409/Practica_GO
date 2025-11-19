@@ -676,6 +676,17 @@ func groupAnagrams(slice []string) map[string][]string {
 }
 
 // 37. Implement a hash map to track the frequency of rolling window elements in a slice.
+func frecuencyRollingWindow[T comparable](slice []T, windowSize int) []map[T]int {
+	var frecuencies []map[T]int
+	for i := 0; i < len(slice)-windowSize; i++ {
+		frecuency := make(map[T]int)
+		for j := 0; j < windowSize; j++ {
+			frecuency[j]++
+		}
+		frecuencies = append(frecuencies, frecuency)
+	}
+	return frecuencies
+}
 
 // 38. Given a slice of integers, find the length of the smallest subarray with the same degree as the original slice using a hash map.
 
