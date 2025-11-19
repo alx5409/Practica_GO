@@ -722,6 +722,35 @@ func findLengthSmallestSubarrayWithSameDegree[T comparable](slice []T) int {
 
 // 40. Given a slice of integers, find the subarray with sum zero using a hash map.
 
+// Generic type for numbers
+type Number interface {
+	~int | ~int32 | ~int64 | ~float32 | ~float64
+}
+
+func sliceSum[T Number](slice []T) T {
+	var sum T
+	for _, value := range slice {
+		sum += value
+	}
+	return sum
+}
+
+func findSubarrayWithZeroSum(slice []int) []int {
+	sumIndex := make(map[int]int)
+	sum := 0
+	for i, value := range slice {
+		sum += value
+		if sum == 0 {
+			return slice[:i+1]
+		}
+		if prevIndex, ok := sumIndex[sum]; ok {
+			return slice[prevIndex : i+1]
+		}
+		sumIndex[sum] = i
+	}
+	return nil
+}
+
 // 41. Implement a hash map to efficiently support prefix search for strings.
 
 // 42. Given a slice of integers, find the number of subarrays whose sum equals a target value using a hash map.
