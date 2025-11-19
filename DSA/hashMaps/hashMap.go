@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"sort"
 	"strings"
 )
 
@@ -662,6 +663,17 @@ func (m FastMap[K, V]) GetRandomKey() K {
 }
 
 // 36. Given a slice of strings, group all anagrams together using a hash map.
+func groupAnagrams(slice []string) map[string][]string {
+	anagrams := make(map[string][]string)
+	for _, word := range slice {
+		// Sort the word's letters to use as a key
+		letters := []rune(word)
+		sort.Slice(letters, func(i, j int) bool { return letters[i] < letters[j] })
+		key := string(letters)
+		anagrams[key] = append(anagrams[key], word)
+	}
+	return anagrams
+}
 
 // 37. Implement a hash map to track the frequency of rolling window elements in a slice.
 
