@@ -3,6 +3,8 @@ package hashMaps
 import (
 	"errors"
 	"fmt"
+	"math/rand"
+	"sort"
 	"strings"
 )
 
@@ -600,10 +602,78 @@ func longestConsecutiveSequence(slice []int) []int {
 }
 
 // 34. Given two slices, find the elements that appear in both more than once using hash maps.
+func findMostCommon[T comparable](slice1 []T, slice2 []T) []T {
+	hmap1 := make(map[T]int)
+	hmap2 := make(map[T]int)
+	var result []T
+	for _, key := range slice1 {
+		hmap1[key]++
+	}
+	for _, key := range slice2 {
+		hmap2[key]++
+	}
+	for key := range hmap1 {
+		if hmap1[key] > 1 && hmap2[key] > 1 {
+			result = append(result, key)
+		}
+	}
+	return result
+}
 
 // 35. Implement a hash map that supports constant time get, set, and delete, and can return a random key in constant time.
+type FastMap[K comparable, V any] struct {
+	data     map[K]V
+	keys     []K
+	keyIndex map[K]int
+}
+
+func (m FastMap[K, V]) Get(key K) V {
+	return m.data[key]
+}
+
+func (m *FastMap[K, V]) Set(key K, value V) {
+	if _, exists := m.data[key]; exists {
+		m.data[key] = value
+		return
+	}
+	m.data[key] = value
+	m.keys = append(m.keys, key)
+	m.keyIndex[key] = len(m.keys) - 1
+}
+
+func (m *FastMap[K, V]) Delete(key K) {
+	index, exists := m.keyIndex[key]
+	if !exists {
+		return
+	}
+	lastIndex := len(m.keys) - 1
+	lastKey := m.keys[lastIndex]
+	// Swap the key to delete with the last key
+	m.keys[index] = lastKey
+	m.keyIndex[lastKey] = index
+	// Remove the last key
+	m.keys = m.keys[:lastIndex]
+	delete(m.keyIndex, key)
+	delete(m.data, key)
+}
+
+func (m FastMap[K, V]) GetRandomKey() K {
+	randomIndex := rand.Intn(len(m.keys))
+	return m.keys[randomIndex]
+}
 
 // 36. Given a slice of strings, group all anagrams together using a hash map.
+func groupAnagrams(slice []string) map[string][]string {
+	anagrams := make(map[string][]string)
+	for _, word := range slice {
+		// Sort the word's letters to use as a key
+		letters := []rune(word)
+		sort.Slice(letters, func(i, j int) bool { return letters[i] < letters[j] })
+		key := string(letters)
+		anagrams[key] = append(anagrams[key], word)
+	}
+	return anagrams
+}
 
 // 37. Implement a hash map to track the frequency of rolling window elements in a slice.
 
