@@ -872,3 +872,77 @@ func findLongestSubstringWithoutRepeatingCharacters(s string) string {
 }
 
 // 45. Implement a hash map to support undo/redo operations for key-value changes.
+type HashMapWithHistory[K comparable, V any] struct {
+	data         map[K]V
+	history      []map[K]V
+	currentIndex int
+}
+
+func copyMap[K comparable, V any](original map[K]V) map[K]V {
+	newMap := make(map[K]V, len(original))
+	for k, v := range original {
+		newMap[k] = v
+	}
+	return newMap
+}
+
+func (h *HashMapWithHistory[K, V]) Set(key K, value V) {
+	if _, ok := h.data[key]; ok {
+		fmt.Println("Overriding the data with key", key)
+	}
+	h.data[key] = value
+	// It copies the map in a new variable to not append the reference
+	copy := copyMap(h.data)
+	// This ensures redo states are discarded when a new change is made after undo
+	if h.currentIndex < len(h.history)-1 {
+		h.history = h.history[:h.currentIndex+1]
+	}
+	h.history = append(h.history, copy)
+	h.currentIndex++
+}
+
+func (h *HashMapWithHistory[K, V]) Delete(key K) error {
+	if _, ok := h.data[key]; !ok {
+		return errors.New("Element not found")
+	}
+	delete(h.data, key)
+	copy := copyMap(h.data)
+	if h.currentIndex < len(h.history)-1 {
+		h.history = h.history[:h.currentIndex+1]
+	}
+	h.history = append(h.history, copy)
+	h.currentIndex++
+	return nil
+}
+
+func (h *HashMapWithHistory[K, V]) Undo() {
+	if h.currentIndex == 0 {
+		return
+	}
+	h.currentIndex--
+	h.data = copyMap(h.history[h.currentIndex])
+}
+
+func (h *HashMapWithHistory[K, V]) Redo() {
+	if h.currentIndex >= len(h.history)-1 {
+		return
+	}
+	h.currentIndex++
+	h.data = copyMap(h.history[h.currentIndex])
+}
+
+func (h HashMapWithHistory[K, V]) Get(key K) V {
+	return h.data[key]
+}
+
+func (h *HashMapWithHistory[K, V]) Clear() {
+	for key := range h.data {
+		delete(h.data, key)
+	}
+	copy := copyMap(h.data)
+	if h.currentIndex < len(h.history)-1 {
+		h.history = h.history[:h.currentIndex+1]
+	}
+	h.history = append(h.history, copy)
+	h.currentIndex++
+}
