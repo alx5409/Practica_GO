@@ -752,6 +752,30 @@ func findSubarrayWithZeroSum(slice []int) []int {
 }
 
 // 41. Implement a hash map to efficiently support prefix search for strings.
+func isPrefix(s string, prefix string) bool {
+	if len(s) < len(prefix) {
+		return false
+	}
+	word := []rune(s)
+	// prefixRunes := []rune(prefix)
+	for i, char := range prefix {
+		if char != word[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func findPrefixInStrings(words []string, prefix string) []string {
+	prefixMap := make(map[string][]string)
+	for _, word := range words {
+		for i := 0; i <= len(word); i++ {
+			pref := word[:i]
+			prefixMap[pref] = append(prefixMap[pref], word)
+		}
+	}
+	return prefixMap[prefix]
+}
 
 // 42. Given a slice of integers, find the number of subarrays whose sum equals a target value using a hash map.
 
