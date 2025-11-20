@@ -719,6 +719,33 @@ func findLengthSmallestSubarrayWithSameDegree[T comparable](slice []T) int {
 }
 
 // 39. Implement a hash map to store and retrieve hierarchical data (e.g., parent-child relationships).
+type HierarchicalData[T comparable] struct {
+	Value    T
+	Children []*HierarchicalData[T]
+	childMap map[T]*HierarchicalData[T] // Add a hash map for fast lookup
+}
+
+// Initialize the childMap when creating a node
+func NewHierarchicalData[T comparable](value T) *HierarchicalData[T] {
+	return &HierarchicalData[T]{
+		Value:    value,
+		Children: []*HierarchicalData[T]{},
+		childMap: make(map[T]*HierarchicalData[T]),
+	}
+}
+
+func (h *HierarchicalData[T]) AddChild(value T) {
+	child := NewHierarchicalData(value)
+	h.Children = append(h.Children, child)
+	h.childMap[value] = child
+}
+
+func (h *HierarchicalData[T]) FindChild(value T) (*HierarchicalData[T], error) {
+	if child, ok := h.childMap[value]; ok {
+		return child, nil
+	}
+	return nil, errors.New("Child not found")
+}
 
 // 40. Given a slice of integers, find the subarray with sum zero using a hash map.
 
