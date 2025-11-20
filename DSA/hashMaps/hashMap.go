@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"sort"
 	"strings"
+	"time"
 )
 
 // 1. Create a hash map to store integer keys and values.
@@ -822,6 +823,27 @@ func numberOfSubarraysWithSum(s []int, target int) int {
 }
 
 // 43. Implement a hash map to store timestamps and efficiently query the number of events in a given time range.
+type EventStore struct {
+	eventCounts map[string]int
+}
+
+func NewEventStore() *EventStore {
+	return &EventStore{eventCounts: make(map[string]int)}
+}
+
+func (store *EventStore) AddEvent(event time.Time) {
+	day := event.Format("2006-01.02")
+	store.eventCounts[day]++
+}
+
+func (store *EventStore) queryNumberOfEvents(events []time.Time, start, end time.Time) int {
+	count := 0
+	for d := start; !d.After(end); d = d.AddDate(0, 0, 1) {
+		dayStr := d.Format("2006-01-02")
+		count += store.eventCounts[dayStr]
+	}
+	return count
+}
 
 // 44. Given a slice of strings, find the longest substring without repeating characters using a hash map.
 
