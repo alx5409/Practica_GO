@@ -846,5 +846,29 @@ func (store *EventStore) queryNumberOfEvents(events []time.Time, start, end time
 }
 
 // 44. Given a slice of strings, find the longest substring without repeating characters using a hash map.
+func findLongestSubstringWithoutRepeatingCharacters(s string) string {
+	left := 0
+	right := 0
+	maxLength := 0
+	startIndex := 0
+	charMap := make(map[rune]int)
+	word := []rune(s)
+	for right < len(s) {
+		char := word[right]
+		// If the character is already in the map and its last index is within the current window,
+		// move the left pointer to one position after the last occurrence of this character.
+		if _, ok := charMap[char]; ok && charMap[char] >= left {
+			left = charMap[char] + 1
+		}
+		charMap[char] = right
+		// Update the maximum length and starting index if the current window is longer.
+		if right-left+1 > maxLength {
+			maxLength = right - left + 1
+			startIndex = left
+		}
+		right++
+	}
+	return string(word[startIndex : startIndex+maxLength])
+}
 
 // 45. Implement a hash map to support undo/redo operations for key-value changes.
