@@ -433,8 +433,8 @@ func (l *DoubleLinkedList[V]) insertNodeAtBack(val V) {
 		l.tail.next = newNode
 	}
 	l.tail = newNode
-	if l.tail != nil {
-		l.tail = newNode
+	if l.head == nil {
+		l.head = newNode
 	}
 }
 
@@ -474,11 +474,31 @@ func (l *LRU[K, V]) Get(key K) (V, bool) {
 
 // Insert or update a value and mark it as recently used
 func (l *LRU[K, V]) Set(key K, value V) error {
-	// If the maximum cache capacity has been reached delete the tail and put the new item there
-	if len(l.data) >= l.capacity {
-		l.history.insertNodeAtBack(value)
-		l.data[key] = l.history.tail
+	// If key exists, update value and move node to front
+	if node, ok := l.data[key]; ok {
+		node.value = value
+		moveNodeToFront(node, l.history)
+		return nil
 	}
+
+	// If cache is full, evict least recently used (tail)
+	if len(l.data) >= l.capacity {
+		evictNode := l.history.tail
+		if evictNode != nil {
+			// Find key to remove
+			for k, n := range l.data {
+				if n == evictNode {
+					delete(l.data, k)
+					break
+				}
+			}
+			l.history.removeNode(evictNode)
+		}
+	}
+
+	// Insert new node at front
+	l.history.insertNodeAtFront(value)
+	l.data[key] = l.history.head
 	return nil
 }
 
@@ -547,7 +567,7 @@ func naiveConsecutiveSequence(slice []int) []int {
 	for i, _ := range slice {
 		counter := 0
 		for j := i; j < len(slice)-1; j++ {
-			if slice[j+1] != 1+slice[j] {
+			if slice[j+1] != slice[j]+1 {
 				break
 			}
 			counter++
@@ -679,10 +699,10 @@ func groupAnagrams(slice []string) map[string][]string {
 // 37. Implement a hash map to track the frequency of rolling window elements in a slice.
 func frequencyRollingWindow[T comparable](slice []T, windowSize int) []map[T]int {
 	var frequencies []map[T]int
-	for i := 0; i < len(slice)-windowSize; i++ {
+	for i := 0; i <= len(slice)-windowSize; i++ {
 		frequency := make(map[T]int)
 		for j := 0; j < windowSize; j++ {
-			frequency[slice[j]]++
+			frequency[slice[i+j]]++
 		}
 		frequencies = append(frequencies, frequency)
 	}
@@ -693,7 +713,6 @@ func frequencyRollingWindow[T comparable](slice []T, windowSize int) []map[T]int
 func maxFrecuency[T comparable](slice []T) int {
 	hmap := countFrecuency(slice)
 	return hmap[maxValueInIntMap(hmap)]
-
 }
 
 func findLengthSmallestSubarrayWithSameDegree[T comparable](slice []T) int {
@@ -702,7 +721,7 @@ func findLengthSmallestSubarrayWithSameDegree[T comparable](slice []T) int {
 	firstIndex := make(map[T]int)
 	lastIndex := make(map[T]int)
 	for i, num := range slice {
-		if _, ok := firstIndex[num]; ok {
+		if _, ok := firstIndex[num]; !ok {
 			firstIndex[num] = i
 		}
 		lastIndex[num] = i
@@ -772,7 +791,7 @@ func findSubarrayWithZeroSum(slice []int) []int {
 			return slice[:i+1]
 		}
 		if prevIndex, ok := sumIndex[sum]; ok {
-			return slice[prevIndex : i+1]
+			return slice[prevIndex+1 : i+1]
 		}
 		sumIndex[sum] = i
 	}
@@ -832,7 +851,7 @@ func NewEventStore() *EventStore {
 }
 
 func (store *EventStore) AddEvent(event time.Time) {
-	day := event.Format("2006-01.02")
+	day := event.Format("2006-01-02")
 	store.eventCounts[day]++
 }
 
@@ -887,6 +906,10 @@ func copyMap[K comparable, V any](original map[K]V) map[K]V {
 }
 
 func (h *HashMapWithHistory[K, V]) Set(key K, value V) {
+	if h.data == nil {
+		h.data = make(map[K]V)
+	}
+
 	if _, ok := h.data[key]; ok {
 		fmt.Println("Overriding the data with key", key)
 	}
