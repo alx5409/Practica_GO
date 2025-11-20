@@ -778,6 +778,21 @@ func findPrefixInStrings(words []string, prefix string) []string {
 }
 
 // 42. Given a slice of integers, find the number of subarrays whose sum equals a target value using a hash map.
+func numberOfSubarraysWithSum(s []int, target int) int {
+	sumCount := make(map[int]int)
+	counter := 0
+	prefixSum := 0
+	sumCount[0] = 1 // To count subarrays stargint at index 0
+
+	for _, num := range s {
+		prefixSum += num
+		if count, ok := sumCount[prefixSum-target]; ok {
+			counter += count
+		}
+		sumCount[prefixSum]++
+	}
+	return counter
+}
 
 // 43. Implement a hash map to store timestamps and efficiently query the number of events in a given time range.
 
