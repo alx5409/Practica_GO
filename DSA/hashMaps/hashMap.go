@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"sort"
 	"strings"
+	"time"
 )
 
 // 1. Create a hash map to store integer keys and values.
@@ -719,6 +720,33 @@ func findLengthSmallestSubarrayWithSameDegree[T comparable](slice []T) int {
 }
 
 // 39. Implement a hash map to store and retrieve hierarchical data (e.g., parent-child relationships).
+type HierarchicalData[T comparable] struct {
+	Value    T
+	Children []*HierarchicalData[T]
+	childMap map[T]*HierarchicalData[T] // Add a hash map for fast lookup
+}
+
+// Initialize the childMap when creating a node
+func NewHierarchicalData[T comparable](value T) *HierarchicalData[T] {
+	return &HierarchicalData[T]{
+		Value:    value,
+		Children: []*HierarchicalData[T]{},
+		childMap: make(map[T]*HierarchicalData[T]),
+	}
+}
+
+func (h *HierarchicalData[T]) AddChild(value T) {
+	child := NewHierarchicalData(value)
+	h.Children = append(h.Children, child)
+	h.childMap[value] = child
+}
+
+func (h *HierarchicalData[T]) FindChild(value T) (*HierarchicalData[T], error) {
+	if child, ok := h.childMap[value]; ok {
+		return child, nil
+	}
+	return nil, errors.New("Child not found")
+}
 
 // 40. Given a slice of integers, find the subarray with sum zero using a hash map.
 
@@ -752,11 +780,169 @@ func findSubarrayWithZeroSum(slice []int) []int {
 }
 
 // 41. Implement a hash map to efficiently support prefix search for strings.
+func isPrefix(s string, prefix string) bool {
+	if len(s) < len(prefix) {
+		return false
+	}
+	word := []rune(s)
+	// prefixRunes := []rune(prefix)
+	for i, char := range prefix {
+		if char != word[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func findPrefixInStrings(words []string, prefix string) []string {
+	prefixMap := make(map[string][]string)
+	for _, word := range words {
+		for i := 0; i <= len(word); i++ {
+			pref := word[:i]
+			prefixMap[pref] = append(prefixMap[pref], word)
+		}
+	}
+	return prefixMap[prefix]
+}
 
 // 42. Given a slice of integers, find the number of subarrays whose sum equals a target value using a hash map.
+func numberOfSubarraysWithSum(s []int, target int) int {
+	sumCount := make(map[int]int)
+	counter := 0
+	prefixSum := 0
+	sumCount[0] = 1 // To count subarrays stargint at index 0
+
+	for _, num := range s {
+		prefixSum += num
+		if count, ok := sumCount[prefixSum-target]; ok {
+			counter += count
+		}
+		sumCount[prefixSum]++
+	}
+	return counter
+}
 
 // 43. Implement a hash map to store timestamps and efficiently query the number of events in a given time range.
+type EventStore struct {
+	eventCounts map[string]int
+}
+
+func NewEventStore() *EventStore {
+	return &EventStore{eventCounts: make(map[string]int)}
+}
+
+func (store *EventStore) AddEvent(event time.Time) {
+	day := event.Format("2006-01.02")
+	store.eventCounts[day]++
+}
+
+func (store *EventStore) queryNumberOfEvents(events []time.Time, start, end time.Time) int {
+	count := 0
+	for d := start; !d.After(end); d = d.AddDate(0, 0, 1) {
+		dayStr := d.Format("2006-01-02")
+		count += store.eventCounts[dayStr]
+	}
+	return count
+}
 
 // 44. Given a slice of strings, find the longest substring without repeating characters using a hash map.
+func findLongestSubstringWithoutRepeatingCharacters(s string) string {
+	left := 0
+	right := 0
+	maxLength := 0
+	startIndex := 0
+	charMap := make(map[rune]int)
+	word := []rune(s)
+	for right < len(s) {
+		char := word[right]
+		// If the character is already in the map and its last index is within the current window,
+		// move the left pointer to one position after the last occurrence of this character.
+		if _, ok := charMap[char]; ok && charMap[char] >= left {
+			left = charMap[char] + 1
+		}
+		charMap[char] = right
+		// Update the maximum length and starting index if the current window is longer.
+		if right-left+1 > maxLength {
+			maxLength = right - left + 1
+			startIndex = left
+		}
+		right++
+	}
+	return string(word[startIndex : startIndex+maxLength])
+}
 
 // 45. Implement a hash map to support undo/redo operations for key-value changes.
+type HashMapWithHistory[K comparable, V any] struct {
+	data         map[K]V
+	history      []map[K]V
+	currentIndex int
+}
+
+func copyMap[K comparable, V any](original map[K]V) map[K]V {
+	newMap := make(map[K]V, len(original))
+	for k, v := range original {
+		newMap[k] = v
+	}
+	return newMap
+}
+
+func (h *HashMapWithHistory[K, V]) Set(key K, value V) {
+	if _, ok := h.data[key]; ok {
+		fmt.Println("Overriding the data with key", key)
+	}
+	h.data[key] = value
+	// It copies the map in a new variable to not append the reference
+	copy := copyMap(h.data)
+	// This ensures redo states are discarded when a new change is made after undo
+	if h.currentIndex < len(h.history)-1 {
+		h.history = h.history[:h.currentIndex+1]
+	}
+	h.history = append(h.history, copy)
+	h.currentIndex++
+}
+
+func (h *HashMapWithHistory[K, V]) Delete(key K) error {
+	if _, ok := h.data[key]; !ok {
+		return errors.New("Element not found")
+	}
+	delete(h.data, key)
+	copy := copyMap(h.data)
+	if h.currentIndex < len(h.history)-1 {
+		h.history = h.history[:h.currentIndex+1]
+	}
+	h.history = append(h.history, copy)
+	h.currentIndex++
+	return nil
+}
+
+func (h *HashMapWithHistory[K, V]) Undo() {
+	if h.currentIndex == 0 {
+		return
+	}
+	h.currentIndex--
+	h.data = copyMap(h.history[h.currentIndex])
+}
+
+func (h *HashMapWithHistory[K, V]) Redo() {
+	if h.currentIndex >= len(h.history)-1 {
+		return
+	}
+	h.currentIndex++
+	h.data = copyMap(h.history[h.currentIndex])
+}
+
+func (h HashMapWithHistory[K, V]) Get(key K) V {
+	return h.data[key]
+}
+
+func (h *HashMapWithHistory[K, V]) Clear() {
+	for key := range h.data {
+		delete(h.data, key)
+	}
+	copy := copyMap(h.data)
+	if h.currentIndex < len(h.history)-1 {
+		h.history = h.history[:h.currentIndex+1]
+	}
+	h.history = append(h.history, copy)
+	h.currentIndex++
+}
