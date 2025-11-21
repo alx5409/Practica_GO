@@ -1,8 +1,40 @@
 package stack
 
+import "errors"
+
 // Stack DSA Practice Exercises:
 //
 // 1. Implement a generic stack with Push, Pop, Peek, and IsEmpty methods.
+type Stack[V comparable] struct {
+	data []V
+}
+
+func (s Stack[V]) IsEmpty() bool {
+	return len(s.data) == 0
+}
+
+func (s *Stack[V]) Push(value V) {
+	s.data = append(s.data, value)
+}
+
+func (s *Stack[V]) Pop() (V, bool) {
+	if s.IsEmpty() {
+		var zero V
+		return zero, false
+	}
+	val := s.data[len(s.data)-1]
+	s.data = s.data[:len(s.data)-1]
+	return val, true
+}
+
+func (s *Stack[V]) Peek() (V, error) {
+	if s.IsEmpty() {
+		var zero V
+		return zero, errors.New("Error, the stack is empty")
+	}
+	return s.data[len(s.data)-1], nil
+}
+
 //
 // 2. Reverse a slice using a stack.
 //
