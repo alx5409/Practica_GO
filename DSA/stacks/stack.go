@@ -37,7 +37,23 @@ func (s *Stack[V]) Peek() (V, error) {
 
 //
 // 2. Reverse a slice using a stack.
-//
+func reverseSliceWithStack[V comparable](slice []V) []V {
+	var reverserSlice []V
+	stack := Stack[V]{}
+	// Push the elements in  order into the stack
+	for _, element := range slice {
+		stack.Push(element)
+	}
+	for !stack.IsEmpty() {
+		value, ok := stack.Pop()
+		if !ok {
+			continue
+		}
+		reverserSlice = append(reverserSlice, value)
+	}
+	return reverserSlice
+}
+
 // 3. Check for balanced parentheses in a string using a stack.
 //
 // 4. Evaluate a postfix (Reverse Polish Notation) expression using a stack.
