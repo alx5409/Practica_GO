@@ -55,7 +55,27 @@ func reverseSliceWithStack[V comparable](slice []V) []V {
 }
 
 // 3. Check for balanced parentheses in a string using a stack.
-//
+func checkBalancedParenthesisWithStack(s string) bool {
+	if len(s) == 0 {
+		return true
+	}
+	openParenthesis := '('
+	closeParenthesis := ')'
+	parenthesisStack := Stack[rune]{}
+	for _, char := range s {
+		if char == openParenthesis {
+			parenthesisStack.Push(openParenthesis)
+		}
+		if char == closeParenthesis {
+			_, ok := parenthesisStack.Pop()
+			if !ok {
+				return false
+			}
+		}
+	}
+	return parenthesisStack.IsEmpty()
+}
+
 // 4. Evaluate a postfix (Reverse Polish Notation) expression using a stack.
 //
 // 5. Sort a stack using only stack operations.
