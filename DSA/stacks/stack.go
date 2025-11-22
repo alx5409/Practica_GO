@@ -1,6 +1,10 @@
 package stack
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
 // Stack DSA Practice Exercises:
 //
@@ -35,7 +39,6 @@ func (s *Stack[V]) Peek() (V, error) {
 	return s.data[len(s.data)-1], nil
 }
 
-//
 // 2. Reverse a slice using a stack.
 func reverseSliceWithStack[V comparable](slice []V) []V {
 	var reverserSlice []V
@@ -77,6 +80,78 @@ func checkBalancedParenthesisWithStack(s string) bool {
 }
 
 // 4. Evaluate a postfix (Reverse Polish Notation) expression using a stack.
+
+// General number type
+type Number interface {
+	~int | ~int32 | ~int64 | ~float32 | ~float64
+}
+
+func sum[N Number](num1 N, num2 N) (N, error) {
+	return num1 + num2, nil
+}
+func subtract[N Number](num1 N, num2 N) (N, error) {
+	return num1 - num2, nil
+}
+func multiply[N Number](num1 N, num2 N) (N, error) {
+	return num1 * num2, nil
+}
+func divide[N Number](num1 N, num2 N) (N, error) {
+	if num2 == 0 {
+		var zero N
+		return zero, errors.New("Division by zero")
+	}
+	return num1 / num2, nil
+}
+
+func isOperator(r rune) bool {
+	return r == '+' || r == '-' || r == '*' || r == '/'
+}
+
+func whichOperation[N Number](r rune, num1 N, num2 N) (N, error) {
+	switch r {
+	case '+':
+		return sum(num1, num2)
+	case '-':
+		return subtract(num1, num2)
+	case '*':
+		return multiply(num1, num2)
+	case '/':
+		return divide(num1, num2)
+	default:
+		var zero N
+		return zero, errors.New("Invalid operator")
+	}
+}
+
+func evaluatePostfix[N Number](input string) (N, error) {
+	var stackNumbers Stack[N]
+	elements := strings.Split(input, " ")
+	for _, element := range elements {
+		r := []rune(element)[0]
+		// If it is not an operator, it must be a number
+		if !isOperator(r) {
+			var num N
+			_, err := fmt.Sscan(element, &num)
+			if err != nil {
+				return num, errors.New("Could not convert element to number")
+			}
+			stackNumbers.Push(num)
+			continue
+		}
+		if len(stackNumbers.data) < 2 {
+			return 0, errors.New("Not enough operands")
+		}
+		num2, _ := stackNumbers.Pop()
+		num1, _ := stackNumbers.Pop()
+		operationResult, err := whichOperation(r, num1, num2)
+		if err != nil {
+			return 0, err
+		}
+		stackNumbers.Push(operationResult)
+	}
+	return stackNumbers.Peek()
+}
+
 //
 // 5. Sort a stack using only stack operations.
 //
