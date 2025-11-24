@@ -44,6 +44,17 @@ func reverseQueue[V any](queue Queue[V]) Queue[V] {
 	return reversedQueue
 }
 
+func recursiveReverseQueue[V any](queue Queue[V]) Queue[V] {
+	if queue.IsEmpty() {
+		return queue
+	}
+	front, _ := queue.Peek()
+	queue.Dequeue()
+	reversed := recursiveReverseQueue(queue)
+	reversed.Enqueue(front)
+	return reversed
+}
+
 // 3. Generate binary numbers from 1 to N using a queue.
 //
 // 4. Implement a circular queue.
