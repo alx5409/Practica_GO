@@ -6,40 +6,43 @@ import "errors"
 //
 // 1. Implement a generic queue with Enqueue, Dequeue, Peek, and IsEmpty methods.
 type Queue[V any] struct {
-	data []V
+	Data []V
 }
 
 func (q Queue[V]) IsEmpty() bool {
-	return len(q.data) == 0
+	return len(q.Data) == 0
 }
 
 func (q Queue[V]) Peek() (V, error) {
 	if q.IsEmpty() {
 		var zero V
-		return zero, errors.New("Error, the queue is empty")
+		return zero, errors.New("the queue is empty")
 	}
-	return q.data[0], nil
+	return q.Data[0], nil
 }
 
 func (q *Queue[V]) Enqueue(value V) {
-	q.data = append(q.data, value)
+	q.Data = append(q.Data, value)
 }
 
-func (q *Queue[V]) Dequeue() []V {
-	if !q.IsEmpty() {
-		q.data = q.data[1:]
+func (q *Queue[V]) Dequeue() (V, error) {
+	var val V
+	if q.IsEmpty() {
+		return val, errors.New("queue is empty")
 	}
-	return q.data
+	val = q.Data[0]
+	q.Data = q.Data[1:]
+	return val, nil
 }
 
 //
 // 2. Reverse a queue using recursion.
-func reverseQueue[V any](queue Queue[V]) Queue[V] {
+func ReverseQueue[V any](queue Queue[V]) Queue[V] {
 	reversedQueue := Queue[V]{}
 	for !queue.IsEmpty() {
-		value := queue.data[len(queue.data)-1]
+		value := queue.Data[len(queue.Data)-1]
 		reversedQueue.Enqueue(value)
-		queue.data = queue.data[:len(queue.data)-1]
+		queue.Data = queue.Data[:len(queue.Data)-1]
 	}
 	return reversedQueue
 }

@@ -1,6 +1,7 @@
 package stack
 
 import (
+	queue "Practica_GO/DSA/queues"
 	"errors"
 	"fmt"
 	"strings"
@@ -250,7 +251,32 @@ func removeAdjacentDuplicates(s string) string {
 }
 
 // 9. Implement a stack using two queues.
-//
+type StackWithQueues[V any] struct {
+	q1 queue.Queue[V]
+	q2 queue.Queue[V]
+}
+
+func (s *StackWithQueues[V]) PushWithQueues(val V) {
+	s.q1.Enqueue(val)
+}
+
+func (s *StackWithQueues[V]) PopWithQueues() (V, error) {
+	var zero V
+	if s.q1.IsEmpty() {
+		return zero, errors.New("stack is empty")
+	}
+	// Move all but the last element from q1 to q2
+	for len(s.q1.Data) > 1 {
+		val, _ := s.q1.Dequeue()
+		s.q2.Enqueue(val)
+	}
+	// The last element in q1 is the "top" of the stack
+	val, _ := s.q1.Dequeue()
+	// Swap q1 and q2
+	s.q1, s.q2 = s.q2, s.q1
+	return val, nil
+}
+
 // 10. Given a histogram (slice of heights), find the largest rectangle area using a stack.
 func findLargestRectangleInHistograms[N Number](histogram []N) N {
 	n := len(histogram)
