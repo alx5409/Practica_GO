@@ -152,10 +152,40 @@ func evaluatePostfix[N Number](input string) (N, error) {
 	return stackNumbers.Peek()
 }
 
-//
 // 5. Sort a stack using only stack operations.
 //
 // 6. Implement a Min Stack that supports retrieving the minimum element in constant time.
+type minStack[V Number] struct {
+	data Stack[V]
+	min  Stack[V]
+}
+
+func (m *minStack[V]) Push(val V) {
+	m.data.Push(val)
+	if m.min.IsEmpty() {
+		m.min.Push(val)
+	} else {
+		minVal, _ := m.min.Peek()
+		if val < minVal {
+			m.min.Push(val)
+		} else {
+			m.min.Push(minVal)
+		}
+	}
+}
+
+func (m *minStack[V]) Pop() (V, bool) {
+	val, ok := m.data.Pop()
+	if ok {
+		m.min.Pop()
+	}
+	return val, ok
+}
+
+func (m minStack[V]) retrieveMin() (V, error) {
+	return m.min.Peek()
+}
+
 //
 // 7. For each element in a slice, find the next greater element to its right using a stack.
 //
