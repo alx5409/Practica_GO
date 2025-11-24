@@ -213,8 +213,20 @@ func findNextGreaterElement[N Number](s []N) []N {
 	return result
 }
 
-//
 // 8. Remove all adjacent duplicates in a string using a stack.
+func removeAdjacentDuplicates(s string) string {
+	stack := Stack[rune]{}
+	for _, char := range s {
+		top, _ := stack.Peek()
+		if char == top && stack.IsEmpty() {
+			stack.Pop()
+			continue
+		}
+		stack.Push(char)
+	}
+	return string(stack.data)
+}
+
 //
 // 9. Implement a stack using two queues.
 //
