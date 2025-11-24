@@ -186,8 +186,33 @@ func (m minStack[V]) retrieveMin() (V, error) {
 	return m.min.Peek()
 }
 
-//
 // 7. For each element in a slice, find the next greater element to its right using a stack.
+func findNextGreaterElement[N Number](s []N) []N {
+	result := make([]N, len(s))
+	stack := Stack[int]{}
+
+	for i := len(s) - 1; i >= 0; i-- {
+		for !stack.IsEmpty() {
+			topIdx, _ := stack.Peek()
+			if s[topIdx] <= s[i] {
+				stack.Pop()
+				continue
+			}
+			break
+		}
+		if stack.IsEmpty() {
+			var zero N
+			result[i] = zero
+			stack.Push(i)
+			continue
+		}
+		topIdx, _ := stack.Peek()
+		result[i] = s[topIdx]
+		stack.Push(i)
+	}
+	return result
+}
+
 //
 // 8. Remove all adjacent duplicates in a string using a stack.
 //
