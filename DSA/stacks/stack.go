@@ -153,7 +153,29 @@ func evaluatePostfix[N Number](input string) (N, error) {
 }
 
 // 5. Sort a stack using only stack operations.
-//
+func sortStack[V Number](s *Stack[V]) {
+	// Use auxiliar stack to help sorting
+	aux := Stack[V]{}
+	for !s.IsEmpty() {
+		temp, _ := s.Pop()
+		// Move elements from aux back to s if they are greater than temp
+		for !aux.IsEmpty() {
+			top, _ := aux.Peek()
+			if top <= temp {
+				break
+			}
+			val, _ := aux.Pop()
+			s.Push(val)
+		}
+		aux.Push(temp)
+	}
+	// Move sorted elements back to the original stack
+	for !aux.IsEmpty() {
+		val, _ := aux.Pop()
+		s.Push(val)
+	}
+}
+
 // 6. Implement a Min Stack that supports retrieving the minimum element in constant time.
 type minStack[V Number] struct {
 	data Stack[V]
