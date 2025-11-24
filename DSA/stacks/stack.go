@@ -152,15 +152,143 @@ func evaluatePostfix[N Number](input string) (N, error) {
 	return stackNumbers.Peek()
 }
 
-//
 // 5. Sort a stack using only stack operations.
-//
+func sortStack[V Number](s *Stack[V]) {
+	// Use auxiliar stack to help sorting
+	aux := Stack[V]{}
+	for !s.IsEmpty() {
+		temp, _ := s.Pop()
+		// Move elements from aux back to s if they are greater than temp
+		for !aux.IsEmpty() {
+			top, _ := aux.Peek()
+			if top <= temp {
+				break
+			}
+			val, _ := aux.Pop()
+			s.Push(val)
+		}
+		aux.Push(temp)
+	}
+	// Move sorted elements back to the original stack
+	for !aux.IsEmpty() {
+		val, _ := aux.Pop()
+		s.Push(val)
+	}
+}
+
 // 6. Implement a Min Stack that supports retrieving the minimum element in constant time.
-//
+type minStack[V Number] struct {
+	data Stack[V]
+	min  Stack[V]
+}
+
+func (m *minStack[V]) Push(val V) {
+	m.data.Push(val)
+	if m.min.IsEmpty() {
+		m.min.Push(val)
+	} else {
+		minVal, _ := m.min.Peek()
+		if val < minVal {
+			m.min.Push(val)
+		} else {
+			m.min.Push(minVal)
+		}
+	}
+}
+
+func (m *minStack[V]) Pop() (V, bool) {
+	val, ok := m.data.Pop()
+	if ok {
+		m.min.Pop()
+	}
+	return val, ok
+}
+
+func (m minStack[V]) retrieveMin() (V, error) {
+	return m.min.Peek()
+}
+
 // 7. For each element in a slice, find the next greater element to its right using a stack.
-//
+func findNextGreaterElement[N Number](s []N) []N {
+	result := make([]N, len(s))
+	stack := Stack[int]{}
+
+	for i := len(s) - 1; i >= 0; i-- {
+		for !stack.IsEmpty() {
+			topIdx, _ := stack.Peek()
+			if s[topIdx] <= s[i] {
+				stack.Pop()
+				continue
+			}
+			break
+		}
+		if stack.IsEmpty() {
+			var zero N
+			result[i] = zero
+			stack.Push(i)
+			continue
+		}
+		topIdx, _ := stack.Peek()
+		result[i] = s[topIdx]
+		stack.Push(i)
+	}
+	return result
+}
+
 // 8. Remove all adjacent duplicates in a string using a stack.
-//
+func removeAdjacentDuplicates(s string) string {
+	stack := Stack[rune]{}
+	for _, char := range s {
+		top, _ := stack.Peek()
+		if char == top && stack.IsEmpty() {
+			stack.Pop()
+			continue
+		}
+		stack.Push(char)
+	}
+	return string(stack.data)
+}
+
 // 9. Implement a stack using two queues.
 //
 // 10. Given a histogram (slice of heights), find the largest rectangle area using a stack.
+func findLargestRectangleInHistograms[N Number](histogram []N) N {
+	n := len(histogram)
+	maxArea := N(0)
+	stack := Stack[int]{}
+
+	for i := 0; i <= n; i++ {
+		var currHeight N
+		if i == n {
+			currHeight = 0
+		}
+		if i != n {
+			currHeight = histogram[i]
+		}
+		for !stack.IsEmpty() {
+			topIdx, _ := stack.Peek()
+			if currHeight >= histogram[topIdx] {
+				break
+			}
+			stack.Pop()
+			height := histogram[topIdx]
+			var width int
+			if stack.IsEmpty() {
+				width = i
+				area := height * N(width)
+				if area > maxArea {
+					maxArea = area
+				}
+				continue
+			}
+			prevIdx, _ := stack.Peek()
+			width = i - prevIdx - 1
+			area := height * N(width)
+			if area > maxArea {
+				maxArea = area
+			}
+		}
+		stack.Push(i)
+	}
+	return maxArea
+}
