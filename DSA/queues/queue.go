@@ -25,16 +25,28 @@ func (q *Queue[V]) Enqueue(value V) {
 	q.data = append(q.data, value)
 }
 
-func (q *Queue[V]) Dequeue() {
-	if q.IsEmpty() {
-		return
+func (q *Queue[V]) Dequeue() []V {
+	if !q.IsEmpty() {
+		q.data = q.data[1:]
 	}
-	q.data = q.data[1:]
+	return q.data
 }
 
 //
 // 2. Reverse a queue using recursion.
-//
+func reverseQueue[V any](queue Queue[V]) Queue[V] {
+	reversedQueue := Queue[V]{}
+	for !queue.IsEmpty() {
+		value, err := queue.Peek()
+		if err != nil {
+			break
+		}
+		reversedQueue.Enqueue(value)
+		queue.Dequeue()
+	}
+	return reversedQueue
+}
+
 // 3. Generate binary numbers from 1 to N using a queue.
 //
 // 4. Implement a circular queue.
