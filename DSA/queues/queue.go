@@ -37,12 +37,9 @@ func (q *Queue[V]) Dequeue() []V {
 func reverseQueue[V any](queue Queue[V]) Queue[V] {
 	reversedQueue := Queue[V]{}
 	for !queue.IsEmpty() {
-		value, err := queue.Peek()
-		if err != nil {
-			break
-		}
+		value := queue.data[len(queue.data)-1]
 		reversedQueue.Enqueue(value)
-		queue.Dequeue()
+		queue.data = queue.data[:len(queue.data)-1]
 	}
 	return reversedQueue
 }
