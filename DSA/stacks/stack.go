@@ -1,6 +1,7 @@
 package stack
 
 import (
+	queue "Practica_GO/DSA/queues"
 	"errors"
 	"fmt"
 	"strings"
@@ -34,7 +35,7 @@ func (s *Stack[V]) Pop() (V, bool) {
 func (s *Stack[V]) Peek() (V, error) {
 	if s.IsEmpty() {
 		var zero V
-		return zero, errors.New("Error, the stack is empty")
+		return zero, errors.New("error, the stack is empty")
 	}
 	return s.data[len(s.data)-1], nil
 }
@@ -98,7 +99,7 @@ func multiply[N Number](num1 N, num2 N) (N, error) {
 func divide[N Number](num1 N, num2 N) (N, error) {
 	if num2 == 0 {
 		var zero N
-		return zero, errors.New("Division by zero")
+		return zero, errors.New("division by zero")
 	}
 	return num1 / num2, nil
 }
@@ -119,7 +120,7 @@ func whichOperation[N Number](r rune, num1 N, num2 N) (N, error) {
 		return divide(num1, num2)
 	default:
 		var zero N
-		return zero, errors.New("Invalid operator")
+		return zero, errors.New("invalid operator")
 	}
 }
 
@@ -133,13 +134,13 @@ func evaluatePostfix[N Number](input string) (N, error) {
 			var num N
 			_, err := fmt.Sscan(element, &num)
 			if err != nil {
-				return num, errors.New("Could not convert element to number")
+				return num, errors.New("could not convert element to number")
 			}
 			stackNumbers.Push(num)
 			continue
 		}
 		if len(stackNumbers.data) < 2 {
-			return 0, errors.New("Not enough operands")
+			return 0, errors.New("not enough operands")
 		}
 		num2, _ := stackNumbers.Pop()
 		num1, _ := stackNumbers.Pop()
@@ -250,7 +251,32 @@ func removeAdjacentDuplicates(s string) string {
 }
 
 // 9. Implement a stack using two queues.
-//
+type StackWithQueues[V any] struct {
+	q1 queue.Queue[V]
+	q2 queue.Queue[V]
+}
+
+func (s *StackWithQueues[V]) PushWithQueues(val V) {
+	s.q1.Enqueue(val)
+}
+
+func (s *StackWithQueues[V]) PopWithQueues() (V, error) {
+	var zero V
+	if s.q1.IsEmpty() {
+		return zero, errors.New("stack is empty")
+	}
+	// Move all but the last element from q1 to q2
+	for len(s.q1.Data) > 1 {
+		val, _ := s.q1.Dequeue()
+		s.q2.Enqueue(val)
+	}
+	// The last element in q1 is the "top" of the stack
+	val, _ := s.q1.Dequeue()
+	// Swap q1 and q2
+	s.q1, s.q2 = s.q2, s.q1
+	return val, nil
+}
+
 // 10. Given a histogram (slice of heights), find the largest rectangle area using a stack.
 func findLargestRectangleInHistograms[N Number](histogram []N) N {
 	n := len(histogram)

@@ -49,7 +49,7 @@ func updateValueWithKey(hmap map[string]int, key string, newValue int) error {
 // 7. Find the number of key-value pairs in the hash map.
 func size(hmap map[string]int) int {
 	counter := 0
-	for key, _ := range hmap {
+	for range hmap {
 		counter++
 	}
 	return counter
