@@ -1,8 +1,37 @@
 package queue
 
+import "errors"
+
 // Queue DSA Practice Exercises:
 //
 // 1. Implement a generic queue with Enqueue, Dequeue, Peek, and IsEmpty methods.
+type Queue[V any] struct {
+	data []V
+}
+
+func (q Queue[V]) IsEmpty() bool {
+	return len(q.data) == 0
+}
+
+func (q Queue[V]) Peek() (V, error) {
+	if q.IsEmpty() {
+		var zero V
+		return zero, errors.New("Error, the queue is empty")
+	}
+	return q.data[0], nil
+}
+
+func (q *Queue[V]) Enqueue(value V) {
+	q.data = append(q.data, value)
+}
+
+func (q *Queue[V]) Dequeue() {
+	if q.IsEmpty() {
+		return
+	}
+	q.data = q.data[1:]
+}
+
 //
 // 2. Reverse a queue using recursion.
 //
