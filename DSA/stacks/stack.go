@@ -227,7 +227,46 @@ func removeAdjacentDuplicates(s string) string {
 	return string(stack.data)
 }
 
-//
 // 9. Implement a stack using two queues.
 //
 // 10. Given a histogram (slice of heights), find the largest rectangle area using a stack.
+func findLargestRectangleInHistograms[N Number](histogram []N) N {
+	n := len(histogram)
+	maxArea := N(0)
+	stack := Stack[int]{}
+
+	for i := 0; i <= n; i++ {
+		var currHeight N
+		if i == n {
+			currHeight = 0
+		}
+		if i != n {
+			currHeight = histogram[i]
+		}
+		for !stack.IsEmpty() {
+			topIdx, _ := stack.Peek()
+			if currHeight >= histogram[topIdx] {
+				break
+			}
+			stack.Pop()
+			height := histogram[topIdx]
+			var width int
+			if stack.IsEmpty() {
+				width = i
+				area := height * N(width)
+				if area > maxArea {
+					maxArea = area
+				}
+				continue
+			}
+			prevIdx, _ := stack.Peek()
+			width = i - prevIdx - 1
+			area := height * N(width)
+			if area > maxArea {
+				maxArea = area
+			}
+		}
+		stack.Push(i)
+	}
+	return maxArea
+}
