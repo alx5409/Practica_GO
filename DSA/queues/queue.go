@@ -62,7 +62,24 @@ func recursiveReverseQueue[V any](queue Queue[V]) Queue[V] {
 }
 
 // 3. Generate binary numbers from 1 to N using a queue.
-//
+func binaryNumbersFrom1ToN(number int) []string {
+	var result []string
+	zero := "0"
+	one := "1"
+	if number < 1 {
+		return result
+	}
+	q := Queue[string]{}
+	q.Enqueue("1")
+	for i := 0; i < number; i++ {
+		value, _ := q.Dequeue()
+		result = append(result, value)
+		q.Enqueue(value + zero)
+		q.Enqueue(value + one)
+	}
+	return result
+}
+
 // 4. Implement a circular queue.
 type CircularQueue[V any] struct {
 	data  []V
