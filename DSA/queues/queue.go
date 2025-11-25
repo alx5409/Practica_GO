@@ -116,7 +116,24 @@ func (c *CircularQueue[V]) Peek() (V, error) {
 }
 
 // 5. Check if a given sequence of brackets can be balanced using a queue.
-//
+func checkBalancedBracketsWithQueue(s string) bool {
+	queue := Queue[rune]{}
+	openBracket := '{'
+	closeBracket := '}'
+	for _, char := range s {
+		if char == openBracket {
+			queue.Enqueue(char)
+		}
+		if char == closeBracket {
+			_, err := queue.Dequeue()
+			if err != nil {
+				return false
+			}
+		}
+	}
+	return queue.IsEmpty()
+}
+
 // 6. Implement a queue using two stacks.
 //
 // 7. Find the first non-repeating character in a stream using a queue.
