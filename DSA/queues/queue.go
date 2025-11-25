@@ -1,6 +1,7 @@
 package queue
 
 import (
+	utils "Practica_GO/DSA/utils"
 	"errors"
 	"fmt"
 )
@@ -135,6 +136,10 @@ func checkBalancedBracketsWithQueue(s string) bool {
 }
 
 // 6. Implement a queue using two stacks.
+func (q *Queue[V]) EnqueueWithStacks(value V) {
+	s := utils.Stack[V]{}
+}
+
 //
 // 7. Find the first non-repeating character in a stream using a queue.
 //

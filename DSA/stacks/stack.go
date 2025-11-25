@@ -1,7 +1,7 @@
 package stack
 
 import (
-	queue "Practica_GO/DSA/queues"
+	utils "Practica_GO/DSA/utils"
 	"errors"
 	"fmt"
 	"strings"
@@ -10,7 +10,7 @@ import (
 // Stack DSA Practice Exercises:
 //
 // 1. Implement a generic stack with Push, Pop, Peek, and IsEmpty methods.
-type Stack[V comparable] struct {
+type Stack[V any] struct {
 	data []V
 }
 
@@ -252,8 +252,8 @@ func removeAdjacentDuplicates(s string) string {
 
 // 9. Implement a stack using two queues.
 type StackWithQueues[V any] struct {
-	q1 queue.Queue[V]
-	q2 queue.Queue[V]
+	q1 utils.Queue[V]
+	q2 utils.Queue[V]
 }
 
 func (s *StackWithQueues[V]) PushWithQueues(val V) {
