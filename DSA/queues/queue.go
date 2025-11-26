@@ -344,5 +344,26 @@ func RoundRobinScheduler[V any](tasks []Task[V], quantum int) []V {
 	return result
 }
 
-//
 // 10. Given a sliding window size, find the maximum in each window using a queue.
+func findMaxInEachSlideWindow(s []int, windowSize int) []int {
+	var result []int
+	sLenght := len(s)
+	if sLenght == 0 {
+		return result
+	}
+	if sLenght <= windowSize {
+		result = append(result, maxInIntSlice(s))
+		return result
+	}
+	q := Queue[int]{}
+	for i := 0; i < windowSize; i++ {
+		q.Enqueue(s[i])
+	}
+	result = append(result, maxInIntSlice(q.Data))
+	for i := windowSize; i < sLenght; i++ {
+		q.Dequeue()
+		q.Enqueue(s[i+1])
+		result = append(result, maxInIntSlice(q.Data))
+	}
+	return result
+}
