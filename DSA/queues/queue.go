@@ -153,8 +153,49 @@ func checkBalancedBracketsWithQueue(s string) bool {
 }
 
 // 6. Implement a queue using two stacks.
-func (q *Queue[V]) EnqueueWithStacks(value V) {
-	s := utils.Stack[V]{}
+type QueueWithStacks[V any] struct {
+	s1 utils.Stack[V]
+	s2 utils.Stack[V]
+}
+
+func (q QueueWithStacks[V]) IsEmpty() bool {
+	return q.s1.IsEmpty() && q.s2.IsEmpty()
+}
+
+func (q *QueueWithStacks[V]) EnqueueWithStacks(value V) {
+	q.s1.Push(value)
+}
+
+func (q *QueueWithStacks[V]) DequeueWithStacks() (V, error) {
+	if q.IsEmpty() {
+		var zero V
+		return zero, errors.New("queue is empty")
+	}
+	// If s2 is empty, move all elements from s1 to s2
+	if q.s2.IsEmpty() {
+		for !q.s1.IsEmpty() {
+			val, _ := q.s1.Pop()
+			q.s2.Push(val)
+		}
+	}
+	value, _ := q.s2.Pop()
+	return value, nil
+}
+
+func (q QueueWithStacks[V]) PeekWithStacks() (V, error) {
+	if q.IsEmpty() {
+		var zero V
+		return zero, errors.New("queue is empty")
+	}
+	// If s2 is empty, move all elements from s1 to s2
+	if q.s2.IsEmpty() {
+		for !q.s1.IsEmpty() {
+			val, _ := q.s1.Pop()
+			q.s2.Push(val)
+		}
+	}
+	value, _ := q.s2.Peek()
+	return value, nil
 }
 
 //
