@@ -232,7 +232,89 @@ func FirstNonRepeatingCharStreamWithQueue(s string) (rune, error) {
 }
 
 // 8. Implement a priority queue.
-//
+type PriorityPair[V any] struct {
+	Value    V
+	Priority int
+}
+
+type PriorityQueue[V any] struct {
+	data []PriorityPair[V]
+}
+
+func (p PriorityQueue[V]) IsEmpty() bool {
+	return len(p.data) == 0
+}
+
+func maxInIntSlice(s []int) int {
+	if len(s) == 0 {
+		return 0
+	}
+	max := s[0]
+	for _, value := range s {
+		if max < value {
+			max = value
+		}
+	}
+	return max
+}
+
+func (p PriorityQueue[V]) FindPriorityPair() (PriorityPair[V], error) {
+	if p.IsEmpty() {
+		var zero PriorityPair[V]
+		return zero, errors.New("queue is empty")
+	}
+	maxPriority := p.data[0].Priority
+	maxValue := p.data[0].Value
+	for _, pair := range p.data {
+		if maxPriority < pair.Priority {
+			maxPriority = pair.Priority
+			maxValue = pair.Value
+		}
+	}
+	return PriorityPair[V]{Value: maxValue, Priority: maxPriority}, nil
+}
+
+func (p PriorityQueue[V]) Peek() (V, error) {
+	if p.IsEmpty() {
+		var zero V
+		return zero, errors.New("queue is empty")
+	}
+	PriorityPair, err := p.FindPriorityPair()
+	return PriorityPair.Value, err
+}
+
+func (p *PriorityQueue[V]) Enqueue(value V, priority int) {
+	pair := PriorityPair[V]{Value: value, Priority: priority}
+	p.data = append(p.data, pair)
+}
+
+func (p PriorityQueue[V]) maxIndexOfPriorityPair() (int, error) {
+	if p.IsEmpty() {
+		var zero int
+		return zero, errors.New("queue is empty")
+	}
+	maxIndex := 0
+	maxPriority := p.data[0].Priority
+	for index, pair := range p.data {
+		if maxPriority < pair.Priority {
+			maxPriority = pair.Priority
+			maxIndex = index
+		}
+	}
+	return maxIndex, nil
+}
+
+func (p *PriorityQueue[V]) Dequeue() (V, error) {
+	if p.IsEmpty() {
+		var zero V
+		return zero, errors.New("queue is empty")
+	}
+	i, _ := p.maxIndexOfPriorityPair()
+	deletedValue := p.data[i].Value
+	p.data = append(p.data[:i], p.data[i+1:]...)
+	return deletedValue, nil
+}
+
 // 9. Simulate a round-robin scheduler using a queue.
 //
 // 10. Given a sliding window size, find the maximum in each window using a queue.
