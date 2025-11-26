@@ -348,7 +348,7 @@ func RoundRobinScheduler[V any](tasks []Task[V], quantum int) []V {
 func findMaxInEachSlideWindow(s []int, windowSize int) []int {
 	var result []int
 	sLenght := len(s)
-	if sLenght == 0 {
+	if sLenght == 0 || windowSize <= 0 {
 		return result
 	}
 	if sLenght <= windowSize {
