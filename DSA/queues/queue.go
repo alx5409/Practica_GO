@@ -316,5 +316,33 @@ func (p *PriorityQueue[V]) Dequeue() (V, error) {
 }
 
 // 9. Simulate a round-robin scheduler using a queue.
+type Task[V any] struct {
+	Value    V
+	TimeLeft int
+}
+
+func RoundRobinScheduler[V any](tasks []Task[V], quantum int) []V {
+	q := Queue[Task[V]]{}
+	var result []V
+
+	// Initialization of the task queue
+	for _, task := range tasks {
+		q.Enqueue(task)
+	}
+	// keeps a quantum amount of time in each task
+	for !q.IsEmpty() {
+		task, _ := q.Dequeue()
+		// Tracks the finished tasks
+		if task.TimeLeft < quantum {
+			result = append(result, task.Value)
+			continue
+		}
+		// If task is not finished returns to the queue
+		task.TimeLeft -= quantum
+		q.Enqueue(task)
+	}
+	return result
+}
+
 //
 // 10. Given a sliding window size, find the maximum in each window using a queue.
