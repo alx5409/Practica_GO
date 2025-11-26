@@ -198,9 +198,39 @@ func (q QueueWithStacks[V]) PeekWithStacks() (V, error) {
 	return value, nil
 }
 
-//
-// 7. Find the first non-repeating character in a stream using a queue.
-//
+// 7. Find the first non-repeating character in a string using a queue.
+
+func FirstNonRepeatingCharStream(s string) (rune, error) {
+	hmap := make(map[rune]int)
+	for _, char := range s {
+		hmap[char]++
+	}
+	for char, count := range hmap {
+		if count == 1 {
+			return char, nil
+		}
+	}
+	return ' ', errors.New("character not found")
+}
+
+func FirstNonRepeatingCharStreamWithQueue(s string) (rune, error) {
+	q := Queue[rune]{}
+	count := make(map[rune]int)
+	for _, char := range s {
+		count[char]++
+		q.Enqueue(char)
+		for !q.IsEmpty() {
+			front, _ := q.Peek()
+			if count[front] > 1 {
+				q.Dequeue()
+			} else {
+				return front, nil
+			}
+		}
+	}
+	return ' ', errors.New("no non-repeating character found")
+}
+
 // 8. Implement a priority queue.
 //
 // 9. Simulate a round-robin scheduler using a queue.
