@@ -1,5 +1,19 @@
 package binaryTrees
 
+type Number interface {
+	~int | ~float64
+}
+
+type Node[T Number] struct {
+	Value T
+	Left  *Node[T]
+	Right *Node[T]
+}
+
+type BinaryTree[T Number] struct {
+	Root *Node[T]
+}
+
 // Exercise 1: Implement a function to insert a value into a binary search tree.
 
 // Exercise 2: Write a function to search for a value in a binary tree (not necessarily a BST).
