@@ -15,6 +15,31 @@ type BinaryTree[T Number] struct {
 }
 
 // Exercise 1: Implement a function to insert a value into a binary search tree.
+func (b *BinaryTree[T]) insertValue(value T) {
+	// If it is empty adds the value as the root node
+	if b.Root == nil {
+		b.Root = &Node[T]{Value: value}
+		return
+	}
+
+	// When is not empty compares the value with each node
+	currentNode := b.Root
+	for {
+		if value < currentNode.Value {
+			if currentNode.Left == nil {
+				currentNode.Left = &Node[T]{Value: value}
+				return
+			}
+			currentNode = currentNode.Left
+			continue
+		}
+		if currentNode.Right == nil {
+			currentNode.Right = &Node[T]{Value: value}
+			return
+		}
+		currentNode = currentNode.Right
+	}
+}
 
 // Exercise 2: Write a function to search for a value in a binary tree (not necessarily a BST).
 
