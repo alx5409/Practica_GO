@@ -2,7 +2,6 @@ package dsa
 
 import (
 	"errors"
-	"fmt"
 	"sort"
 	"strings"
 )
@@ -192,5 +191,5 @@ func findLargestKElement(slice []int, k int) (int, error) {
 
 // 15. Implement a circular queue with enqueue and dequeue operations.
 func main() {
-	fmt.Println("Hello")
+	main2()
 }

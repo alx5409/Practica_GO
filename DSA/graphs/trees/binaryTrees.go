@@ -1,5 +1,7 @@
 package binaryTrees
 
+import "errors"
+
 type Number interface {
 	~int | ~float64
 }
@@ -57,6 +59,27 @@ func (b BinaryTree[T]) deepFirstSearch(value T) bool {
 }
 
 // Exercise 3: Implement a function to find the minimum and maximum value in a binary search tree.
+func (b BinaryTree[T]) minMaxBST() (min T, max T, err error) {
+	if b.Root == nil {
+		err = errors.New("binary tree is empty")
+		var zero T
+		min = zero
+		max = zero
+		return min, max, err
+	}
+	minNode := b.Root
+	for minNode.Left != nil {
+		minNode = minNode.Left
+	}
+	maxNode := b.Root
+	for maxNode.Right != nil {
+		maxNode = maxNode.Right
+	}
+
+	min = minNode.Value
+	max = maxNode.Value
+	return min, max, nil
+}
 
 // Exercise 4: Write a function to calculate the height (maximum depth) of a binary tree.
 
