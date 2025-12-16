@@ -42,6 +42,19 @@ func (b *BinaryTree[T]) insertValue(value T) {
 }
 
 // Exercise 2: Write a function to search for a value in a binary tree (not necessarily a BST).
+func recursiveDFS[T Number](node *Node[T], value T) bool {
+	if node == nil {
+		return false
+	}
+	if node.Value == value {
+		return true
+	}
+	return recursiveDFS(node.Left, value) || recursiveDFS(node.Right, value)
+}
+
+func (b BinaryTree[T]) deepFirstSearch(value T) bool {
+	return recursiveDFS(b.Root, value)
+}
 
 // Exercise 3: Implement a function to find the minimum and maximum value in a binary search tree.
 
