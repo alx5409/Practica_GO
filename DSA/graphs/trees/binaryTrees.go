@@ -82,6 +82,22 @@ func (b BinaryTree[T]) minMaxBST() (min T, max T, err error) {
 }
 
 // Exercise 4: Write a function to calculate the height (maximum depth) of a binary tree.
+func recursiveHeight[T Number](node *Node[T]) int {
+	if node == nil {
+		return 0
+	}
+	left := recursiveHeight(node.Left)
+	right := recursiveHeight(node.Right)
+
+	if left > right {
+		return left + 1
+	}
+	return right + 1
+}
+
+func (b BinaryTree[T]) maximumDepth() int {
+	return recursiveHeight(b.Root)
+}
 
 // Exercise 5: Implement functions for preorder, inorder, and postorder traversals of a binary tree.
 
