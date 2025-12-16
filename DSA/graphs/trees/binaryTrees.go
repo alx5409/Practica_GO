@@ -1,6 +1,9 @@
 package binaryTrees
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type Number interface {
 	~int | ~float64
@@ -100,6 +103,67 @@ func (b BinaryTree[T]) maximumDepth() int {
 }
 
 // Exercise 5: Implement functions for preorder, inorder, and postorder traversals of a binary tree.
+func printSlice[A any](slice []A) {
+	for i, value := range slice {
+		fmt.Print(value)
+		if i < len(slice)-1 {
+			fmt.Print(" -> ")
+		}
+	}
+	fmt.Println()
+}
+
+func preTraverse[T Number](node *Node[T], slice *[]T) {
+	if node == nil {
+		return
+	}
+
+	*slice = append(*slice, node.Value)
+	preTraverse(node.Left, slice)
+	preTraverse(node.Right, slice)
+}
+
+func (b BinaryTree[T]) preorderTraversal() []T {
+	var result []T
+	preTraverse(b.Root, &result)
+	return result
+}
+
+func (b BinaryTree[T]) inorderTraversal() []T {
+	var result []T
+	firstNode := b.Root
+	for firstNode.Left != nil {
+		firstNode = firstNode.Left
+	}
+	return result
+}
+
+func (b BinaryTree[T]) postorderTraversal() []T {
+	var result []T
+
+	return result
+}
+
+func Main5() {
+	// Create a binary tree and insert some values
+	tree := BinaryTree[int]{}
+	values := []int{8, 3, 10, 1, 6, 14, 4, 7, 13}
+	for _, v := range values {
+		tree.insertValue(v)
+	}
+
+	// Test the 3 types of traversals
+	pre := tree.preorderTraversal()
+	// in := tree.inorderTraversal()
+	// post := tree.postorderTraversal()
+
+	fmt.Println("Preorder traversal:")
+	printSlice(pre)
+	// fmt.Println("Inorder traversal:")
+	// printSlice(in)
+	// fmt.Println("Postorder traversal:")
+	// printSlice(post)
+}
 
 // Exercise 6: Write a function to check if a binary tree is balanced.
 
