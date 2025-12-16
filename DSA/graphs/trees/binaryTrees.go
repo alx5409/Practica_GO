@@ -125,22 +125,40 @@ func preTraverse[T Number](node *Node[T], slice *[]T) {
 
 func (b BinaryTree[T]) preorderTraversal() []T {
 	var result []T
-	preTraverse(b.Root, &result)
+	firstNode := b.Root
+	preTraverse(firstNode, &result)
 	return result
+}
+
+func inTraverse[T Number](node *Node[T], slice *[]T) {
+	if node == nil {
+		return
+	}
+
+	inTraverse(node.Left, slice)
+	*slice = append(*slice, node.Value)
+	inTraverse(node.Right, slice)
 }
 
 func (b BinaryTree[T]) inorderTraversal() []T {
 	var result []T
-	firstNode := b.Root
-	for firstNode.Left != nil {
-		firstNode = firstNode.Left
-	}
+	inTraverse(b.Root, &result)
 	return result
+}
+
+func postTraverse[T Number](node *Node[T], slice *[]T) {
+	if node == nil {
+		return
+	}
+
+	postTraverse(node.Left, slice)
+	postTraverse(node.Right, slice)
+	*slice = append(*slice, node.Value)
 }
 
 func (b BinaryTree[T]) postorderTraversal() []T {
 	var result []T
-
+	postTraverse(b.Root, &result)
 	return result
 }
 
@@ -154,15 +172,15 @@ func Main5() {
 
 	// Test the 3 types of traversals
 	pre := tree.preorderTraversal()
-	// in := tree.inorderTraversal()
-	// post := tree.postorderTraversal()
+	in := tree.inorderTraversal()
+	post := tree.postorderTraversal()
 
 	fmt.Println("Preorder traversal:")
 	printSlice(pre)
-	// fmt.Println("Inorder traversal:")
-	// printSlice(in)
-	// fmt.Println("Postorder traversal:")
-	// printSlice(post)
+	fmt.Println("Inorder traversal:")
+	printSlice(in)
+	fmt.Println("Postorder traversal:")
+	printSlice(post)
 }
 
 // Exercise 6: Write a function to check if a binary tree is balanced.
