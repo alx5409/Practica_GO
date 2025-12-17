@@ -500,5 +500,24 @@ func (b *BinaryTree[T]) deleteNode(value T) error {
 }
 
 // Exercise 14: Write a function to check if two binary trees are identical.
+func areIdenticarNodes[T Number](node1 *Node[T], node2 *Node[T]) bool {
+	if node1 == nil && node2 == nil {
+		return true
+	}
+	if (node1 == nil && node2 != nil) || (node1 != nil && node2 == nil) {
+		return false
+	}
+	if node1.Value != node2.Value {
+		return false
+	}
+
+	left := areIdenticarNodes(node1.Left, node2.Left)
+	right := areIdenticarNodes(node1.Right, node2.Right)
+	return left && right
+}
+
+func areIdenticalTrees[T Number](tree1, tree2 BinaryTree[T]) bool {
+	return areIdenticarNodes(tree1.Root, tree2.Root)
+}
 
 // Exercise 15: Implement a function to find the diameter (longest path) of a binary tree.
