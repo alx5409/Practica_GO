@@ -3,6 +3,7 @@ package binaryTrees
 import (
 	"errors"
 	"fmt"
+	"math"
 )
 
 type Number interface {
@@ -184,6 +185,73 @@ func Main5() {
 }
 
 // Exercise 6: Write a function to check if a binary tree is balanced.
+func subtreeHeight[T Number](node *Node[T], currentHeight int) int {
+	if node == nil {
+		return 0
+	}
+	return 1 + max(subtreeHeight(node.Left, currentHeight), subtreeHeight(node.Right, currentHeight))
+}
+func (b BinaryTree[T]) isBalanced() bool {
+	if b.Root == nil {
+		return false
+	}
+	var initialHeight int
+	return math.Abs(float64(subtreeHeight(b.Root.Left, initialHeight)-subtreeHeight(b.Root.Right, initialHeight))) <= 1
+}
+
+func Main6() {
+	// Example 1: Balanced tree (should print "The tree is balanced.")
+	tree1 := BinaryTree[int]{}
+	values1 := []int{8, 3, 10, 1, 6, 14, 4, 7, 13}
+	for _, v := range values1 {
+		tree1.insertValue(v)
+	}
+	fmt.Print("Example 1: ")
+	if tree1.isBalanced() {
+		fmt.Println("The tree is balanced.")
+	} else {
+		fmt.Println("The tree is not balanced.")
+	}
+
+	// Example 2: Unbalanced tree (right-skewed, should print "not balanced")
+	tree2 := BinaryTree[int]{}
+	values2 := []int{1, 2, 3, 4, 5}
+	for _, v := range values2 {
+		tree2.insertValue(v)
+	}
+	fmt.Print("Example 2: ")
+	if tree2.isBalanced() {
+		fmt.Println("The tree is balanced.")
+	} else {
+		fmt.Println("The tree is not balanced.")
+	}
+
+	// Example 3: Unbalanced tree (left-skewed, should print "not balanced")
+	tree3 := BinaryTree[int]{}
+	values3 := []int{5, 4, 3, 2, 1}
+	for _, v := range values3 {
+		tree3.insertValue(v)
+	}
+	fmt.Print("Example 3: ")
+	if tree3.isBalanced() {
+		fmt.Println("The tree is balanced.")
+	} else {
+		fmt.Println("The tree is not balanced.")
+	}
+
+	// Example 4: Small balanced tree (should print "balanced")
+	tree4 := BinaryTree[int]{}
+	values4 := []int{2, 1, 3}
+	for _, v := range values4 {
+		tree4.insertValue(v)
+	}
+	fmt.Print("Example 4: ")
+	if tree4.isBalanced() {
+		fmt.Println("The tree is balanced.")
+	} else {
+		fmt.Println("The tree is not balanced.")
+	}
+}
 
 // Exercise 7: Implement a function to find the lowest common ancestor (LCA) of two nodes in a binary tree.
 
