@@ -268,18 +268,71 @@ func Main6() {
 }
 
 // Exercise 7: Implement a function to find the lowest common ancestor (LCA) of two nodes in a binary tree.
-func (b BinaryTree[T]) lowestCommontAncestorByvalue(value1 T, value2 T) T {
-	var result T
-	return result
+
+func findFirstNodeWithValueDFS[T Number](node *Node[T], value T) *Node[T] {
+	if node == nil {
+		return nil
+	}
+	if node.Value == value {
+		return node
+	}
+	if left := findFirstNodeWithValueDFS(node.Left, value); left != nil {
+		return left
+	}
+	return findFirstNodeWithValueDFS(node.Right, value)
 }
 
+// TODO: finish implementation
+// func (b BinaryTree[T]) lowestCommontAncestorByvalue(value1 T, value2 T) T {
+// 	var result T
+// 	return result
+// }
+
+// Helper function to find LCA given two nodes
 func LCA[T Number](currentNode, node1, node2 *Node[T]) *Node[T] {
-	var result *Node[T]
-	return result
+	if currentNode == nil {
+		return nil
+	}
+	if currentNode.Left == node1 || currentNode.Left == node2 ||
+		currentNode.Right == node1 || currentNode.Right == node2 {
+		return currentNode
+	}
+	left := LCA(currentNode.Left, node1, node2)
+	right := LCA(currentNode.Right, node1, node2)
+	if left != right {
+		fmt.Println("They do not coincide")
+	}
+	return left
 }
+
 func (b BinaryTree[T]) lowestCommontAncestor(node1 *Node[T], node2 *Node[T]) *Node[T] {
-	var result *Node[T]
-	return result
+	return LCA(b.Root, node1, node2)
+}
+
+func Main7() {
+	// Build the tree
+	tree := BinaryTree[int]{}
+	values := []int{8, 3, 10, 1, 6, 14, 4, 7, 13}
+	for _, v := range values {
+		tree.insertValue(v)
+	}
+
+	// Choose two nodes to find LCA for
+	val1, val2 := 1, 7
+	node1 := tree.deepFirstSearch(tree.Root, val1)
+	node2 := tree.deepFirstSearch(tree.Root, val2)
+
+	if node1 == nil || node2 == nil {
+		fmt.Printf("One or both nodes not found: %d, %d\n", val1, val2)
+		return
+	}
+
+	lca := tree.lowestCommontAncestor(node1, node2)
+	if lca != nil {
+		fmt.Printf("LCA of %d and %d is: %d\n", val1, val2, lca.Value)
+	} else {
+		fmt.Println("LCA not found.")
+	}
 }
 
 // Exercise 8: Write a function to count the number of leaf nodes in a binary tree.
