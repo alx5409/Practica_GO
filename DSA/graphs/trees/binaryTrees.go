@@ -185,18 +185,32 @@ func Main5() {
 }
 
 // Exercise 6: Write a function to check if a binary tree is balanced.
-func subtreeHeight[T Number](node *Node[T], currentHeight int) int {
+func subtreeHeight[T Number](node *Node[T]) int {
 	if node == nil {
 		return 0
 	}
-	return 1 + max(subtreeHeight(node.Left, currentHeight), subtreeHeight(node.Right, currentHeight))
+	left := subtreeHeight(node.Left)
+	right := subtreeHeight(node.Right)
+	if left > right {
+		return left + 1
+	}
+	return right + 1
 }
-func (b BinaryTree[T]) isBalanced() bool {
-	if b.Root == nil {
+
+func isBalancedHelper[T Number](node *Node[T]) bool {
+	if node == nil {
+		return true
+	}
+	leftHeight := subtreeHeight(node.Left)
+	rightHeight := subtreeHeight(node.Right)
+	if math.Abs(float64(leftHeight-rightHeight)) > 1 {
 		return false
 	}
-	var initialHeight int
-	return math.Abs(float64(subtreeHeight(b.Root.Left, initialHeight)-subtreeHeight(b.Root.Right, initialHeight))) <= 1
+	return isBalancedHelper(node.Left) && isBalancedHelper(node.Right)
+}
+
+func (b BinaryTree[T]) isBalanced() bool {
+	return isBalancedHelper(b.Root)
 }
 
 func Main6() {
