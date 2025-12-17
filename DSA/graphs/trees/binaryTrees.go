@@ -460,6 +460,15 @@ func (b BinaryTree[T]) printAllPaths() {
 }
 
 // Exercise 12: Write a function to calculate the sum of all nodes in a binary tree.
+func sumNodes[T Number](node *Node[T]) T {
+	if node == nil {
+		return 0
+	}
+	return node.Value + sumNodes(node.Left) + sumNodes(node.Right)
+}
+func (b BinaryTree[T]) sumAllNodes() T {
+	return sumNodes(b.Root)
+}
 
 // Exercise 13: Implement a function to delete a node from a binary search tree.
 
