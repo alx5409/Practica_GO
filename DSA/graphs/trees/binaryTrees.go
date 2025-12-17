@@ -307,7 +307,7 @@ func LCA[T Number](currentNode, node1, node2 *Node[T]) *Node[T] {
 	return right
 }
 
-func (b BinaryTree[T]) lowestCommontAncestor(node1 *Node[T], node2 *Node[T]) *Node[T] {
+func (b BinaryTree[T]) lowestCommonAncestor(node1 *Node[T], node2 *Node[T]) *Node[T] {
 	return LCA(b.Root, node1, node2)
 }
 
@@ -329,7 +329,7 @@ func Main7() {
 		return
 	}
 
-	lca := tree.lowestCommontAncestor(node1, node2)
+	lca := tree.lowestCommonAncestor(node1, node2)
 	if lca != nil {
 		fmt.Printf("LCA of %d and %d is: %d\n", val1, val2, lca.Value)
 	} else {
@@ -338,6 +338,35 @@ func Main7() {
 }
 
 // Exercise 8: Write a function to count the number of leaf nodes in a binary tree.
+
+// Helper function to find the number of leafs of a tree
+func numberLeaf[T Number](node *Node[T]) int {
+	if node == nil {
+		return 0
+	}
+	if node.Right == nil && node.Left == nil {
+		return 1
+	}
+	return numberLeaf(node.Left) + numberLeaf(node.Right)
+}
+
+// main function to find the number of leafs of a tree
+func (b BinaryTree[T]) numberOfLeaf() int {
+	return numberLeaf(b.Root)
+}
+
+func Main8() {
+	// Build the tree
+	tree := BinaryTree[int]{}
+	values := []int{8, 3, 10, 1, 6, 14, 4, 7, 13}
+	for _, v := range values {
+		tree.insertValue(v)
+	}
+
+	// Count the number of leaf nodes
+	leafCount := tree.numberOfLeaf()
+	fmt.Printf("Number of leaf nodes: %d\n", leafCount)
+}
 
 // Exercise 9: Implement a function to check if a binary tree is a valid binary search tree (BST).
 
