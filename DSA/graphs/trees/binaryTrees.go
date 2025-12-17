@@ -422,6 +422,21 @@ func Main9() {
 }
 
 // Exercise 10: Write a function to mirror (invert) a binary tree.
+func invertNode[T Number](node *Node[T]) {
+	if node == nil {
+		return
+	}
+	node.Left, node.Right = node.Right, node.Left
+	invertNode(node.Left)
+	invertNode(node.Right)
+}
+
+func (b BinaryTree[T]) mirror() {
+	if b.IsEmpty() {
+		return
+	}
+	invertNode(b.Root)
+}
 
 // Exercise 11: Implement a function to print all paths from root to leaf in a binary tree.
 
