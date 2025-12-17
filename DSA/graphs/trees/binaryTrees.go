@@ -471,6 +471,33 @@ func (b BinaryTree[T]) sumAllNodes() T {
 }
 
 // Exercise 13: Implement a function to delete a node from a binary search tree.
+func (b *BinaryTree[T]) deleteNode(value T) error {
+	if b.IsEmpty() {
+		err := errors.New("imposible to delete value, tree is empty")
+		return err
+	}
+	deletedNode := findFirstNodeWithValueDFS(b.Root, value)
+	// If the node has no children
+	if deletedNode.Right == nil && deletedNode.Left == nil {
+		deletedNode = nil
+		return nil
+	}
+
+	// If the node has only one child
+	if (deletedNode.Right == nil && deletedNode.Left != nil) ||
+		(deletedNode.Right != nil && deletedNode.Left == nil) {
+		// do the implementation
+		return nil
+	}
+
+	// If the node has two children
+	if deletedNode.Right != nil && deletedNode.Left != nil {
+		// complete the implementation
+		return nil
+	}
+
+	return nil
+}
 
 // Exercise 14: Write a function to check if two binary trees are identical.
 
