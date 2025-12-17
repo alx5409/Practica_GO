@@ -438,7 +438,26 @@ func (b BinaryTree[T]) mirror() {
 	invertNode(b.Root)
 }
 
-// Exercise 11: Implement a function to print all paths from root to leaf in a binary tree.
+// Exercise 11: Implement a function to print all printPaths from root to leaf in a binary tree.
+func printPaths[T Number](node *Node[T], currentPath []T) {
+	if node == nil {
+		return
+	}
+	currentPath = append(currentPath, node.Value)
+	if node.Left == nil && node.Right == nil {
+		printSlice(currentPath)
+	}
+	printPaths(node.Left, currentPath)
+	printPaths(node.Right, currentPath)
+}
+
+func (b BinaryTree[T]) printAllPaths() {
+	if b.IsEmpty() {
+		return
+	}
+	var path []T
+	printPaths(b.Root, path)
+}
 
 // Exercise 12: Write a function to calculate the sum of all nodes in a binary tree.
 
