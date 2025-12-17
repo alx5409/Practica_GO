@@ -20,10 +20,14 @@ type BinaryTree[T Number] struct {
 	Root *Node[T]
 }
 
+func (b BinaryTree[T]) IsEmpty() bool {
+	return b.Root == nil
+}
+
 // Exercise 1: Implement a function to insert a value into a binary search tree.
 func (b *BinaryTree[T]) insertValue(value T) {
 	// If it is empty adds the value as the root node
-	if b.Root == nil {
+	if b.IsEmpty() {
 		b.Root = &Node[T]{Value: value}
 		return
 	}
@@ -64,7 +68,7 @@ func (b BinaryTree[T]) deepFirstSearch(value T) bool {
 
 // Exercise 3: Implement a function to find the minimum and maximum value in a binary search tree.
 func (b BinaryTree[T]) minMaxBST() (min T, max T, err error) {
-	if b.Root == nil {
+	if b.IsEmpty() {
 		err = errors.New("binary tree is empty")
 		var zero T
 		min = zero
@@ -369,6 +373,53 @@ func Main8() {
 }
 
 // Exercise 9: Implement a function to check if a binary tree is a valid binary search tree (BST).
+func isValidBSTNode[T Number](node *Node[T], min, max *T) bool {
+	if node == nil {
+		return true
+	}
+	if (min != nil && node.Value <= *min) || (max != nil && node.Value >= *max) {
+		return false
+	}
+	return isValidBSTNode(node.Left, min, &node.Value) && isValidBSTNode(node.Right, &node.Value, max)
+}
+
+func (b BinaryTree[T]) isValidBST() bool {
+	if b.IsEmpty() {
+		return true
+	}
+	var zero *T
+	return isValidBSTNode(b.Root, zero, zero)
+}
+
+func Main9() {
+	// Valid BST
+	tree := BinaryTree[int]{}
+	values := []int{8, 3, 10, 1, 6, 14, 4, 7, 13}
+	for _, v := range values {
+		tree.insertValue(v)
+	}
+	fmt.Print("Valid BST: ")
+	if tree.isValidBST() {
+		fmt.Println("Tree is a valid BST.")
+	} else {
+		fmt.Println("Tree is NOT a valid BST.")
+	}
+
+	// Invalid BST (manually break the BST property)
+	badTree := BinaryTree[int]{}
+	badTree.Root = &Node[int]{Value: 8}
+	badTree.Root.Left = &Node[int]{Value: 3}
+	badTree.Root.Right = &Node[int]{Value: 10}
+	badTree.Root.Left.Left = &Node[int]{Value: 1}
+	badTree.Root.Left.Right = &Node[int]{Value: 9} // 9 > 8, should not be in left subtree
+
+	fmt.Print("Invalid BST: ")
+	if badTree.isValidBST() {
+		fmt.Println("Tree is a valid BST.")
+	} else {
+		fmt.Println("Tree is NOT a valid BST.")
+	}
+}
 
 // Exercise 10: Write a function to mirror (invert) a binary tree.
 
