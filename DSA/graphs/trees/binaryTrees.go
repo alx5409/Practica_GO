@@ -293,16 +293,18 @@ func LCA[T Number](currentNode, node1, node2 *Node[T]) *Node[T] {
 	if currentNode == nil {
 		return nil
 	}
-	if currentNode.Left == node1 || currentNode.Left == node2 ||
-		currentNode.Right == node1 || currentNode.Right == node2 {
+	if currentNode == node1 || currentNode == node2 {
 		return currentNode
 	}
 	left := LCA(currentNode.Left, node1, node2)
 	right := LCA(currentNode.Right, node1, node2)
-	if left != right {
-		fmt.Println("They do not coincide")
+	if left != nil && right != nil {
+		return currentNode
 	}
-	return left
+	if left != nil {
+		return left
+	}
+	return right
 }
 
 func (b BinaryTree[T]) lowestCommontAncestor(node1 *Node[T], node2 *Node[T]) *Node[T] {
@@ -319,8 +321,8 @@ func Main7() {
 
 	// Choose two nodes to find LCA for
 	val1, val2 := 1, 7
-	node1 := tree.deepFirstSearch(tree.Root, val1)
-	node2 := tree.deepFirstSearch(tree.Root, val2)
+	node1 := findFirstNodeWithValueDFS(tree.Root, val1)
+	node2 := findFirstNodeWithValueDFS(tree.Root, val2)
 
 	if node1 == nil || node2 == nil {
 		fmt.Printf("One or both nodes not found: %d, %d\n", val1, val2)

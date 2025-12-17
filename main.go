@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	binaryTrees.Main6()
+	binaryTrees.Main7()
 }
