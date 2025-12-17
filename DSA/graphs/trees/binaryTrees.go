@@ -268,6 +268,19 @@ func Main6() {
 }
 
 // Exercise 7: Implement a function to find the lowest common ancestor (LCA) of two nodes in a binary tree.
+func (b BinaryTree[T]) lowestCommontAncestorByvalue(value1 T, value2 T) T {
+	var result T
+	return result
+}
+
+func LCA[T Number](currentNode, node1, node2 *Node[T]) *Node[T] {
+	var result *Node[T]
+	return result
+}
+func (b BinaryTree[T]) lowestCommontAncestor(node1 *Node[T], node2 *Node[T]) *Node[T] {
+	var result *Node[T]
+	return result
+}
 
 // Exercise 8: Write a function to count the number of leaf nodes in a binary tree.
 
