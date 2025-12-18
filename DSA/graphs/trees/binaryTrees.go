@@ -521,3 +521,19 @@ func areIdenticalTrees[T Number](tree1, tree2 BinaryTree[T]) bool {
 }
 
 // Exercise 15: Implement a function to find the diameter (longest path) of a binary tree.
+func diameter[T Number](node *Node[T], maxDiameter *int) int {
+	if node == nil {
+		return 0
+	}
+	leftHeight := diameter(node.Left, maxDiameter)
+	rightHeight := diameter(node.Right, maxDiameter)
+	if leftHeight+rightHeight > *maxDiameter {
+		*maxDiameter = leftHeight + rightHeight
+	}
+	return 1 + max(leftHeight, rightHeight)
+}
+func (b BinaryTree[T]) longestPath() int {
+	maxDiameter := 0
+	diameter(b.Root, &maxDiameter)
+	return maxDiameter
+}
