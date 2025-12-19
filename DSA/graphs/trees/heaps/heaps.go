@@ -30,6 +30,16 @@ func (Mh *MaxHeap[T]) insert(value T) {
 }
 
 // 3. Build a heap from an unsorted array (heapify).
+func heapifyslice[T bt.Number](slice []T) MinHeap[T] {
+	var result MinHeap[T]
+	if len(slice) == 0 {
+		return result
+	}
+	for _, value := range slice {
+		result.insert(value)
+	}
+	return result
+}
 
 // 4. Implement heap sort using a heap.
 
