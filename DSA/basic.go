@@ -10,7 +10,7 @@ import (
 func rotateArray(array []int, steps int) ([]int, error) {
 	rotatedArray := array
 	if steps <= 0 {
-		er := errors.New("The number of steps should be positive.")
+		er := errors.New("the number of steps should be positive")
 		return rotatedArray, er
 	}
 	for i, _ := range array {
@@ -36,7 +36,7 @@ func character_position_is_in_every_string(stringSlice []string, char rune, posi
 func longest_common_prefix(stringSlice []string) (string, error) {
 	prefix := ""
 	if len(stringSlice) == 0 {
-		er := errors.New("There are no strings")
+		er := errors.New("there are no strings")
 		return prefix, er
 	}
 	firstString := stringSlice[0]
@@ -54,11 +54,10 @@ func longest_common_prefix(stringSlice []string) (string, error) {
 func countLetters(word string) (map[rune]int, error) {
 	letterCounter := make(map[rune]int)
 	if len(word) == 0 {
-		er := errors.New("Empty string")
+		er := errors.New("empty string")
 		return letterCounter, er
 	}
-	runes := []rune(word)
-	for _, char := range runes {
+	for _, char := range word {
 		letterCounter[char]++
 	}
 	return letterCounter, nil
@@ -90,10 +89,7 @@ func areMapEqual(map1 map[rune]int, map2 map[rune]int) bool {
 func areAnagrams(firstWord string, secondWord string) bool {
 	firstLetterCounter, _ := countLetters(firstWord)
 	secondLetterCounter, _ := countLetters(secondWord)
-	if !areMapEqual(firstLetterCounter, secondLetterCounter) {
-		return false
-	}
-	return true
+	return areMapEqual(firstLetterCounter, secondLetterCounter)
 }
 
 // 4. Find the first non-repeating character in a string.
@@ -174,14 +170,14 @@ func binarySearch(sortedSlice []int, target int) (int, error) {
 		last = mid - 1
 
 	}
-	err := errors.New("Target not found")
+	err := errors.New("target not found")
 	return -1, err
 }
 
 // 13. Find the kth largest element in an slice.
 func findLargestKElement(slice []int, k int) (int, error) {
 	if k < 0 || k > len(slice)-1 {
-		return 0, errors.New("Invalid k")
+		return 0, errors.New("invalid k")
 	}
 	sortedSlice := make([]int, len(slice))
 	copy(sortedSlice, slice)
@@ -190,6 +186,6 @@ func findLargestKElement(slice []int, k int) (int, error) {
 }
 
 // 15. Implement a circular queue with enqueue and dequeue operations.
-func main() {
-	main2()
-}
+// func main() {
+// 	main2()
+// }
