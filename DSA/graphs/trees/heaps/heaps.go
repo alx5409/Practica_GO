@@ -11,7 +11,7 @@ for any node at index i:
 
 	left child -> index 2 * i + 1
 	right child -> index 2 * + 2
-	parent -> (i - 2) / 2
+	parent -> (i - 1) / 2
 */
 type MinHeap[T bt.Number] struct {
 	data []T
@@ -23,47 +23,76 @@ func (mh MinHeap[T]) isEmpty() bool {
 	return len(mh.data) == 0
 }
 
+// Returns the root index
+func rootIndex() int {
+	return 0
+}
+
 // Returns the root value
 func (mh MinHeap[T]) rootValue() T {
-	return mh.data[0]
+	return mh.data[rootIndex()]
+}
+
+// Retunrs the left child index
+func leftChildIndex(index int) int {
+	return 2*index + 1
 }
 
 // Returns the left child value
 func (mh MinHeap[T]) leftChildValue(index int) (T, error) {
-	leftChildIndex := 2*index + 1
-	if leftChildIndex >= len(mh.data) {
+	childIndex := leftChildIndex(index)
+	if childIndex >= len(mh.data) {
 		var zero T
 		return zero, errors.New("index out of bounds")
 	}
-	return mh.data[leftChildIndex], nil
+	return mh.data[childIndex], nil
+}
+
+// Retunrs the right child index
+func rightChildIndex(index int) int {
+	return 2*index + 2
 }
 
 // Returns the right child value
 func (mh MinHeap[T]) rightChildValue(index int) (T, error) {
-	rightChildIndex := 2 * index
-	if rightChildIndex >= len(mh.data) {
+	childIndex := rightChildIndex(index)
+	if childIndex >= len(mh.data) {
 		var zero T
 		return zero, errors.New("index out of bounds")
 	}
-	return mh.data[rightChildIndex], nil
+	return mh.data[childIndex], nil
+}
+
+// Returns the parent index
+func parentIndex(index int) int {
+	return (index - 1) / 2
 }
 
 // Returns the parent value
 func (mh MinHeap[T]) parentValue(index int) (T, error) {
-	parentIndex := (index - 2) / 2
-	if parentIndex < 0 {
+	parentInd := parentIndex(index)
+	if parentInd < 0 {
 		var zero T
 		return zero, errors.New("index out of bounds")
 	}
-	return mh.data[parentIndex], nil
+	return mh.data[parentInd], nil
 }
 
 // Helper function to keep the min heap structure
-func(mh MinHeap[T]) heapifyMin[T bt.Number]() {
-	lastIndex := len(mh.data)
-	lastValue := data[lastIndex]
-	if lastValue < mh.parent(lastIndex) {
-		mh.data[lastIndex], mh.data[]
+func (mh *MinHeap[T]) heapifyMin() {
+	lastIndex := len(mh.data) - 1
+	lastValue := mh.data[lastIndex]
+	rootIndex := rootIndex()
+	for lastIndex != rootIndex {
+		parentValue, err := mh.parentValue(lastIndex)
+		if err != nil {
+			return
+		}
+		if parentValue <= lastValue {
+			break
+		}
+		mh.data[lastIndex], mh.data[parentIndex(lastIndex)] = mh.data[parentIndex(lastIndex)], mh.data[lastIndex]
+		lastIndex, lastValue = parentIndex(lastIndex), parentValue
 	}
 }
 
@@ -71,10 +100,11 @@ func (mh *MinHeap[T]) insert(value T) {
 	// If is empty insert the value at root
 	if mh.isEmpty() {
 		mh.data = append(mh.data, value)
+		return
 	}
 	// Add the new vale at last node and heapify
 	mh.data = append(mh.data, value)
-	heapifyMin(mh.data)
+	mh.heapifyMin()
 }
 
 func (mh *MinHeap[T]) extractMin() T {
@@ -82,7 +112,7 @@ func (mh *MinHeap[T]) extractMin() T {
 	if mh.isEmpty() {
 		return result
 	}
-	return mh.root()
+	return mh.rootValue()
 }
 
 // 2. Implement a Max-Heap with insert and extract-max operations.
