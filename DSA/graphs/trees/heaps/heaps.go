@@ -161,7 +161,7 @@ func (hM *MaxHeap[T]) extractMax() T {
 	return hM.rootValue()
 }
 
-// 3. Build a heap from an unsorted array (heapify).
+// 3. Build a min heap from an unsorted array (heapify).
 func heapifyslice[T bt.Number](slice []T) MinHeap[T] {
 	var result MinHeap[T]
 	if len(slice) == 0 {
