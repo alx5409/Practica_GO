@@ -176,7 +176,26 @@ func heapifyslice[T bt.Number](slice []T) MinHeap[T] {
 // 4. Implement heap sort using a heap.
 
 func (mh *MinHeap[T]) heapifyMinDown() {
+	index := rootIndex()
+	lastIndex := len(mh.data) - 1
 
+	for {
+		leftIdx := leftChildIndex(index)
+		rightIdx := rightChildIndex(index)
+		smallest := index
+
+		if leftIdx <= lastIndex && mh.data[leftIdx] < mh.data[smallest] {
+			smallest = leftIdx
+		}
+		if rightIdx <= lastIndex && mh.data[rightIdx] < mh.data[smallest] {
+			smallest = rightIdx
+		}
+		if smallest == index {
+			break
+		}
+		mh.data[index], mh.data[smallest] = mh.data[smallest], mh.data[index]
+		index = smallest
+	}
 }
 
 func (mh *MinHeap[T]) removeRoot() {
