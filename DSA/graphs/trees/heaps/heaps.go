@@ -162,7 +162,7 @@ func (hM *MaxHeap[T]) extractMax() T {
 }
 
 // 3. Build a min heap from an unsorted array (heapify).
-func heapifyslice[T bt.Number](slice []T) MinHeap[T] {
+func minHeapifySlice[T bt.Number](slice []T) MinHeap[T] {
 	var result MinHeap[T]
 	if len(slice) == 0 {
 		return result
@@ -210,7 +210,7 @@ func heapSort[T bt.Number](slice []T) []T {
 	if len(slice) == 0 {
 		return orderedSlice
 	}
-	minHeap := heapifyslice(slice)
+	minHeap := minHeapifySlice(slice)
 	for !minHeap.isEmpty() {
 		orderedSlice = append(orderedSlice, minHeap.rootValue())
 		minHeap.removeRoot()
@@ -224,7 +224,7 @@ func kthSmallestElement[T bt.Number](slice []T, k int) (T, error) {
 	if k <= 0 || k > len(slice) {
 		return kthSmallest, errors.New("index out of bounds")
 	}
-	minHeap := heapifyslice(slice)
+	minHeap := minHeapifySlice(slice)
 	for i := 1; i < k; i++ {
 		minHeap.removeRoot()
 	}
@@ -232,6 +232,58 @@ func kthSmallestElement[T bt.Number](slice []T, k int) (T, error) {
 }
 
 // 6. Find the kth largest element in an array using a heap.
+func maxHeapifySlice[T bt.Number](slice []T) MaxHeap[T] {
+	var result MaxHeap[T]
+	if len(slice) == 0 {
+		return result
+	}
+	for _, value := range slice {
+		result.insert(value)
+	}
+	return result
+}
+
+func (mH *MaxHeap[T]) heapifyMaxDown() {
+	index := rootIndex()
+	lastIndex := len(mH.data) - 1
+
+	for {
+		leftIdx := leftChildIndex(index)
+		rightIdx := rightChildIndex(index)
+		largest := index
+
+		if leftIdx <= lastIndex && mH.data[leftIdx] > mH.data[largest] {
+			largest = leftIdx
+		}
+		if rightIdx <= lastIndex && mH.data[rightIdx] > mH.data[largest] {
+			largest = rightIdx
+		}
+		if largest == index {
+			break
+		}
+		mH.data[index], mH.data[largest] = mH.data[largest], mH.data[index]
+		index = largest
+	}
+}
+
+func (mh *MaxHeap[T]) removeRoot() {
+	lastIndex := len(mh.data) - 1
+	mh.data[rootIndex()] = mh.data[lastIndex]
+	mh.data = mh.data[:lastIndex]
+	mh.heapifyMaxDown()
+}
+
+func kthLargestElement[T bt.Number](slice []T, k int) (T, error) {
+	var kthSmallest T
+	if k <= 0 || k > len(slice) {
+		return kthSmallest, errors.New("index out of bounds")
+	}
+	maxHeap := maxHeapifySlice(slice)
+	for i := 1; i < k; i++ {
+		maxHeap.removeRoot()
+	}
+	return maxHeap.rootValue(), nil
+}
 
 // 7. Merge k sorted arrays using a min-heap.
 
