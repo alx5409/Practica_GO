@@ -13,14 +13,12 @@ for any node at index i:
 	right child -> index 2 * + 2
 	parent -> (i - 1) / 2
 */
-type MinHeap[T bt.Number] struct {
+type Heap[T bt.Number] struct {
 	data []T
 }
 
-// 1. Implement a Min-Heap with insert and extract-min operations.
-
-func (mh MinHeap[T]) isEmpty() bool {
-	return len(mh.data) == 0
+func (h Heap[T]) isEmpty() bool {
+	return len(h.data) == 0
 }
 
 // Returns the root index
@@ -29,8 +27,8 @@ func rootIndex() int {
 }
 
 // Returns the root value
-func (mh MinHeap[T]) rootValue() T {
-	return mh.data[rootIndex()]
+func (h Heap[T]) rootValue() T {
+	return h.data[rootIndex()]
 }
 
 // Retunrs the left child index
@@ -39,13 +37,13 @@ func leftChildIndex(index int) int {
 }
 
 // Returns the left child value
-func (mh MinHeap[T]) leftChildValue(index int) (T, error) {
+func (h Heap[T]) leftChildValue(index int) (T, error) {
 	childIndex := leftChildIndex(index)
-	if childIndex >= len(mh.data) {
+	if childIndex >= len(h.data) {
 		var zero T
 		return zero, errors.New("index out of bounds")
 	}
-	return mh.data[childIndex], nil
+	return h.data[childIndex], nil
 }
 
 // Retunrs the right child index
@@ -54,13 +52,13 @@ func rightChildIndex(index int) int {
 }
 
 // Returns the right child value
-func (mh MinHeap[T]) rightChildValue(index int) (T, error) {
+func (h Heap[T]) rightChildValue(index int) (T, error) {
 	childIndex := rightChildIndex(index)
-	if childIndex >= len(mh.data) {
+	if childIndex >= len(h.data) {
 		var zero T
 		return zero, errors.New("index out of bounds")
 	}
-	return mh.data[childIndex], nil
+	return h.data[childIndex], nil
 }
 
 // Returns the parent index
@@ -69,57 +67,98 @@ func parentIndex(index int) int {
 }
 
 // Returns the parent value
-func (mh MinHeap[T]) parentValue(index int) (T, error) {
+func (h Heap[T]) parentValue(index int) (T, error) {
 	parentInd := parentIndex(index)
 	if parentInd < 0 {
 		var zero T
 		return zero, errors.New("index out of bounds")
 	}
-	return mh.data[parentInd], nil
+	return h.data[parentInd], nil
+}
+
+// 1. Implement a Min-Heap with insert and extract-min operations.
+type MinHeap[T bt.Number] struct {
+	Heap[T]
 }
 
 // Helper function to keep the min heap structure
-func (mh *MinHeap[T]) heapifyMin() {
-	lastIndex := len(mh.data) - 1
-	lastValue := mh.data[lastIndex]
+func (h *Heap[T]) heapifyMin() {
+	lastIndex := len(h.data) - 1
+	lastValue := h.data[lastIndex]
 	rootIndex := rootIndex()
 	for lastIndex != rootIndex {
-		parentValue, err := mh.parentValue(lastIndex)
+		parentValue, err := h.parentValue(lastIndex)
 		if err != nil {
 			return
 		}
 		if parentValue <= lastValue {
 			break
 		}
-		mh.data[lastIndex], mh.data[parentIndex(lastIndex)] = mh.data[parentIndex(lastIndex)], mh.data[lastIndex]
+		h.data[lastIndex], h.data[parentIndex(lastIndex)] = h.data[parentIndex(lastIndex)], h.data[lastIndex]
 		lastIndex, lastValue = parentIndex(lastIndex), parentValue
 	}
 }
 
-func (mh *MinHeap[T]) insert(value T) {
+func (hm *MinHeap[T]) insert(value T) {
 	// If is empty insert the value at root
-	if mh.isEmpty() {
-		mh.data = append(mh.data, value)
+	if hm.isEmpty() {
+		hm.data = append(hm.data, value)
 		return
 	}
 	// Add the new vale at last node and heapify
-	mh.data = append(mh.data, value)
-	mh.heapifyMin()
+	hm.data = append(hm.data, value)
+	hm.heapifyMin()
 }
 
-func (mh *MinHeap[T]) extractMin() T {
+func (hm *MinHeap[T]) extractMin() T {
 	var result T
-	if mh.isEmpty() {
+	if hm.isEmpty() {
 		return result
 	}
-	return mh.rootValue()
+	return hm.rootValue()
 }
 
 // 2. Implement a Max-Heap with insert and extract-max operations.
-type MaxHeap[T bt.Number] bt.BinaryTree[T]
 
-func (Mh *MaxHeap[T]) insert(value T) {
+type MaxHeap[T bt.Number] struct {
+	Heap[T]
+}
 
+// Helper function to keep the max heap structure
+func (h *MaxHeap[T]) heapifyMax() {
+	lastIndex := len(h.data) - 1
+	lastValue := h.data[lastIndex]
+	rootIndex := rootIndex()
+	for lastIndex != rootIndex {
+		parentValue, err := h.parentValue(lastIndex)
+		if err != nil {
+			return
+		}
+		if parentValue >= lastValue {
+			break
+		}
+		h.data[lastIndex], h.data[parentIndex(lastIndex)] = h.data[parentIndex(lastIndex)], h.data[lastIndex]
+		lastIndex, lastValue = parentIndex(lastIndex), parentValue
+	}
+}
+
+func (hM *MaxHeap[T]) insert(value T) {
+	// If is empty insert the value at root
+	if hM.isEmpty() {
+		hM.data = append(hM.data, value)
+		return
+	}
+	// Add the new vale at last node and heapify
+	hM.data = append(hM.data, value)
+	hM.heapifyMax()
+}
+
+func (hM *MaxHeap[T]) extractMax() T {
+	if hM.isEmpty() {
+		var zero T
+		return zero
+	}
+	return hM.rootValue()
 }
 
 // 3. Build a heap from an unsorted array (heapify).
