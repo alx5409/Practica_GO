@@ -2,24 +2,87 @@ package heaps
 
 import (
 	bt "Practica_GO/DSA/graphs/trees/binaryTrees"
+	"errors"
 )
 
+/*
+root -> index 0
+for any node at index i:
+
+	left child -> index 2 * i + 1
+	right child -> index 2 * + 2
+	parent -> (i - 2) / 2
+*/
+type MinHeap[T bt.Number] struct {
+	data []T
+}
+
 // 1. Implement a Min-Heap with insert and extract-min operations.
-type MinHeap[T bt.Number] bt.BinaryTree[T]
+
+func (mh MinHeap[T]) isEmpty() bool {
+	return len(mh.data) == 0
+}
+
+// Returns the root value
+func (mh MinHeap[T]) rootValue() T {
+	return mh.data[0]
+}
+
+// Returns the left child value
+func (mh MinHeap[T]) leftChildValue(index int) (T, error) {
+	leftChildIndex := 2*index + 1
+	if leftChildIndex >= len(mh.data) {
+		var zero T
+		return zero, errors.New("index out of bounds")
+	}
+	return mh.data[leftChildIndex], nil
+}
+
+// Returns the right child value
+func (mh MinHeap[T]) rightChildValue(index int) (T, error) {
+	rightChildIndex := 2 * index
+	if rightChildIndex >= len(mh.data) {
+		var zero T
+		return zero, errors.New("index out of bounds")
+	}
+	return mh.data[rightChildIndex], nil
+}
+
+// Returns the parent value
+func (mh MinHeap[T]) parentValue(index int) (T, error) {
+	parentIndex := (index - 2) / 2
+	if parentIndex < 0 {
+		var zero T
+		return zero, errors.New("index out of bounds")
+	}
+	return mh.data[parentIndex], nil
+}
+
+// Helper function to keep the min heap structure
+func(mh MinHeap[T]) heapifyMin[T bt.Number]() {
+	lastIndex := len(mh.data)
+	lastValue := data[lastIndex]
+	if lastValue < mh.parent(lastIndex) {
+		mh.data[lastIndex], mh.data[]
+	}
+}
 
 func (mh *MinHeap[T]) insert(value T) {
-	if mh.Root == nil {
-		mh.Root = &bt.Node[T]{Value: value}
+	// If is empty insert the value at root
+	if mh.isEmpty() {
+		mh.data = append(mh.data, value)
 	}
-
+	// Add the new vale at last node and heapify
+	mh.data = append(mh.data, value)
+	heapifyMin(mh.data)
 }
 
 func (mh *MinHeap[T]) extractMin() T {
 	var result T
-	if mh.Root == nil {
+	if mh.isEmpty() {
 		return result
 	}
-	return mh.Root.Value
+	return mh.root()
 }
 
 // 2. Implement a Max-Heap with insert and extract-max operations.
