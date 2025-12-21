@@ -219,6 +219,17 @@ func heapSort[T bt.Number](slice []T) []T {
 }
 
 // 5. Find the kth smallest element in an array using a heap.
+func kthSmallestElement[T bt.Number](slice []T, k int) (T, error) {
+	var kthSmallest T
+	if k <= 0 || k > len(slice) {
+		return kthSmallest, errors.New("index out of bounds")
+	}
+	minHeap := heapifyslice(slice)
+	for i := 1; i < k; i++ {
+		minHeap.removeRoot()
+	}
+	return minHeap.rootValue(), nil
+}
 
 // 6. Find the kth largest element in an array using a heap.
 
