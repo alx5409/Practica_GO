@@ -175,6 +175,30 @@ func heapifyslice[T bt.Number](slice []T) MinHeap[T] {
 
 // 4. Implement heap sort using a heap.
 
+func (mh *MinHeap[T]) heapifyMinDown() {
+
+}
+
+func (mh *MinHeap[T]) removeRoot() {
+	lastIndex := len(mh.data) - 1
+	mh.data[rootIndex()] = mh.data[lastIndex]
+	mh.data = mh.data[:lastIndex]
+	mh.heapifyMinDown()
+}
+
+func heapSort[T bt.Number](slice []T) []T {
+	var orderedSlice []T
+	if len(slice) == 0 {
+		return orderedSlice
+	}
+	minHeap := heapifyslice(slice)
+	for !minHeap.isEmpty() {
+		orderedSlice = append(orderedSlice, minHeap.rootValue())
+		minHeap.removeRoot()
+	}
+	return orderedSlice
+}
+
 // 5. Find the kth smallest element in an array using a heap.
 
 // 6. Find the kth largest element in an array using a heap.
