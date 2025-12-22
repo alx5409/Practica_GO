@@ -293,68 +293,61 @@ type heapNode[T bt.Number] struct {
 	elemIdx  int // index within that array
 }
 
+// MinHeap for heapNode[T]
 type MinHeapNode[T bt.Number] struct {
 	data []heapNode[T]
 }
 
-    elemIdx  int // index within that array
-}
-
-// MinHeap for heapNode[T]
-type MinHeapNode[T bt.Number] struct {
-    data []heapNode[T]
-}
-
 func (h *MinHeapNode[T]) isEmpty() bool {
-    return len(h.data) == 0
+	return len(h.data) == 0
 }
 
 func (h *MinHeapNode[T]) insert(node heapNode[T]) {
-    h.data = append(h.data, node)
-    h.heapifyUp(len(h.data) - 1)
+	h.data = append(h.data, node)
+	h.heapifyUp(len(h.data) - 1)
 }
 
 func (h *MinHeapNode[T]) rootValue() heapNode[T] {
-    return h.data[0]
+	return h.data[0]
 }
 
 func (h *MinHeapNode[T]) removeRoot() {
-    lastIndex := len(h.data) - 1
-    h.data[0] = h.data[lastIndex]
-    h.data = h.data[:lastIndex]
-    h.heapifyDown(0)
+	lastIndex := len(h.data) - 1
+	h.data[0] = h.data[lastIndex]
+	h.data = h.data[:lastIndex]
+	h.heapifyDown(0)
 }
 
 func (h *MinHeapNode[T]) heapifyUp(index int) {
-    for index > 0 {
-        parent := (index - 1) / 2
-        if h.data[parent].value <= h.data[index].value {
-            break
-        }
-        h.data[parent], h.data[index] = h.data[index], h.data[parent]
-        index = parent
-    }
+	for index > 0 {
+		parent := (index - 1) / 2
+		if h.data[parent].value <= h.data[index].value {
+			break
+		}
+		h.data[parent], h.data[index] = h.data[index], h.data[parent]
+		index = parent
+	}
 }
 
 func (h *MinHeapNode[T]) heapifyDown(index int) {
-    n := len(h.data)
-    for {
-        left := 2*index + 1
-        right := 2*index + 2
-        smallest := index
+	n := len(h.data)
+	for {
+		left := 2*index + 1
+		right := 2*index + 2
+		smallest := index
 
-        if left < n && h.data[left].value < h.data[smallest].value {
-            smallest = left
-        }
-        if right < n && h.data[right].value < h.data[smallest].value {
-            smallest = right
-        }
-        if smallest == index {
-            break
-        }
-        h.data[index], h.data[smallest] = h.data[smallest], h.data[index]
-        index = smallest
-    }
+		if left < n && h.data[left].value < h.data[smallest].value {
+			smallest = left
+		}
+		if right < n && h.data[right].value < h.data[smallest].value {
+			smallest = right
+		}
+		if smallest == index {
+			break
+		}
+		h.data[index], h.data[smallest] = h.data[smallest], h.data[index]
+		index = smallest
+	}
 }
 
 func mergeSortedArrays[T bt.Number](slices [][]T) []T {
@@ -374,7 +367,7 @@ func mergeSortedArrays[T bt.Number](slices [][]T) []T {
 		removedArrayIdx := minHeap.data[0].arrayIdx
 		removedElemIdx := minHeap.data[0].elemIdx
 		minHeap.removeRoot()
-		if removedElemIdx +1 >= len(slices[removedArrayIdx]) {
+		if removedElemIdx+1 >= len(slices[removedArrayIdx]) {
 			continue
 		}
 		minHeap.insert(heapNode[T]{
@@ -391,14 +384,14 @@ func isSliceValidMinHeap[T bt.Number](slice []T) bool {
 	size := len(slice)
 	// Check that every posible node satisfies the heap condition
 	for i, parentValue := range slice {
-		leftChildIdx:=leftChildIndex(i)
-		rightChildIdx:=rightChildIndex(i)
+		leftChildIdx := leftChildIndex(i)
+		rightChildIdx := rightChildIndex(i)
 		if rightChildIdx < size && parentValue > slice[rightChildIdx] {
 			return false
 		}
 		if leftChildIdx < size && parentValue > slice[leftChildIdx] {
 			return false
-		} 
+		}
 	}
 	return true
 }
@@ -408,91 +401,91 @@ func isSliceValidMaxHeap[T bt.Number](slice []T) bool {
 	size := len(slice)
 	// Check that every posible node satisfies the heap condition
 	for i, parentValue := range slice {
-		leftChildIdx:=leftChildIndex(i)
-		rightChildIdx:=rightChildIndex(i)
+		leftChildIdx := leftChildIndex(i)
+		rightChildIdx := rightChildIndex(i)
 		if rightChildIdx < size && parentValue < slice[rightChildIdx] {
 			return false
 		}
 		if leftChildIdx < size && parentValue < slice[leftChildIdx] {
 			return false
-		} 
+		}
 	}
 	return true
 }
 
 // 10. Convert a min-heap to a max-heap (and vice versa).
 func minHeapToMaxHeap[T bt.Number](minHeap MinHeap[T]) MaxHeap[T] {
-	maxHeap := MaxHeap[T]{data: minHeap.data}
+	maxHeap := MaxHeap[T]{Heap: Heap[T]{data: minHeap.data}}
 	maxHeap.heapifyMax()
 	return maxHeap
 }
 
-func maxHeapToMinHeap[T bt.Number](minHeap MaxHeap[T]) MinHeap[T] {
-	minHeap := MinHeap[T]{data: maxHeap.data}
+func maxHeapToMinHeap[T bt.Number](maxHeap MaxHeap[T]) MinHeap[T] {
+	minHeap := MinHeap[T]{Heap: Heap[T]{data: maxHeap.data}}
 	minHeap.heapifyMin()
 	return minHeap
 }
 
 // 11. Implement a priority queue using a heap.
 type PairPriority[T bt.Number] struct {
-    priority int
-    value    T
+	priority int
+	value    T
 }
 
 type MaxHeapPriority[T bt.Number] struct {
-    data []PairPriority[T]
+	data []PairPriority[T]
 }
 
 func (h *MaxHeapPriority[T]) isEmpty() bool {
-    return len(h.data) == 0
+	return len(h.data) == 0
 }
 
 func (h *MaxHeapPriority[T]) insert(pair PairPriority[T]) {
-    h.data = append(h.data, pair)
-    h.heapifyUp(len(h.data) - 1)
+	h.data = append(h.data, pair)
+	h.heapifyUp(len(h.data) - 1)
 }
 
 func (h *MaxHeapPriority[T]) rootValue() PairPriority[T] {
-    return h.data[0]
+	return h.data[0]
 }
 
 func (h *MaxHeapPriority[T]) removeRoot() {
-    lastIndex := len(h.data) - 1
-    h.data[0] = h.data[lastIndex]
-    h.data = h.data[:lastIndex]
-    h.heapifyDown(0)
+	lastIndex := len(h.data) - 1
+	h.data[0] = h.data[lastIndex]
+	h.data = h.data[:lastIndex]
+	h.heapifyDown(0)
 }
 
 func (h *MaxHeapPriority[T]) heapifyUp(index int) {
-    for index > 0 {
-        parent := (index - 1) / 2
-        if h.data[parent].priority >= h.data[index].priority {
-            break
-        }
-        h.data[parent], h.data[index] = h.data[index], h.data[parent]
-        index = parent
-    }
+	for index > 0 {
+		parent := (index - 1) / 2
+		if h.data[parent].priority >= h.data[index].priority {
+			break
+		}
+		h.data[parent], h.data[index] = h.data[index], h.data[parent]
+		index = parent
+	}
 }
 
 func (h *MaxHeapPriority[T]) heapifyDown(index int) {
-    n := len(h.data)
-    for {
-        left := 2*index + 1
-        right := 2*index + 2
-        largest := index
+	n := len(h.data)
+	for {
+		left := 2*index + 1
+		right := 2*index + 2
+		largest := index
 
-        if left < n && h.data[left].priority > h.data[largest].priority {
-            largest = left
-        }
-        if right < n && h.data[right].priority > h.data[largest].priority {
-            largest = right
-        }
-        if largest == index {
-            break
-        }
-        h.data[index], h.data[largest] = h.data[largest], h.data[index]
-        index = largest
-    }
+		if left < n && h.data[left].priority > h.data[largest].priority {
+			largest = left
+		}
+		if right < n && h.data[right].priority > h.data[largest].priority {
+			largest = right
+		}
+		if largest == index {
+			break
+		}
+		h.data[index], h.data[largest] = h.data[largest], h.data[index]
+		index = largest
+	}
 }
 
 type MaxPriorityQueue[T bt.Number] struct {
@@ -514,12 +507,58 @@ func (q *MaxPriorityQueue[T]) dequeue() error {
 func (q MaxHeapPriority[T]) peek() (T, error) {
 	if q.isEmpty() {
 		var zero T
-		return zero, errors.New("empty queue") 
+		return zero, errors.New("empty queue")
 	}
 	return q.rootValue().value, nil
 }
 
 // 12. Increase or decrease the key value of a given element in a heap.
+func (h *MinHeap[T]) bubbleUp(index int) {
+	for index > 0 {
+		parentIdx := parentIndex(index)
+		if h.data[parentIdx] <= h.data[index] {
+			break
+		}
+		h.data[parentIdx], h.data[index] = h.data[index], h.data[parentIdx]
+		index = parentIdx
+	}
+}
+
+func (h *MinHeap[T]) bubbleDown(index int) {
+	size := len(h.data)
+	for {
+		left := leftChildIndex(index)
+		right := rightChildIndex(index)
+		smallest := index
+		if left < size && h.data[left] < h.data[smallest] {
+			smallest = left
+		}
+		if right < size && h.data[right] < h.data[smallest] {
+			smallest = right
+		}
+		if smallest == index {
+			break
+		}
+		h.data[index], h.data[smallest] = h.data[smallest], h.data[index]
+		index = smallest
+	}
+}
+
+func (h *MinHeap[T]) updateElement(value T, index int) {
+	oldValue := h.data[index]
+	if oldValue == value {
+		return
+	}
+	h.data[index] = value
+	// If is greater bubble up from that node
+	if oldValue < value {
+		h.bubbleUp(index)
+	}
+	// If is greater bubble down from that node
+	if oldValue > value {
+		h.bubbleDown(index)
+	}
+}
 
 // 13. Remove an arbitrary element from a heap.
 
