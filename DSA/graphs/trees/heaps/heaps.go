@@ -434,6 +434,90 @@ func maxHeapToMinHeap[T bt.Number](minHeap MaxHeap[T]) MinHeap[T] {
 }
 
 // 11. Implement a priority queue using a heap.
+type PairPriority[T bt.Number] struct {
+    priority int
+    value    T
+}
+
+type MaxHeapPriority[T bt.Number] struct {
+    data []PairPriority[T]
+}
+
+func (h *MaxHeapPriority[T]) isEmpty() bool {
+    return len(h.data) == 0
+}
+
+func (h *MaxHeapPriority[T]) insert(pair PairPriority[T]) {
+    h.data = append(h.data, pair)
+    h.heapifyUp(len(h.data) - 1)
+}
+
+func (h *MaxHeapPriority[T]) rootValue() PairPriority[T] {
+    return h.data[0]
+}
+
+func (h *MaxHeapPriority[T]) removeRoot() {
+    lastIndex := len(h.data) - 1
+    h.data[0] = h.data[lastIndex]
+    h.data = h.data[:lastIndex]
+    h.heapifyDown(0)
+}
+
+func (h *MaxHeapPriority[T]) heapifyUp(index int) {
+    for index > 0 {
+        parent := (index - 1) / 2
+        if h.data[parent].priority >= h.data[index].priority {
+            break
+        }
+        h.data[parent], h.data[index] = h.data[index], h.data[parent]
+        index = parent
+    }
+}
+
+func (h *MaxHeapPriority[T]) heapifyDown(index int) {
+    n := len(h.data)
+    for {
+        left := 2*index + 1
+        right := 2*index + 2
+        largest := index
+
+        if left < n && h.data[left].priority > h.data[largest].priority {
+            largest = left
+        }
+        if right < n && h.data[right].priority > h.data[largest].priority {
+            largest = right
+        }
+        if largest == index {
+            break
+        }
+        h.data[index], h.data[largest] = h.data[largest], h.data[index]
+        index = largest
+    }
+}
+
+type MaxPriorityQueue[T bt.Number] struct {
+	MaxHeapPriority[T]
+}
+
+func (q *MaxPriorityQueue[T]) enqueue(value T, priority int) {
+	q.insert(PairPriority[T]{value: value, priority: priority})
+}
+
+func (q *MaxPriorityQueue[T]) dequeue() error {
+	if q.isEmpty() {
+		return errors.New("empty queue")
+	}
+	q.removeRoot()
+	return nil
+}
+
+func (q MaxHeapPriority[T]) peek() (T, error) {
+	if q.isEmpty() {
+		var zero T
+		return zero, errors.New("empty queue") 
+	}
+	return q.rootValue().value, nil
+}
 
 // 12. Increase or decrease the key value of a given element in a heap.
 
