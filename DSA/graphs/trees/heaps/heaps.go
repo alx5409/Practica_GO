@@ -561,6 +561,27 @@ func (h *MinHeap[T]) updateElement(value T, index int) {
 }
 
 // 13. Remove an arbitrary element from a heap.
+func (h *MinHeap[T]) delete(index int) error {
+	if h.isEmpty() {
+		return errors.New("empty heap")
+	}
+	if index < 0 || index >= len(h.data) {
+		return errors.New("index out of bounds")
+	}
+	// If the element to be removed, there is no problem with the rest of the heap
+	lastIndex := len(h.data) - 1
+	if index == lastIndex {
+		h.data = h.data[:lastIndex]
+		return nil
+	}
+	// Replace the last value with the value at the index
+	h.data[index], h.data[lastIndex] = h.data[lastIndex], h.data[index]
+	h.data = h.data[:lastIndex]
+	// Bubble up and down to mantain the heap structure
+	h.bubbleUp(index)
+	h.bubbleDown(index)
+	return nil
+}
 
 // 14. Find the median of a stream of numbers using two heaps.
 
