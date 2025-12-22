@@ -287,6 +287,105 @@ func kthLargestElement[T bt.Number](slice []T, k int) (T, error) {
 
 // 7. Merge k sorted arrays using a min-heap.
 
+type heapNode[T bt.Number] struct {
+	value    T
+	arrayIdx int // from which array comes from
+	elemIdx  int // index within that array
+}
+
+type MinHeapNode[T bt.Number] struct {
+	data []heapNode[T]
+}
+
+    elemIdx  int // index within that array
+}
+
+// MinHeap for heapNode[T]
+type MinHeapNode[T bt.Number] struct {
+    data []heapNode[T]
+}
+
+func (h *MinHeapNode[T]) isEmpty() bool {
+    return len(h.data) == 0
+}
+
+func (h *MinHeapNode[T]) insert(node heapNode[T]) {
+    h.data = append(h.data, node)
+    h.heapifyUp(len(h.data) - 1)
+}
+
+func (h *MinHeapNode[T]) rootValue() heapNode[T] {
+    return h.data[0]
+}
+
+func (h *MinHeapNode[T]) removeRoot() {
+    lastIndex := len(h.data) - 1
+    h.data[0] = h.data[lastIndex]
+    h.data = h.data[:lastIndex]
+    h.heapifyDown(0)
+}
+
+func (h *MinHeapNode[T]) heapifyUp(index int) {
+    for index > 0 {
+        parent := (index - 1) / 2
+        if h.data[parent].value <= h.data[index].value {
+            break
+        }
+        h.data[parent], h.data[index] = h.data[index], h.data[parent]
+        index = parent
+    }
+}
+
+func (h *MinHeapNode[T]) heapifyDown(index int) {
+    n := len(h.data)
+    for {
+        left := 2*index + 1
+        right := 2*index + 2
+        smallest := index
+
+        if left < n && h.data[left].value < h.data[smallest].value {
+            smallest = left
+        }
+        if right < n && h.data[right].value < h.data[smallest].value {
+            smallest = right
+        }
+        if smallest == index {
+            break
+        }
+        h.data[index], h.data[smallest] = h.data[smallest], h.data[index]
+        index = smallest
+    }
+}
+
+func mergeSortedArrays[T bt.Number](slices [][]T) []T {
+	var minHeap MinHeapNode[T]
+	var orderedSlice []T
+
+	// Insert the first element of each slice and keep track where the min comes from
+	for i, slice := range slices {
+		if len(slice) > 0 {
+			minHeap.insert(heapNode[T]{value: slice[0], arrayIdx: i, elemIdx: 0})
+		}
+	}
+
+	// Remove the root and add the next element in the heap where the removed element came from
+	for !minHeap.isEmpty() {
+		orderedSlice = append(orderedSlice, minHeap.rootValue().value)
+		removedArrayIdx := minHeap.data[0].arrayIdx
+		removedElemIdx := minHeap.data[0].elemIdx
+		minHeap.removeRoot()
+		if removedElemIdx +1 >= len(slices[removedArrayIdx]) {
+			continue
+		}
+		minHeap.insert(heapNode[T]{
+			value:    slices[removedArrayIdx][removedElemIdx+1],
+			arrayIdx: removedArrayIdx,
+			elemIdx:  removedElemIdx + 1,
+		})
+	}
+	return orderedSlice
+}
+
 // 8. Check if a given array represents a valid min-heap.
 
 // 9. Check if a given array represents a valid max-heap.
