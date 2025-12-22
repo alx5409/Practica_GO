@@ -404,6 +404,21 @@ func isSliceValidMinHeap[T bt.Number](slice []T) bool {
 }
 
 // 9. Check if a given array represents a valid max-heap.
+func isSliceValidMaxHeap[T bt.Number](slice []T) bool {
+	size := len(slice)
+	// Check that every posible node satisfies the heap condition
+	for i, parentValue := range slice {
+		leftChildIdx:=leftChildIndex(i)
+		rightChildIdx:=rightChildIndex(i)
+		if rightChildIdx < size && parentValue < slice[rightChildIdx] {
+			return false
+		}
+		if leftChildIdx < size && parentValue < slice[leftChildIdx] {
+			return false
+		} 
+	}
+	return true
+}
 
 // 10. Convert a min-heap to a max-heap (and vice versa).
 
