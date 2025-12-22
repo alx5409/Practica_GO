@@ -162,7 +162,7 @@ func (hM *MaxHeap[T]) extractMax() T {
 }
 
 // 3. Build a min heap from an unsorted array (heapify).
-func heapifyslice[T bt.Number](slice []T) MinHeap[T] {
+func minHeapifySlice[T bt.Number](slice []T) MinHeap[T] {
 	var result MinHeap[T]
 	if len(slice) == 0 {
 		return result
@@ -210,7 +210,7 @@ func heapSort[T bt.Number](slice []T) []T {
 	if len(slice) == 0 {
 		return orderedSlice
 	}
-	minHeap := heapifyslice(slice)
+	minHeap := minHeapifySlice(slice)
 	for !minHeap.isEmpty() {
 		orderedSlice = append(orderedSlice, minHeap.rootValue())
 		minHeap.removeRoot()
@@ -219,23 +219,411 @@ func heapSort[T bt.Number](slice []T) []T {
 }
 
 // 5. Find the kth smallest element in an array using a heap.
+func kthSmallestElement[T bt.Number](slice []T, k int) (T, error) {
+	var kthSmallest T
+	if k <= 0 || k > len(slice) {
+		return kthSmallest, errors.New("index out of bounds")
+	}
+	minHeap := minHeapifySlice(slice)
+	for i := 1; i < k; i++ {
+		minHeap.removeRoot()
+	}
+	return minHeap.rootValue(), nil
+}
 
 // 6. Find the kth largest element in an array using a heap.
+func maxHeapifySlice[T bt.Number](slice []T) MaxHeap[T] {
+	var result MaxHeap[T]
+	if len(slice) == 0 {
+		return result
+	}
+	for _, value := range slice {
+		result.insert(value)
+	}
+	return result
+}
+
+func (mH *MaxHeap[T]) heapifyMaxDown() {
+	index := rootIndex()
+	lastIndex := len(mH.data) - 1
+
+	for {
+		leftIdx := leftChildIndex(index)
+		rightIdx := rightChildIndex(index)
+		largest := index
+
+		if leftIdx <= lastIndex && mH.data[leftIdx] > mH.data[largest] {
+			largest = leftIdx
+		}
+		if rightIdx <= lastIndex && mH.data[rightIdx] > mH.data[largest] {
+			largest = rightIdx
+		}
+		if largest == index {
+			break
+		}
+		mH.data[index], mH.data[largest] = mH.data[largest], mH.data[index]
+		index = largest
+	}
+}
+
+func (mh *MaxHeap[T]) removeRoot() {
+	lastIndex := len(mh.data) - 1
+	mh.data[rootIndex()] = mh.data[lastIndex]
+	mh.data = mh.data[:lastIndex]
+	mh.heapifyMaxDown()
+}
+
+func kthLargestElement[T bt.Number](slice []T, k int) (T, error) {
+	var kthSmallest T
+	if k <= 0 || k > len(slice) {
+		return kthSmallest, errors.New("index out of bounds")
+	}
+	maxHeap := maxHeapifySlice(slice)
+	for i := 1; i < k; i++ {
+		maxHeap.removeRoot()
+	}
+	return maxHeap.rootValue(), nil
+}
 
 // 7. Merge k sorted arrays using a min-heap.
 
+type heapNode[T bt.Number] struct {
+	value    T
+	arrayIdx int // from which array comes from
+	elemIdx  int // index within that array
+}
+
+// MinHeap for heapNode[T]
+type MinHeapNode[T bt.Number] struct {
+	data []heapNode[T]
+}
+
+func (h *MinHeapNode[T]) isEmpty() bool {
+	return len(h.data) == 0
+}
+
+func (h *MinHeapNode[T]) insert(node heapNode[T]) {
+	h.data = append(h.data, node)
+	h.heapifyUp(len(h.data) - 1)
+}
+
+func (h *MinHeapNode[T]) rootValue() heapNode[T] {
+	return h.data[0]
+}
+
+func (h *MinHeapNode[T]) removeRoot() {
+	lastIndex := len(h.data) - 1
+	h.data[0] = h.data[lastIndex]
+	h.data = h.data[:lastIndex]
+	h.heapifyDown(0)
+}
+
+func (h *MinHeapNode[T]) heapifyUp(index int) {
+	for index > 0 {
+		parent := (index - 1) / 2
+		if h.data[parent].value <= h.data[index].value {
+			break
+		}
+		h.data[parent], h.data[index] = h.data[index], h.data[parent]
+		index = parent
+	}
+}
+
+func (h *MinHeapNode[T]) heapifyDown(index int) {
+	n := len(h.data)
+	for {
+		left := 2*index + 1
+		right := 2*index + 2
+		smallest := index
+
+		if left < n && h.data[left].value < h.data[smallest].value {
+			smallest = left
+		}
+		if right < n && h.data[right].value < h.data[smallest].value {
+			smallest = right
+		}
+		if smallest == index {
+			break
+		}
+		h.data[index], h.data[smallest] = h.data[smallest], h.data[index]
+		index = smallest
+	}
+}
+
+func mergeSortedArrays[T bt.Number](slices [][]T) []T {
+	var minHeap MinHeapNode[T]
+	var orderedSlice []T
+
+	// Insert the first element of each slice and keep track where the min comes from
+	for i, slice := range slices {
+		if len(slice) > 0 {
+			minHeap.insert(heapNode[T]{value: slice[0], arrayIdx: i, elemIdx: 0})
+		}
+	}
+
+	// Remove the root and add the next element in the heap where the removed element came from
+	for !minHeap.isEmpty() {
+		orderedSlice = append(orderedSlice, minHeap.rootValue().value)
+		removedArrayIdx := minHeap.data[0].arrayIdx
+		removedElemIdx := minHeap.data[0].elemIdx
+		minHeap.removeRoot()
+		if removedElemIdx+1 >= len(slices[removedArrayIdx]) {
+			continue
+		}
+		minHeap.insert(heapNode[T]{
+			value:    slices[removedArrayIdx][removedElemIdx+1],
+			arrayIdx: removedArrayIdx,
+			elemIdx:  removedElemIdx + 1,
+		})
+	}
+	return orderedSlice
+}
+
 // 8. Check if a given array represents a valid min-heap.
+func isSliceValidMinHeap[T bt.Number](slice []T) bool {
+	size := len(slice)
+	// Check that every posible node satisfies the heap condition
+	for i, parentValue := range slice {
+		leftChildIdx := leftChildIndex(i)
+		rightChildIdx := rightChildIndex(i)
+		if rightChildIdx < size && parentValue > slice[rightChildIdx] {
+			return false
+		}
+		if leftChildIdx < size && parentValue > slice[leftChildIdx] {
+			return false
+		}
+	}
+	return true
+}
 
 // 9. Check if a given array represents a valid max-heap.
+func isSliceValidMaxHeap[T bt.Number](slice []T) bool {
+	size := len(slice)
+	// Check that every posible node satisfies the heap condition
+	for i, parentValue := range slice {
+		leftChildIdx := leftChildIndex(i)
+		rightChildIdx := rightChildIndex(i)
+		if rightChildIdx < size && parentValue < slice[rightChildIdx] {
+			return false
+		}
+		if leftChildIdx < size && parentValue < slice[leftChildIdx] {
+			return false
+		}
+	}
+	return true
+}
 
 // 10. Convert a min-heap to a max-heap (and vice versa).
+func minHeapToMaxHeap[T bt.Number](minHeap MinHeap[T]) MaxHeap[T] {
+	maxHeap := MaxHeap[T]{Heap: Heap[T]{data: minHeap.data}}
+	maxHeap.heapifyMax()
+	return maxHeap
+}
+
+func maxHeapToMinHeap[T bt.Number](maxHeap MaxHeap[T]) MinHeap[T] {
+	minHeap := MinHeap[T]{Heap: Heap[T]{data: maxHeap.data}}
+	minHeap.heapifyMin()
+	return minHeap
+}
 
 // 11. Implement a priority queue using a heap.
+type PairPriority[T bt.Number] struct {
+	priority int
+	value    T
+}
+
+type MaxHeapPriority[T bt.Number] struct {
+	data []PairPriority[T]
+}
+
+func (h *MaxHeapPriority[T]) isEmpty() bool {
+	return len(h.data) == 0
+}
+
+func (h *MaxHeapPriority[T]) insert(pair PairPriority[T]) {
+	h.data = append(h.data, pair)
+	h.heapifyUp(len(h.data) - 1)
+}
+
+func (h *MaxHeapPriority[T]) rootValue() PairPriority[T] {
+	return h.data[0]
+}
+
+func (h *MaxHeapPriority[T]) removeRoot() {
+	lastIndex := len(h.data) - 1
+	h.data[0] = h.data[lastIndex]
+	h.data = h.data[:lastIndex]
+	h.heapifyDown(0)
+}
+
+func (h *MaxHeapPriority[T]) heapifyUp(index int) {
+	for index > 0 {
+		parent := (index - 1) / 2
+		if h.data[parent].priority >= h.data[index].priority {
+			break
+		}
+		h.data[parent], h.data[index] = h.data[index], h.data[parent]
+		index = parent
+	}
+}
+
+func (h *MaxHeapPriority[T]) heapifyDown(index int) {
+	n := len(h.data)
+	for {
+		left := 2*index + 1
+		right := 2*index + 2
+		largest := index
+
+		if left < n && h.data[left].priority > h.data[largest].priority {
+			largest = left
+		}
+		if right < n && h.data[right].priority > h.data[largest].priority {
+			largest = right
+		}
+		if largest == index {
+			break
+		}
+		h.data[index], h.data[largest] = h.data[largest], h.data[index]
+		index = largest
+	}
+}
+
+type MaxPriorityQueue[T bt.Number] struct {
+	MaxHeapPriority[T]
+}
+
+func (q *MaxPriorityQueue[T]) enqueue(value T, priority int) {
+	q.insert(PairPriority[T]{value: value, priority: priority})
+}
+
+func (q *MaxPriorityQueue[T]) dequeue() error {
+	if q.isEmpty() {
+		return errors.New("empty queue")
+	}
+	q.removeRoot()
+	return nil
+}
+
+func (q MaxHeapPriority[T]) peek() (T, error) {
+	if q.isEmpty() {
+		var zero T
+		return zero, errors.New("empty queue")
+	}
+	return q.rootValue().value, nil
+}
 
 // 12. Increase or decrease the key value of a given element in a heap.
+func (h *MinHeap[T]) bubbleUp(index int) {
+	for index > 0 {
+		parentIdx := parentIndex(index)
+		if h.data[parentIdx] <= h.data[index] {
+			break
+		}
+		h.data[parentIdx], h.data[index] = h.data[index], h.data[parentIdx]
+		index = parentIdx
+	}
+}
+
+func (h *MinHeap[T]) bubbleDown(index int) {
+	size := len(h.data)
+	for {
+		left := leftChildIndex(index)
+		right := rightChildIndex(index)
+		smallest := index
+		if left < size && h.data[left] < h.data[smallest] {
+			smallest = left
+		}
+		if right < size && h.data[right] < h.data[smallest] {
+			smallest = right
+		}
+		if smallest == index {
+			break
+		}
+		h.data[index], h.data[smallest] = h.data[smallest], h.data[index]
+		index = smallest
+	}
+}
+
+func (h *MinHeap[T]) updateElement(value T, index int) {
+	oldValue := h.data[index]
+	if oldValue == value {
+		return
+	}
+	h.data[index] = value
+	// If is greater bubble up from that node
+	if oldValue < value {
+		h.bubbleUp(index)
+	}
+	// If is greater bubble down from that node
+	if oldValue > value {
+		h.bubbleDown(index)
+	}
+}
 
 // 13. Remove an arbitrary element from a heap.
+func (h *MinHeap[T]) delete(index int) error {
+	if h.isEmpty() {
+		return errors.New("empty heap")
+	}
+	if index < 0 || index >= len(h.data) {
+		return errors.New("index out of bounds")
+	}
+	// If the element to be removed, there is no problem with the rest of the heap
+	lastIndex := len(h.data) - 1
+	if index == lastIndex {
+		h.data = h.data[:lastIndex]
+		return nil
+	}
+	// Replace the last value with the value at the index
+	h.data[index], h.data[lastIndex] = h.data[lastIndex], h.data[index]
+	h.data = h.data[:lastIndex]
+	// Bubble up and down to mantain the heap structure
+	h.bubbleUp(index)
+	h.bubbleDown(index)
+	return nil
+}
 
 // 14. Find the median of a stream of numbers using two heaps.
+type MedianFinder[T bt.Number] struct {
+	low  MaxHeap[T]
+	high MinHeap[T]
+}
+
+func (mf *MedianFinder[T]) BalanceHeaps() {
+	if len(mf.low.data) > len(mf.high.data)+1 {
+		removedValue := mf.low.rootValue()
+		mf.low.removeRoot()
+		mf.high.insert(removedValue)
+		return
+	}
+	if len(mf.high.data) > len(mf.low.data)+1 {
+		removedValue := mf.high.rootValue()
+		mf.high.removeRoot()
+		mf.low.insert(removedValue)
+		return
+	}
+}
+
+func (mf *MedianFinder[T]) AddNumber(number T) {
+	// Insert into max-heap if empty or num <= max of low
+	if len(mf.low.data) == 0 || number <= mf.low.rootValue() {
+		mf.low.insert(number)
+	} else {
+		mf.high.insert(number)
+	}
+	mf.BalanceHeaps()
+}
+
+func (mf *MedianFinder[T]) FindMedian() T {
+	// When the max heap contains one more element than the min heap return the root value on the max heap
+	if len(mf.low.data) == len(mf.high.data)+1 {
+		return mf.low.rootValue()
+	}
+	if len(mf.high.data) == len(mf.low.data)+1 {
+		return mf.high.rootValue()
+	}
+	// When min and max heap contains the same amount of elements return the minimum of those root values
+	return min(mf.low.rootValue(), mf.high.rootValue())
+}
 
 // 15. Implement a d-ary heap (where each node has d children) and its operations.
