@@ -584,5 +584,9 @@ func (h *MinHeap[T]) delete(index int) error {
 }
 
 // 14. Find the median of a stream of numbers using two heaps.
+type MedianFinder[T bt.Number] struct {
+	low  MaxHeap[T]
+	high MinHeap[T]
+}
 
 // 15. Implement a d-ary heap (where each node has d children) and its operations.
