@@ -421,6 +421,17 @@ func isSliceValidMaxHeap[T bt.Number](slice []T) bool {
 }
 
 // 10. Convert a min-heap to a max-heap (and vice versa).
+func minHeapToMaxHeap[T bt.Number](minHeap MinHeap[T]) MaxHeap[T] {
+	maxHeap := MaxHeap[T]{data: minHeap.data}
+	maxHeap.heapifyMax()
+	return maxHeap
+}
+
+func maxHeapToMinHeap[T bt.Number](minHeap MaxHeap[T]) MinHeap[T] {
+	minHeap := MinHeap[T]{data: maxHeap.data}
+	minHeap.heapifyMin()
+	return minHeap
+}
 
 // 11. Implement a priority queue using a heap.
 
