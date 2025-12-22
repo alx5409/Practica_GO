@@ -589,4 +589,41 @@ type MedianFinder[T bt.Number] struct {
 	high MinHeap[T]
 }
 
+func (mf *MedianFinder[T]) BalanceHeaps() {
+	if len(mf.low.data) > len(mf.high.data)+1 {
+		removedValue := mf.low.rootValue()
+		mf.low.removeRoot()
+		mf.high.insert(removedValue)
+		return
+	}
+	if len(mf.high.data) > len(mf.low.data)+1 {
+		removedValue := mf.high.rootValue()
+		mf.high.removeRoot()
+		mf.low.insert(removedValue)
+		return
+	}
+}
+
+func (mf *MedianFinder[T]) AddNumber(number T) {
+	// Insert into max-heap if empty or num <= max of low
+	if len(mf.low.data) == 0 || number <= mf.low.rootValue() {
+		mf.low.insert(number)
+	} else {
+		mf.high.insert(number)
+	}
+	mf.BalanceHeaps()
+}
+
+func (mf *MedianFinder[T]) FindMedian() T {
+	// When the max heap contains one more element than the min heap return the root value on the max heap
+	if len(mf.low.data) == len(mf.high.data)+1 {
+		return mf.low.rootValue()
+	}
+	if len(mf.high.data) == len(mf.low.data)+1 {
+		return mf.high.rootValue()
+	}
+	// When min and max heap contains the same amount of elements return the minimum of those root values
+	return min(mf.low.rootValue(), mf.high.rootValue())
+}
+
 // 15. Implement a d-ary heap (where each node has d children) and its operations.
