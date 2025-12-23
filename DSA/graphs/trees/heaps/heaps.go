@@ -672,11 +672,31 @@ func (h *DaryMinHeap[T]) rootValue() (T, error) {
 }
 
 func (h *DaryMinHeap[T]) bubbleUp(index int) {
-
+	for index > 0 {
+		parentIdx := h.parentIndex(index)
+		if h.data[parentIdx] <= h.data[index] {
+			break
+		}
+		// swap the parent and the children
+		h.data[parentIdx], h.data[index] = h.data[index], h.data[parentIdx]
+	}
 }
 
 func (h *DaryMinHeap[T]) bubbleDown(index int) {
-
+	n := len(h.data)
+	for {
+		min := index
+		for k := 1; k < h.d; k++ {
+			childIdx := h.d*index + k
+			if childIdx < n && h.data[childIdx] < h.data[min] {
+				min = childIdx
+			}
+		}
+		if min == index {
+			break
+		}
+		h.data[min], h.data[index] = h.data[index], h.data[min]
+	}
 }
 
 func (h *DaryMinHeap[T]) insert(value T) {
