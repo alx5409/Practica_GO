@@ -627,3 +627,12 @@ func (mf *MedianFinder[T]) FindMedian() T {
 }
 
 // 15. Implement a d-ary heap (where each node has d children) and its operations.
+type DaryNode[T bt.Number] struct {
+	chidren          *[]DaryNode[T]
+	values           []T
+	numberOfChildren int
+}
+
+type DaryHeap[T bt.Number] struct {
+	Root *DaryNode[T]
+}
