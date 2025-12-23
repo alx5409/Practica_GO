@@ -627,3 +627,107 @@ func (mf *MedianFinder[T]) FindMedian() T {
 }
 
 // 15. Implement a d-ary heap (where each node has d children) and its operations.
+type DaryMinHeap[T bt.Number] struct {
+	data []T
+	d    int // number of max children per node
+}
+
+/*
+Since every node has at most d children now the index of the children are as follows:
+	for node with index i:
+		has children with indices d*i + 1 to d*i + d
+	for node with index i:
+		parent has index = (i-1)/d
+*/
+
+func (h DaryMinHeap[T]) isEmpty() bool {
+	return len(h.data) == 0
+}
+
+func (h DaryMinHeap[T]) parentIndex(index int) int {
+	if index == 0 {
+		return -1
+	}
+	return (index - 1) / h.d
+}
+
+func (h DaryMinHeap[T]) childIndex(index int, k int) int {
+	return h.d*index + k
+}
+
+func (h DaryMinHeap[T]) childrenIndices(index int) []int {
+	var indices []int
+	for i := 1; i <= h.d; i++ {
+		indices = append(indices, h.childIndex(index, i))
+	}
+	return indices
+}
+
+func (h *DaryMinHeap[T]) rootValue() (T, error) {
+	if h.isEmpty() {
+		var zero T
+		return zero, errors.New("empty heap")
+	}
+	return h.data[0], nil
+}
+
+func (h *DaryMinHeap[T]) bubbleUp(index int) {
+	for index > 0 {
+		parentIdx := h.parentIndex(index)
+		if h.data[parentIdx] <= h.data[index] {
+			break
+		}
+		// swap the parent and the children
+		h.data[parentIdx], h.data[index] = h.data[index], h.data[parentIdx]
+	}
+}
+
+func (h *DaryMinHeap[T]) bubbleDown(index int) {
+	n := len(h.data)
+	for {
+		min := index
+		for k := 1; k < h.d; k++ {
+			childIdx := h.d*index + k
+			if childIdx < n && h.data[childIdx] < h.data[min] {
+				min = childIdx
+			}
+		}
+		if min == index {
+			break
+		}
+		h.data[min], h.data[index] = h.data[index], h.data[min]
+	}
+}
+
+func (h *DaryMinHeap[T]) insert(value T) {
+	// Add value at the end of the slice and then bubble up from there
+	h.data = append(h.data, value)
+	lastIndex := len(h.data) - 1
+	h.bubbleUp(lastIndex)
+}
+
+func (h *DaryMinHeap[T]) removeRoot() {
+	if h.isEmpty() {
+		return
+	}
+	// Remove the root value by updating it with the last one and bubble down from the root
+	rootIdx := rootIndex()
+	lastIndex := len(h.data) - 1
+	h.data[0] = h.data[lastIndex]
+	h.data = h.data[:lastIndex]
+	h.bubbleDown(rootIdx)
+}
+
+func buildDaryHeapFromSlice[T bt.Number](slice []T, d int) DaryMinHeap[T] {
+	heap := DaryMinHeap[T]{data: append([]T{}, slice...), d: d}
+	n := len(slice)
+	if n == 0 {
+		return heap
+	}
+
+	// Start from the last parent and bubble down to root
+	for i := (n - 2) / d; i >= 0; i-- {
+		heap.bubbleDown(i)
+	}
+	return heap
+}
