@@ -680,11 +680,34 @@ func (h *DaryMinHeap[T]) bubbleDown(index int) {
 }
 
 func (h *DaryMinHeap[T]) insert(value T) {
-
+	// Add value at the end of the slice and then bubble up from there
+	h.data = append(h.data, value)
+	lastIndex := len(h.data) - 1
+	h.bubbleUp(lastIndex)
 }
 
 func (h *DaryMinHeap[T]) removeRoot() {
 	if h.isEmpty() {
 		return
 	}
+	// Remove the root value by updating it with the last one and bubble down from the root
+	rootIdx := rootIndex()
+	lastIndex := len(h.data) - 1
+	h.data[0] = h.data[lastIndex]
+	h.data = h.data[:lastIndex]
+	h.bubbleDown(rootIdx)
+}
+
+func buildDaryHeapFromSlice[T bt.Number](slice []T, d int) DaryMinHeap[T] {
+	heap := DaryMinHeap[T]{data: append([]T{}, slice...), d: d}
+	n := len(slice)
+	if n == 0 {
+		return heap
+	}
+
+	// Start from the last parent and bubble down to root
+	for i := (n - 2) / d; i >= 0; i-- {
+		heap.bubbleDown(i)
+	}
+	return heap
 }
