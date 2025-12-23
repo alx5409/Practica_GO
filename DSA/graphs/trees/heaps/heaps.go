@@ -679,6 +679,7 @@ func (h *DaryMinHeap[T]) bubbleUp(index int) {
 		}
 		// swap the parent and the children
 		h.data[parentIdx], h.data[index] = h.data[index], h.data[parentIdx]
+		index = parentIdx
 	}
 }
 
@@ -696,6 +697,7 @@ func (h *DaryMinHeap[T]) bubbleDown(index int) {
 			break
 		}
 		h.data[min], h.data[index] = h.data[index], h.data[min]
+		index = min
 	}
 }
 
