@@ -627,12 +627,38 @@ func (mf *MedianFinder[T]) FindMedian() T {
 }
 
 // 15. Implement a d-ary heap (where each node has d children) and its operations.
-type DaryNode[T bt.Number] struct {
-	chidren          *[]DaryNode[T]
-	values           []T
-	numberOfChildren int
+type DaryHeap[T bt.Number] struct {
+	data []T
+	d    int // number of max children per node
 }
 
-type DaryHeap[T bt.Number] struct {
-	Root *DaryNode[T]
+/*
+Since every node has at most d children now the index of the children are as follows:
+	for node with index i:
+		has children with indices d*i + 1 to d*i + d
+	for node with index i:
+		parent has index = (i-1)/d
+*/
+
+func (h DaryHeap[T]) isEmpty() bool {
+	return len(h.data) == 0
+}
+
+func (h DaryHeap[T]) parentIndex(index int) int {
+	if index == 0 {
+		return -1
+	}
+	return (index - 1) / h.d
+}
+
+func (h DaryHeap[T]) childIndex(index int, k int) int {
+	return h.d*index + k
+}
+
+func (h DaryHeap[T]) childrenIndices(index int) []int {
+	var indices []int
+	for i := 1; i <= h.d; i++ {
+		indices = append(indices, h.childIndex(index, i))
+	}
+	return indices
 }
