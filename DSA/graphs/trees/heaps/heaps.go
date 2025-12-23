@@ -627,7 +627,7 @@ func (mf *MedianFinder[T]) FindMedian() T {
 }
 
 // 15. Implement a d-ary heap (where each node has d children) and its operations.
-type DaryHeap[T bt.Number] struct {
+type DaryMinHeap[T bt.Number] struct {
 	data []T
 	d    int // number of max children per node
 }
@@ -640,25 +640,51 @@ Since every node has at most d children now the index of the children are as fol
 		parent has index = (i-1)/d
 */
 
-func (h DaryHeap[T]) isEmpty() bool {
+func (h DaryMinHeap[T]) isEmpty() bool {
 	return len(h.data) == 0
 }
 
-func (h DaryHeap[T]) parentIndex(index int) int {
+func (h DaryMinHeap[T]) parentIndex(index int) int {
 	if index == 0 {
 		return -1
 	}
 	return (index - 1) / h.d
 }
 
-func (h DaryHeap[T]) childIndex(index int, k int) int {
+func (h DaryMinHeap[T]) childIndex(index int, k int) int {
 	return h.d*index + k
 }
 
-func (h DaryHeap[T]) childrenIndices(index int) []int {
+func (h DaryMinHeap[T]) childrenIndices(index int) []int {
 	var indices []int
 	for i := 1; i <= h.d; i++ {
 		indices = append(indices, h.childIndex(index, i))
 	}
 	return indices
+}
+
+func (h *DaryMinHeap[T]) rootValue() (T, error) {
+	if h.isEmpty() {
+		var zero T
+		return zero, errors.New("empty heap")
+	}
+	return h.data[0], nil
+}
+
+func (h *DaryMinHeap[T]) bubbleUp(index int) {
+
+}
+
+func (h *DaryMinHeap[T]) bubbleDown(index int) {
+
+}
+
+func (h *DaryMinHeap[T]) insert(value T) {
+
+}
+
+func (h *DaryMinHeap[T]) removeRoot() {
+	if h.isEmpty() {
+		return
+	}
 }
