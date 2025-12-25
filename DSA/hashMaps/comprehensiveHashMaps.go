@@ -1,10 +1,36 @@
 package hashMaps
 
+import "errors"
+
 // Comprehensive Hash Map Exercises
 
 // 1. Implement a Multimap (map with multiple values per key).
 //    - Write a generic multimap structure where each key maps to a slice of values.
+
+// Generic multimap structure where each key maps to a slice of values
+type Multimap[K comparable, A any] map[K][]A
+
 //    - Support insert, remove, and get operations.
+
+func (m Multimap[K, A]) Insert(key K, values []A) {
+	m[key] = append(m[key], values...)
+}
+
+func (m Multimap[K, A]) Remove(key K) error {
+	if _, ok := m[key]; !ok {
+		return errors.New("not found key")
+	}
+	delete(m, key)
+	return nil
+}
+
+func (m Multimap[K, A]) Get(key K) ([]A, error) {
+	if _, ok := m[key]; !ok {
+		var zero []A
+		return zero, errors.New("not found key")
+	}
+	return m[key], nil
+}
 
 // 2. Design a Word Frequency Counter with Top-K Query.
 //    - Given a stream of words, efficiently support:
