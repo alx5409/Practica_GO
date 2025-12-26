@@ -142,7 +142,7 @@ func (h *MaxHeap[T]) heapifyMax() {
 	}
 }
 
-func (hM *MaxHeap[T]) insert(value T) {
+func (hM *MaxHeap[T]) Insert(value T) {
 	// If is empty insert the value at root
 	if hM.isEmpty() {
 		hM.data = append(hM.data, value)
@@ -153,7 +153,7 @@ func (hM *MaxHeap[T]) insert(value T) {
 	hM.heapifyMax()
 }
 
-func (hM *MaxHeap[T]) extractMax() T {
+func (hM *MaxHeap[T]) ExtractMax() T {
 	if hM.isEmpty() {
 		var zero T
 		return zero
@@ -198,7 +198,7 @@ func (mh *MinHeap[T]) heapifyMinDown() {
 	}
 }
 
-func (mh *MinHeap[T]) removeRoot() {
+func (mh *MinHeap[T]) RemoveRoot() {
 	lastIndex := len(mh.data) - 1
 	mh.data[rootIndex()] = mh.data[lastIndex]
 	mh.data = mh.data[:lastIndex]
@@ -213,7 +213,7 @@ func heapSort[T bt.Number](slice []T) []T {
 	minHeap := minHeapifySlice(slice)
 	for !minHeap.isEmpty() {
 		orderedSlice = append(orderedSlice, minHeap.rootValue())
-		minHeap.removeRoot()
+		minHeap.RemoveRoot()
 	}
 	return orderedSlice
 }
@@ -226,7 +226,7 @@ func kthSmallestElement[T bt.Number](slice []T, k int) (T, error) {
 	}
 	minHeap := minHeapifySlice(slice)
 	for i := 1; i < k; i++ {
-		minHeap.removeRoot()
+		minHeap.RemoveRoot()
 	}
 	return minHeap.rootValue(), nil
 }
@@ -238,7 +238,7 @@ func maxHeapifySlice[T bt.Number](slice []T) MaxHeap[T] {
 		return result
 	}
 	for _, value := range slice {
-		result.insert(value)
+		result.Insert(value)
 	}
 	return result
 }
@@ -273,7 +273,7 @@ func (mh *MaxHeap[T]) removeRoot() {
 	mh.heapifyMaxDown()
 }
 
-func kthLargestElement[T bt.Number](slice []T, k int) (T, error) {
+func KthLargestElement[T bt.Number](slice []T, k int) (T, error) {
 	var kthSmallest T
 	if k <= 0 || k > len(slice) {
 		return kthSmallest, errors.New("index out of bounds")
@@ -598,8 +598,8 @@ func (mf *MedianFinder[T]) BalanceHeaps() {
 	}
 	if len(mf.high.data) > len(mf.low.data)+1 {
 		removedValue := mf.high.rootValue()
-		mf.high.removeRoot()
-		mf.low.insert(removedValue)
+		mf.high.RemoveRoot()
+		mf.low.Insert(removedValue)
 		return
 	}
 }
@@ -607,7 +607,7 @@ func (mf *MedianFinder[T]) BalanceHeaps() {
 func (mf *MedianFinder[T]) AddNumber(number T) {
 	// Insert into max-heap if empty or num <= max of low
 	if len(mf.low.data) == 0 || number <= mf.low.rootValue() {
-		mf.low.insert(number)
+		mf.low.Insert(number)
 	} else {
 		mf.high.insert(number)
 	}
