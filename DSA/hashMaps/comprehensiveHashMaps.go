@@ -178,7 +178,55 @@ func (t TopKQuery) mostKFrecuentWords(k int) []string {
 }
 
 // 3. Implement a Trie (Prefix Tree) Using Hash Maps.
+
 //    - Build a trie for string storage and prefix search, using hash maps for children at each node.
+
+// Data about english alphabet
+const alphabetSize int = 26
+const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+var alphabetRunes = []rune("abcdefghijklmnopqrstuvwxyz")
+
+type PrefixNode struct {
+	character   rune
+	children    map[rune]*PrefixNode
+	isEndOfWord bool
+}
+
+type Trie struct {
+	Root *PrefixNode
+}
+
+func NewTrie() *Trie {
+	return &Trie{
+		Root: &PrefixNode{
+			character:   '0',
+			isEndOfWord: false,
+			children:    make(map[rune]*PrefixNode),
+		},
+	}
+}
+
+// Search for all possible strings after introducing a string
+func (t Trie) search(key string) bool {
+	node := t.Root
+	for _, char := range key {
+		next, ok := node.children[char]
+		if !ok {
+			return false
+		}
+		node = next
+	}
+	return node.isEndOfWord
+}
+
+func (t *Trie) insert(character rune) {
+
+}
+
+func (t *Trie) delete(character rune) {
+
+}
 
 // 4. Find All Subarrays With Equal Number of 0s and 1s.
 //    - Given a binary array, use a hash map to find the number of subarrays with equal numbers of 0s and 1s.
