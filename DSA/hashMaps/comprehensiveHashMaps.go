@@ -229,7 +229,41 @@ func (t *Trie) delete(character rune) {
 }
 
 // 4. Find All Subarrays With Equal Number of 0s and 1s.
-//    - Given a binary array, use a hash map to find the number of subarrays with equal numbers of 0s and 1s.
+//   - Given a binary array, use a hash map to find the number of subarrays with equal numbers of 0s and 1s.
+func isBinarySlice(slice []int) bool {
+	zero := 0
+	one := 1
+	for _, value := range slice {
+		if value != zero && value != one {
+			return false
+		}
+	}
+	return true
+}
+
+func efficientNumberOfSubslicesWithEqual0sAnd1s(binarySlice []int) int {
+	if !isBinarySlice(binarySlice) {
+		return -1
+	}
+	counter := 0
+	prefixSum := 0
+	prefixSumMap := make(map[int]int)
+	prefixSumMap[0] = 1 // to count subarrays starting from index 0
+
+	for _, value := range binarySlice {
+		if value == 1 {
+			prefixSum += value
+		}
+		// consider the values 0 as -1 to see if the sublice has same number of 0s and 1s which will have zero sum
+		if value == 0 {
+			prefixSum -= 1
+		}
+		// if the same prefix sum has occured befora at some previous index, the subslice has the same number of 0s and 1s
+		counter += prefixSumMap[prefixSum]
+		prefixSumMap[prefixSum]++
+	}
+	return counter
+}
 
 // 5. Group Shifted Strings.
 //    - Given a list of strings, group all strings that belong to the same shifting sequence (e.g., "abc", "bcd", "xyz" are in the same group).
