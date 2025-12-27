@@ -2,6 +2,8 @@ package hashMaps
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 )
 
 // Comprehensive Hash Map Exercises
@@ -266,7 +268,58 @@ func efficientNumberOfSubslicesWithEqual0sAnd1s(binarySlice []int) int {
 }
 
 // 5. Group Shifted Strings.
-//    - Given a list of strings, group all strings that belong to the same shifting sequence (e.g., "abc", "bcd", "xyz" are in the same group).
+//   - Given a list of strings, group all strings that belong to the same shifting sequence (e.g., "abc", "bcd", "xyz" are in the same group).
+func largestStringLength(stringSlice []string) int {
+	max := 0
+	for _, s := range stringSlice {
+		if max < len(s) {
+			max = len(s)
+		}
+	}
+	return max
+}
+
+func separationMap(stringSlice []string) map[string][]int {
+	hmap := make(map[string][]int)
+	for _, s := range stringSlice {
+		intStringRunes := []rune(s)
+		firstRune := intStringRunes[0]
+		for _, r := range intStringRunes {
+			hmap[s] = append(hmap[s], int(firstRune)-int(r))
+		}
+	}
+	return hmap
+}
+
+func separationKey(sMap map[string][]int) map[string]string {
+	sepKeyMap := make(map[string]string)
+	for key, value := range sMap {
+		// transform the integer slice into a string by just concatenating
+		var parts []string
+		for _, num := range value {
+			sNum := fmt.Sprintf("%d", num)
+			parts = append(parts, sNum)
+		}
+		sValue := strings.Join(parts, "")
+		sepKeyMap[key] = sValue
+	}
+	return sepKeyMap
+}
+
+func groupShiftingStrings(stringList []string) [][]string {
+	sepMap := separationMap(stringList)
+	sepKeys := separationKey(sepMap)
+	stringGroups := make(map[string][]string)
+	for _, s := range stringList {
+		key := sepKeys[s]
+		stringGroups[key] = append(stringGroups[key], s)
+	}
+	var result [][]string
+	for _, group := range stringGroups {
+		result = append(result, group)
+	}
+	return result
+}
 
 // 6. Implement a Least Frequently Used (LFU) Cache.
 //    - Design a cache that evicts the least frequently used item.
