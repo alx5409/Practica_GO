@@ -179,6 +179,7 @@ func (t TopKQuery) mostKFrecuentWords(k int) []string {
 	return result
 }
 
+// TODO: the complexity of the problems yields this exercise to a new project
 // 3. Implement a Trie (Prefix Tree) Using Hash Maps.
 
 //    - Build a trie for string storage and prefix search, using hash maps for children at each node.
@@ -321,6 +322,7 @@ func groupShiftingStrings(stringList []string) [][]string {
 	return result
 }
 
+// TODO: need to see double linked list first
 // 6. Implement a Least Frequently Used (LFU) Cache.
 //    - Design a cache that evicts the least frequently used item.
 //    - Use hash maps for O(1) access and frequency tracking.
