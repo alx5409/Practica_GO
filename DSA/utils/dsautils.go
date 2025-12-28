@@ -2,6 +2,11 @@ package utils
 
 import "errors"
 
+// Generic type for numbers
+type Number interface {
+	~int | ~int32 | ~int64 | ~float32 | ~float64
+}
+
 // Stack structure
 type Stack[V any] struct {
 	data []V
