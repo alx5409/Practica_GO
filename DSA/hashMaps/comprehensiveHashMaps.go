@@ -332,6 +332,15 @@ func groupShiftingStrings(stringList []string) [][]string {
 // 7. Find the Longest Substring with At Most K Distinct Characters.
 //    - Given a string and an integer K, find the length of the longest substring with at most K distinct characters using a hash map.
 
+func longestSubstringKDistinct(s string, k int) int {
+	maxLength := 0
+	if k == 0 || len(s) == 0 {
+		return maxLength
+	}
+	// complete the function
+	return maxLength
+}
+
 // 8. Detect and Return All Duplicate Subtrees in a Binary Tree.
 //    - Serialize each subtree using a hash map to detect duplicates.
 
