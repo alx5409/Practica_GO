@@ -1,6 +1,7 @@
 package hashMaps
 
 import (
+	utils "Practica_GO/DSA/utils"
 	"errors"
 	"fmt"
 	"strings"
@@ -334,7 +335,42 @@ func groupShiftingStrings(stringList []string) [][]string {
 //    - Serialize each subtree using a hash map to detect duplicates.
 
 // 9. Implement a Two Sum Data Structure.
-//    - Support add(number) and find(value) to check if any two numbers sum to a value, using a hash map.
+
+// Two sum problem for context: find two numbers a and b that sums an objective sum
+
+// Function to find two numbers in a slice that sums up to an objective
+func twoSums(intSlice []int, sum int) (int, int) {
+	hmap := make(map[int]bool)
+	for _, value := range intSlice {
+		complement := sum - value
+		if hmap[complement] {
+			return value, complement
+		}
+		hmap[value] = true
+	}
+	return -1, -1
+}
+
+type TwoSum[N utils.Number] struct {
+	data []N
+}
+
+// - Support add(number) and find(value) to check if any two numbers sum to a value, using a hash map.
+func (t *TwoSum[N]) add(number N) {
+	t.data = append(t.data, number)
+}
+
+func (t *TwoSum[N]) find(value N) bool {
+	hmap := make(map[N]bool)
+	for _, val := range t.data {
+		complement := value - val
+		if hmap[complement] {
+			return true
+		}
+		hmap[val] = true
+	}
+	return false
+}
 
 // 10. Find All Pairs of Anagrams in a List.
 //     - Given a list of strings, return all pairs of indices where the strings are anagrams of each other.
