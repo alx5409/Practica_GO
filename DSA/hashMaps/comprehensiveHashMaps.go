@@ -4,6 +4,7 @@ import (
 	utils "Practica_GO/DSA/utils"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -373,4 +374,30 @@ func (t *TwoSum[N]) find(value N) bool {
 }
 
 // 10. Find All Pairs of Anagrams in a List.
-//     - Given a list of strings, return all pairs of indices where the strings are anagrams of each other.
+//     - Given a list of strings, return all indices where the strings are anagrams of each other.
+
+// Sorts the string and returns that as a signature
+func signature(s string) string {
+	runes := []rune(s)
+	sort.Slice(runes, func(i, j int) bool {
+		return runes[i] < runes[j]
+	})
+	return string(runes)
+}
+
+func allPaisOfAnagrams(list []string) [][]int {
+	indicesGroups := make(map[string][]int)
+	// for each string in the list builds the signature and appends the index according its signature
+	for i, s := range list {
+		sgn := signature(s)
+		indicesGroups[sgn] = append(indicesGroups[sgn], i)
+	}
+
+	var result [][]int
+	for _, indices := range indicesGroups {
+		if len(indices) > 1 {
+			result = append(result, indices)
+		}
+	}
+	return result
+}
