@@ -24,7 +24,7 @@ func instertKeyValueInMap(hmap map[string]int, key string, value int) {
 }
 
 // 4. Delete a key-value pair from the hash map.
-func deleteKeyValue(hmap map[string]int, key string, value int) error {
+func deleteKeyValue(hmap map[string]int, key string) error {
 	if !isKeyInMap(hmap, key) {
 		return errors.New("The key is not in the hash map")
 	}
@@ -564,7 +564,7 @@ func allPairsWithSum(slice []int, sum int) ([]Pair[int], error) {
 func naiveConsecutiveSequence(slice []int) []int {
 	maxLength := 0
 	maxIndex := 0
-	for i, _ := range slice {
+	for i := range slice {
 		counter := 0
 		for j := i; j < len(slice)-1; j++ {
 			if slice[j+1] != slice[j]+1 {
@@ -609,7 +609,7 @@ func longestConsecutiveSequence(slice []int) []int {
 		return slice
 	}
 	numpMap := make(map[int]int)
-	for position, _ := range slice {
+	for position := range slice {
 		for i := position; i < len(slice)-1; i++ {
 			if slice[i+1] != slice[i]+1 {
 				break
@@ -855,7 +855,7 @@ func (store *EventStore) AddEvent(event time.Time) {
 	store.eventCounts[day]++
 }
 
-func (store *EventStore) queryNumberOfEvents(events []time.Time, start, end time.Time) int {
+func (store *EventStore) queryNumberOfEvents(start, end time.Time) int {
 	count := 0
 	for d := start; !d.After(end); d = d.AddDate(0, 0, 1) {
 		dayStr := d.Format("2006-01-02")
