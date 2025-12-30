@@ -360,6 +360,52 @@ func longestSubstringKDistinct(s string, k int) int {
 // 8. Detect and Return All Duplicate Subtrees in a Binary Tree.
 //    - Serialize each subtree using a hash map to detect duplicates.
 
+type Node[T comparable] struct {
+	value T
+	left  *Node[T]
+	right *Node[T]
+}
+
+type BinaryTree[T comparable] struct {
+	Root *Node[T]
+}
+
+// function to make a unique signature to serialize a subtree in the following way: "value","left_serialization","right_serialization"
+//
+// For example, for a node with value 1, left child 2, and right child 3, the serialization is:
+// "1,2,#,#,3,#,#"
+func serializeSubtree[T comparable](node *Node[T]) string {
+	if node == nil {
+		return "#"
+	}
+	left := serializeSubtree(node.left)
+	right := serializeSubtree(node.right)
+	return fmt.Sprintf("%v,%s,%s", node.value, left, right)
+}
+
+// helper function to serialize the entire tree
+func duplicatesHelper[T comparable](node *Node[T], seen map[string]int, result *[]*Node[T]) string {
+	if node == nil {
+		return "#"
+	}
+	serial := serializeSubtree(node)
+	seen[serial]++
+	if seen[serial] == 2 {
+		*result = append(*result, node)
+	}
+	duplicatesHelper(node.left, seen, result)
+	duplicatesHelper(node.right, seen, result)
+	return serial
+}
+
+// Returns duplicates by traversing the tree and marking the seen nodes
+func (b BinaryTree[T]) duplicates() []*Node[T] {
+	seen := make(map[string]int)
+	var result []*Node[T]
+	duplicatesHelper(b.Root, seen, &result)
+	return result
+}
+
 // 9. Implement a Two Sum Data Structure.
 
 // Two sum problem for context: find two numbers a and b that sums an objective sum
