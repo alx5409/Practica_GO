@@ -337,7 +337,23 @@ func longestSubstringKDistinct(s string, k int) int {
 	if k == 0 || len(s) == 0 {
 		return maxLength
 	}
-	// complete the function
+	// hash map to track the count of each character in the current sliding window
+	charMap := make(map[byte]int)
+	left := 0
+	// sliding window to find the substring
+	for right := 0; right < len(s); right++ {
+		charMap[s[right]]++
+		for len(charMap) > k {
+			charMap[s[left]]--
+			if charMap[s[left]] == 0 {
+				delete(charMap, s[left])
+			}
+			left++
+		}
+		if right-left > maxLength {
+			maxLength = right - left + 1
+		}
+	}
 	return maxLength
 }
 
