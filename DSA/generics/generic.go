@@ -100,6 +100,19 @@ type LinkedList[T any] struct {
 	Head *ListNode[T]
 }
 
+// Generic doubly linked list node
+type DoublyListNode[T any] struct {
+	Value T
+	Next  *DoublyListNode[T]
+	Prev  *DoublyListNode[T]
+}
+
+// Generic doubly linked list
+type DoublyLinkedList[T any] struct {
+	Head *DoublyListNode[T]
+	Tail *DoublyListNode[T]
+}
+
 // Generic binary tree node
 type TreeNode[T any] struct {
 	Value T
