@@ -127,3 +127,34 @@ type BinaryTree[T any] struct {
 
 // Generic set
 type Set[T comparable] map[T]struct{} // Using empty struct to save memory (each value occupies 0 bytes)
+
+// Generic functional algorithms
+
+// Map function applies a given function to each element of the input slice and returns a new slice with the results
+func Map[T any, U any](slice []T, fn func(T) U) []U {
+	result := make([]U, len(slice))
+	for i, v := range slice {
+		result[i] = fn(v)
+	}
+	return result
+}
+
+// Filter function returns a new slice containing only the elements that satisfy the given predicate function
+func Filter[T any](slice []T, predicate func(T) bool) []T {
+	result := []T{}
+	for _, v := range slice {
+		if predicate(v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+// Reduce function reduces the input slice to a single value using the given binary function and an initial accumulator value
+func Reduce[T any, U any](slice []T, fn func(U, T) U, initial U) U {
+	result := initial
+	for _, v := range slice {
+		result = fn(result, v)
+	}
+	return result
+}
