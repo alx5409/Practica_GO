@@ -4,14 +4,20 @@ package avl
 // 1. Implement an AVL tree node structure in Go.
 
 // Adelson-Velsky and Landis generic node
-type AVLNode[A any] struct {
+import (
+	utils "Practica_GO/DSA/utils"
+)
+
+type Number utils.Number
+
+type AVLNode[A Number] struct {
 	value A
 	left  *AVLNode[A]
 	right *AVLNode[A]
 }
 
 // Adelson-Velsky and Landis generic tree
-type AVLTree[A any] struct {
+type AVLTree[A Number] struct {
 	Root *AVLNode[A]
 }
 
@@ -20,7 +26,7 @@ func (a AVLTree[A]) isEmpty() bool {
 }
 
 // Computes the height of the subtree with the node as Root node
-func subtreeHeight[A any](node *AVLNode[A]) int {
+func subtreeHeight[A Number](node *AVLNode[A]) int {
 	if node == nil {
 		return 0
 	}
@@ -33,14 +39,89 @@ func subtreeHeight[A any](node *AVLNode[A]) int {
 }
 
 // Computes the balance factor of a node
-func balanceFactor[A any](node *AVLNode[A]) int {
+func balanceFactor[A Number](node *AVLNode[A]) int {
 	return subtreeHeight(node.left) - subtreeHeight(node.right)
 }
 
 // 2. Write a function to insert a value into an AVL tree and maintain balance.
 
+// Perform a left-left rotation
+func (a *AVLTree[A]) LLRotation(parentNode, childNode *AVLNode[A]) {
+
+}
+
+// Perform a left-right rotation
+func (a *AVLTree[A]) LRRotation(parentNode, childNode *AVLNode[A]) {
+
+}
+
+// Perform a right-left rotation
+func (a *AVLTree[A]) RLRotation(parentNode, childNode *AVLNode[A]) {
+
+}
+
+// Perform a right-right rotation
+func (a *AVLTree[A]) RRRotation(parentNode, childNode *AVLNode[A]) {
+
+}
+
+// Detect which rotation type use:
+//
+//	ParentNodeBF | ChildNodeBF | RotationType | Description
+//	+2           | 0, 1        | RR           | Left subtree heavy, right rotation
+//	+2           | -1          | LR           | Left subtree heavy with bent arm, left-right rotation
+//	-2           | -1, 0       | LL           | Right subtree heavy, left rotation
+//	-2           | +1          | RL           | Right subtree heavy with bent arm, right-left rotation
+func rotationType(parentNodeBF, childNodeBF int) string {
+	if parentNodeBF >= 2 && (childNodeBF == 0 || childNodeBF == 1) {
+		return "RR"
+	}
+	if parentNodeBF >= 2 && childNodeBF == -1 {
+		return "LR"
+	}
+	if parentNodeBF <= -2 && (childNodeBF == -1 || childNodeBF == 0) {
+		return "LL"
+	}
+	if parentNodeBF <= -2 && childNodeBF == 1 {
+		return "RL"
+	}
+	// if there is no rotation return empty string
+	return ""
+}
+
+// AVLBalance checks the balance of the AVL tree and performs the necessary rotations
+// to maintain the AVL property.
+func (a *AVLTree[A]) AVLBalance() {
+	parentNode := a.Root
+	for parentNode != nil {
+		parentBalanceFactor := balanceFactor(parentNode)
+		// if the node is balanced just jump to the next node
+		if parentBalanceFactor >= -1 && parentBalanceFactor <= 1 {
+			parentNode = parentNode.left
+		}
+		leftChild := parentNode.left
+		leftChildBalanceFactor := balanceFactor(leftChild)
+		rightChild := parentNode.right
+		rightChildBalanceFactor := balanceFactor(rightChild)
+	}
+}
+
+// Recursive function to insert an element in a BST way, then balancing it to keep the AVL structure
+func (a AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
+	if node == nil {
+		return &AVLNode[A]{value: value}
+	}
+	if value < node.value {
+		node.left = a.insertHelper(node.left, value)
+	} else {
+		node.right = a.insertHelper(node.right, value)
+	}
+	return node
+}
+
 func (a AVLTree[A]) insert(value A) {
-	// newNode := AVLNode[A]{a.value}
+	a.Root = a.insertHelper(a.Root, value)
+	AVLBalance(a)
 }
 
 // 3. Write a function to delete a value from an AVL tree and maintain balance.
