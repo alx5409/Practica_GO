@@ -53,31 +53,31 @@ func (node *AVLNode[A]) isBalanced() bool {
 // 2. Write a function to insert a value into an AVL tree and maintain balance.
 
 // Perform a left-left rotation (right rotation)
-func (n *AVLNode[A]) LLRotation() *AVLNode[A] {
-	leftChild := n.left
-	n.left = leftChild.right
-	leftChild.right = n
+func (node *AVLNode[A]) LLRotation() *AVLNode[A] {
+	leftChild := node.left
+	node.left = leftChild.right
+	leftChild.right = node
 	return leftChild
 }
 
 // Perform a right-right rotation (left rotation)
-func (n *AVLNode[A]) RRRotation() *AVLNode[A] {
-	rightChild := n.right
-	n.right = rightChild.left
-	rightChild.left = n
+func (node *AVLNode[A]) RRRotation() *AVLNode[A] {
+	rightChild := node.right
+	node.right = rightChild.left
+	rightChild.left = node
 	return rightChild
 }
 
 // Perform a left-right rotation
-func (n *AVLNode[A]) LRRotation() *AVLNode[A] {
-	n.left = n.left.RRRotation()
-	return n.LLRotation()
+func (node *AVLNode[A]) LRRotation() *AVLNode[A] {
+	node.left = node.left.RRRotation()
+	return node.LLRotation()
 }
 
 // Perform a right-left rotation
-func (n *AVLNode[A]) RLRotation() *AVLNode[A] {
-	n.right = n.right.LLRotation()
-	return n.RRRotation()
+func (node *AVLNode[A]) RLRotation() *AVLNode[A] {
+	node.right = node.right.LLRotation()
+	return node.RRRotation()
 }
 
 // Detect which rotation type use:
@@ -108,16 +108,18 @@ func (node *AVLNode[A]) rotationType() string {
 }
 
 // rotates according the rotation type
-func (n *AVLNode[A]) rotate(rotationType string) {
+func (node *AVLNode[A]) rotate(rotationType string) *AVLNode[A] {
 	switch rotationType {
 	case "LL":
-		n.LLRotation()
+		return node.LLRotation()
 	case "RR":
-		n.RRRotation()
+		return node.RRRotation()
 	case "RL":
-		n.RLRotation()
+		return node.RLRotation()
 	case "LR":
-		n.LRRotation()
+		return node.LRRotation()
+	default:
+		return node
 	}
 }
 
@@ -152,10 +154,9 @@ func (a AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 	if node.isBalanced() {
 		return node
 	}
-	// rebalance the node with a rotation
+	// rebalance the node with the correct rotation type
 	rType := node.rotationType()
-	node.rotate(rType)
-	return node
+	return node.rotate(rType)
 }
 
 // Function that inserts a value in the AVL tree keeping the structure of the tree
