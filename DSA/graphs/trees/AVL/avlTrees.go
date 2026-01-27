@@ -45,31 +45,39 @@ func (node *AVLNode[A]) balanceFactor() int {
 }
 
 // Checks if a node is unbalanced, meaning, its balance factor is outside of {-1, 0, 1} values.
-func isBalanced(balanceFactor int) bool {
+func (node *AVLNode[A]) isBalanced() bool {
+	balanceFactor := node.balanceFactor()
 	return balanceFactor == -1 || balanceFactor == 0 || balanceFactor == 1
 }
 
 // 2. Write a function to insert a value into an AVL tree and maintain balance.
 
-// Perform a left-left rotation.
-// Occurs when a node becomes unbalanced due to an insertion in the left subtree of its left child
-func (n *AVLNode[A]) LLRotation() {
+// Perform a left-left rotation (right rotation)
+func (n *AVLNode[A]) LLRotation() *AVLNode[A] {
+	leftChild := n.left
+	n.left = leftChild.right
+	leftChild.right = n
+	return leftChild
+}
 
+// Perform a right-right rotation (left rotation)
+func (n *AVLNode[A]) RRRotation() *AVLNode[A] {
+	rightChild := n.right
+	n.right = rightChild.left
+	rightChild.left = n
+	return rightChild
 }
 
 // Perform a left-right rotation
-func (n *AVLNode[A]) LRRotation() {
-
+func (n *AVLNode[A]) LRRotation() *AVLNode[A] {
+	n.left = n.left.RRRotation()
+	return n.LLRotation()
 }
 
 // Perform a right-left rotation
-func (n *AVLNode[A]) RLRotation() {
-
-}
-
-// Perform a right-right rotation
-func (n *AVLNode[A]) RRRotation() {
-
+func (n *AVLNode[A]) RLRotation() *AVLNode[A] {
+	n.right = n.right.LLRotation()
+	return n.RRRotation()
 }
 
 // Detect which rotation type use:
@@ -79,7 +87,7 @@ func (n *AVLNode[A]) RRRotation() {
 //	+2           | -1          | LR           | Left subtree heavy with bent arm, left-right rotation
 //	-2           | -1, 0       | LL           | Right subtree heavy, left rotation
 //	-2           | +1          | RL           | Right subtree heavy with bent arm, right-left rotation
-func rotationType[A Number](node *AVLNode[A]) string {
+func (node *AVLNode[A]) rotationType() string {
 	bf := node.balanceFactor()
 	if bf > 1 {
 		// Left heavy
@@ -90,7 +98,7 @@ func rotationType[A Number](node *AVLNode[A]) string {
 		}
 	} else if bf < -1 {
 		// Right heavy
-		if balanceFactor(node.right) <= 0 {
+		if node.right.balanceFactor() <= 0 {
 			return "RR"
 		} else {
 			return "RL"
@@ -140,14 +148,14 @@ func (a AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 	} else {
 		node.right = a.insertHelper(node.right, value)
 	}
-	nodeBF := balanceFactor(node)
 	// if the balance factor is okay just return the node
-	if ok := isBalanced(nodeBF); ok {
+	if node.isBalanced() {
 		return node
 	}
 	// rebalance the node with a rotation
-	rType := rotationType[A](node)
-	a.rotate(rType)
+	rType := node.rotationType()
+	node.rotate(rType)
+	return node
 }
 
 // Function that inserts a value in the AVL tree keeping the structure of the tree
