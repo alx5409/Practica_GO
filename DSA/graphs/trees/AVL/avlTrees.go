@@ -10,19 +10,19 @@ import (
 
 type Number utils.Number
 
-type AVLNode[A Number] struct {
-	value A
-	left  *AVLNode[A]
-	right *AVLNode[A]
+type AVLNode[N Number] struct {
+	value N
+	left  *AVLNode[N]
+	right *AVLNode[N]
 }
 
 // Adelson-Velsky and Landis generic tree
-type AVLTree[A Number] struct {
-	Root *AVLNode[A]
+type AVLTree[N Number] struct {
+	Root *AVLNode[N]
 }
 
-func (a AVLTree[A]) isEmpty() bool {
-	return a.Root == nil
+func (tree AVLTree[A]) isEmpty() bool {
+	return tree.Root == nil
 }
 
 // Computes the height of the subtree with the node as Root node
@@ -141,14 +141,14 @@ func (node *AVLNode[A]) rotate(rotationType string) *AVLNode[A] {
 // }
 
 // Recursive function to insert an element in a BST way and balancing it to keep the AVL structure
-func (a AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
+func (tree AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 	if node == nil {
 		return &AVLNode[A]{value: value}
 	}
 	if value < node.value {
-		node.left = a.insertHelper(node.left, value)
+		node.left = tree.insertHelper(node.left, value)
 	} else {
-		node.right = a.insertHelper(node.right, value)
+		node.right = tree.insertHelper(node.right, value)
 	}
 	// if the balance factor is okay just return the node
 	if node.isBalanced() {
@@ -160,13 +160,13 @@ func (a AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 }
 
 // Function that inserts a value in the AVL tree keeping the structure of the tree
-func (a AVLTree[A]) insert(value A) {
-	a.Root = a.insertHelper(a.Root, value)
+func (tree AVLTree[A]) insert(value A) {
+	tree.Root = tree.insertHelper(tree.Root, value)
 }
 
 // 3. Write a function to delete a value from an AVL tree and maintain balance.
 
-func (a AVLTree[A]) delete(value A) error {
+func (tree AVLTree[A]) delete(value A) error {
 
 	return nil
 }
