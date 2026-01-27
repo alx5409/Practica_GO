@@ -45,23 +45,24 @@ func balanceFactor[A Number](node *AVLNode[A]) int {
 
 // 2. Write a function to insert a value into an AVL tree and maintain balance.
 
-// Perform a left-left rotation
-func (a *AVLTree[A]) LLRotation(parentNode, childNode *AVLNode[A]) {
+// Perform a left-left rotation.
+// Occurs when a node becomes unbalanced due to an insertion in the left subtree of its left child
+func (a *AVLTree[A]) LLRotation(node *AVLNode[A]) {
 
 }
 
 // Perform a left-right rotation
-func (a *AVLTree[A]) LRRotation(parentNode, childNode *AVLNode[A]) {
+func (a *AVLTree[A]) LRRotation(node *AVLNode[A]) {
 
 }
 
 // Perform a right-left rotation
-func (a *AVLTree[A]) RLRotation(parentNode, childNode *AVLNode[A]) {
+func (a *AVLTree[A]) RLRotation(node *AVLNode[A]) {
 
 }
 
 // Perform a right-right rotation
-func (a *AVLTree[A]) RRRotation(parentNode, childNode *AVLNode[A]) {
+func (a *AVLTree[A]) RRRotation(node *AVLNode[A]) {
 
 }
 
@@ -89,24 +90,24 @@ func rotationType(parentNodeBF, childNodeBF int) string {
 	return ""
 }
 
-// AVLBalance checks the balance of the AVL tree and performs the necessary rotations
-// to maintain the AVL property.
-func (a *AVLTree[A]) AVLBalance() {
-	parentNode := a.Root
-	for parentNode != nil {
-		parentBalanceFactor := balanceFactor(parentNode)
-		// if the node is balanced just jump to the next node
-		if parentBalanceFactor >= -1 && parentBalanceFactor <= 1 {
-			parentNode = parentNode.left
-		}
-		leftChild := parentNode.left
-		leftChildBalanceFactor := balanceFactor(leftChild)
-		rightChild := parentNode.right
-		rightChildBalanceFactor := balanceFactor(rightChild)
-	}
-}
+// AVLBalance checks the balance of the AVL tree and performs the necessary rotations to maintain the AVL property.
+// func (a *AVLTree[A]) AVLBalance() {
+// 	parentNode := a.Root
+// 	for parentNode != nil {
+// 		parentBalanceFactor := balanceFactor(parentNode)
+// 		// if the node is balanced just jump to the next node
+// 		if parentBalanceFactor >= -1 && parentBalanceFactor <= 1 {
+// 			parentNode = parentNode.left
+// 		}
+// 		leftChild := parentNode.left
+// 		leftChildBalanceFactor := balanceFactor(leftChild)
+// 		rightChild := parentNode.right
+// 		rightChildBalanceFactor := balanceFactor(rightChild)
 
-// Recursive function to insert an element in a BST way, then balancing it to keep the AVL structure
+// 	}
+// }
+
+// Recursive function to insert an element in a BST way and balancing it to keep the AVL structure
 func (a AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 	if node == nil {
 		return &AVLNode[A]{value: value}
@@ -116,15 +117,27 @@ func (a AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 	} else {
 		node.right = a.insertHelper(node.right, value)
 	}
+	nodeBF := balanceFactor(node)
+	// if the balance factor is okay just return the node
+	if nodeBF >= -1 && nodeBF <= 1 {
+		return node
+	}
+
 	return node
 }
 
+// Function that inserts a value in the AVL tree keeping the structure of the tree
 func (a AVLTree[A]) insert(value A) {
 	a.Root = a.insertHelper(a.Root, value)
-	AVLBalance(a)
 }
 
 // 3. Write a function to delete a value from an AVL tree and maintain balance.
+
+func (a AVLTree[A]) delete(value A) error {
+
+	return nil
+}
+
 // 4. Implement a function to perform a left rotation on a subtree.
 // 5. Implement a function to perform a right rotation on a subtree.
 // 6. Write a function to get the height of a node in an AVL tree.
