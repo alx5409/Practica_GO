@@ -171,11 +171,31 @@ func (tree AVLTree[A]) delete(value A) error {
 	return nil
 }
 
+// the following exercises are already done above
+
 // 4. Implement a function to perform a left rotation on a subtree.
 // 5. Implement a function to perform a right rotation on a subtree.
 // 6. Write a function to get the height of a node in an AVL tree.
 // 7. Write a function to get the balance factor of a node in an AVL tree.
 // 8. Implement a function to search for a value in an AVL tree.
+
+func (tree AVLTree[N]) search(value N) bool {
+	node := tree.Root
+	for node != nil {
+		if value == node.value {
+			return true
+		}
+		if value < node.value {
+			node = node.left
+			continue
+		}
+		if value > node.value {
+			node = node.right
+		}
+	}
+	return false
+}
+
 // 9. Write a function to find the minimum value in an AVL tree.
 // 10. Write a function to find the maximum value in an AVL tree.
 // 11. Implement preorder, inorder, and postorder traversals for an AVL tree.
