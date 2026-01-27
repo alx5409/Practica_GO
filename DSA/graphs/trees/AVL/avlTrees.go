@@ -6,6 +6,7 @@ package avl
 // Adelson-Velsky and Landis generic node
 import (
 	utils "Practica_GO/DSA/utils"
+	"errors"
 )
 
 type Number utils.Number
@@ -179,6 +180,7 @@ func (tree AVLTree[A]) delete(value A) error {
 // 7. Write a function to get the balance factor of a node in an AVL tree.
 // 8. Implement a function to search for a value in an AVL tree.
 
+// returns true if the value is in the AVL tree, and false if not
 func (tree AVLTree[N]) search(value N) bool {
 	node := tree.Root
 	for node != nil {
@@ -197,6 +199,21 @@ func (tree AVLTree[N]) search(value N) bool {
 }
 
 // 9. Write a function to find the minimum value in an AVL tree.
+
+// returns the minimum value of an AVL, returns error and 0 if the tree is empty
+func (tree AVLTree[N]) min() (N, error) {
+	var minimum N
+	if tree.isEmpty() {
+		err := errors.New("tree is empty")
+		return minimum, err
+	}
+	node := tree.Root
+	for node.left != nil {
+		node = node.left
+	}
+	return node.value, nil
+}
+
 // 10. Write a function to find the maximum value in an AVL tree.
 // 11. Implement preorder, inorder, and postorder traversals for an AVL tree.
 // 12. Write a function to check if a given binary tree is a valid AVL tree.
