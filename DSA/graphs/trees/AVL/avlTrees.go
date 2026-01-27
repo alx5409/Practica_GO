@@ -26,43 +26,49 @@ func (a AVLTree[A]) isEmpty() bool {
 }
 
 // Computes the height of the subtree with the node as Root node
-func subtreeHeight[A Number](node *AVLNode[A]) int {
+func (node *AVLNode[A]) subtreeHeight() int {
 	if node == nil {
 		return 0
 	}
-	leftHeight := subtreeHeight(node.left)
-	rightHeight := subtreeHeight(node.right)
+	leftHeight := node.left.subtreeHeight()
+	rightHeight := node.right.subtreeHeight()
 	if leftHeight > rightHeight {
 		return leftHeight + 1
 	}
 	return rightHeight + 1
 }
 
-// Computes the balance factor of a node
-func balanceFactor[A Number](node *AVLNode[A]) int {
-	return subtreeHeight(node.left) - subtreeHeight(node.right)
+// Computes the balance factor of a node: the height of the subtree with the left node as root -
+// the height of the subtree with the right node as root
+func (node *AVLNode[A]) balanceFactor() int {
+	return node.left.subtreeHeight() - node.right.subtreeHeight()
+}
+
+// Checks if a node is unbalanced, meaning, its balance factor is outside of {-1, 0, 1} values.
+func isBalanced(balanceFactor int) bool {
+	return balanceFactor == -1 || balanceFactor == 0 || balanceFactor == 1
 }
 
 // 2. Write a function to insert a value into an AVL tree and maintain balance.
 
 // Perform a left-left rotation.
 // Occurs when a node becomes unbalanced due to an insertion in the left subtree of its left child
-func (a *AVLTree[A]) LLRotation(node *AVLNode[A]) {
+func (n *AVLNode[A]) LLRotation() {
 
 }
 
 // Perform a left-right rotation
-func (a *AVLTree[A]) LRRotation(node *AVLNode[A]) {
+func (n *AVLNode[A]) LRRotation() {
 
 }
 
 // Perform a right-left rotation
-func (a *AVLTree[A]) RLRotation(node *AVLNode[A]) {
+func (n *AVLNode[A]) RLRotation() {
 
 }
 
 // Perform a right-right rotation
-func (a *AVLTree[A]) RRRotation(node *AVLNode[A]) {
+func (n *AVLNode[A]) RRRotation() {
 
 }
 
@@ -73,21 +79,38 @@ func (a *AVLTree[A]) RRRotation(node *AVLNode[A]) {
 //	+2           | -1          | LR           | Left subtree heavy with bent arm, left-right rotation
 //	-2           | -1, 0       | LL           | Right subtree heavy, left rotation
 //	-2           | +1          | RL           | Right subtree heavy with bent arm, right-left rotation
-func rotationType(parentNodeBF, childNodeBF int) string {
-	if parentNodeBF >= 2 && (childNodeBF == 0 || childNodeBF == 1) {
-		return "RR"
+func rotationType[A Number](node *AVLNode[A]) string {
+	bf := node.balanceFactor()
+	if bf > 1 {
+		// Left heavy
+		if node.left.balanceFactor() >= 0 {
+			return "LL"
+		} else {
+			return "LR"
+		}
+	} else if bf < -1 {
+		// Right heavy
+		if balanceFactor(node.right) <= 0 {
+			return "RR"
+		} else {
+			return "RL"
+		}
 	}
-	if parentNodeBF >= 2 && childNodeBF == -1 {
-		return "LR"
-	}
-	if parentNodeBF <= -2 && (childNodeBF == -1 || childNodeBF == 0) {
-		return "LL"
-	}
-	if parentNodeBF <= -2 && childNodeBF == 1 {
-		return "RL"
-	}
-	// if there is no rotation return empty string
 	return ""
+}
+
+// rotates according the rotation type
+func (n *AVLNode[A]) rotate(rotationType string) {
+	switch rotationType {
+	case "LL":
+		n.LLRotation()
+	case "RR":
+		n.RRRotation()
+	case "RL":
+		n.RLRotation()
+	case "LR":
+		n.LRRotation()
+	}
 }
 
 // AVLBalance checks the balance of the AVL tree and performs the necessary rotations to maintain the AVL property.
@@ -119,11 +142,12 @@ func (a AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 	}
 	nodeBF := balanceFactor(node)
 	// if the balance factor is okay just return the node
-	if nodeBF >= -1 && nodeBF <= 1 {
+	if ok := isBalanced(nodeBF); ok {
 		return node
 	}
-
-	return node
+	// rebalance the node with a rotation
+	rType := rotationType[A](node)
+	a.rotate(rType)
 }
 
 // Function that inserts a value in the AVL tree keeping the structure of the tree
