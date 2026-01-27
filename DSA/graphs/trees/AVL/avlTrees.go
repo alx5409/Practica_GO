@@ -7,6 +7,7 @@ package avl
 import (
 	utils "Practica_GO/DSA/utils"
 	"errors"
+	"fmt"
 )
 
 type Number utils.Number
@@ -15,6 +16,10 @@ type AVLNode[N Number] struct {
 	value N
 	left  *AVLNode[N]
 	right *AVLNode[N]
+}
+
+func (node AVLNode[N]) printValue() {
+	fmt.Print(node.value)
 }
 
 // Adelson-Velsky and Landis generic tree
@@ -168,7 +173,6 @@ func (tree AVLTree[A]) insert(value A) {
 // 3. Write a function to delete a value from an AVL tree and maintain balance.
 
 func (tree AVLTree[A]) delete(value A) error {
-
 	return nil
 }
 
@@ -231,6 +235,55 @@ func (tree AVLTree[N]) max() (N, error) {
 }
 
 // 11. Implement preorder, inorder, and postorder traversals for an AVL tree.
+
+// helper function to apply recursion in preorder
+func (node *AVLNode[N]) preTraverse() {
+	if node == nil {
+		return
+	}
+	node.printValue()
+	node.left.preTraverse()
+	node.right.preTraverse()
+}
+
+// visit a node, then left subtree, then right subtree
+func (tree AVLTree[N]) preorderTraversal() {
+	node := tree.Root
+	node.preTraverse()
+}
+
+// helper function to apply recursion in postorder
+func (node *AVLNode[N]) postTraverse() {
+	if node == nil {
+		return
+	}
+	node.left.preTraverse()
+	node.right.preTraverse()
+	node.printValue()
+}
+
+// visit the left subtree, then right subtree, then node
+func (tree AVLTree[N]) postorderTraversal() {
+	node := tree.Root
+	node.postTraverse()
+}
+
+// helper function to apply recursion in inorder
+func (node *AVLNode[N]) inTraverse() {
+	if node == nil {
+		return
+	}
+	node.left.preTraverse()
+	node.printValue()
+	node.right.preTraverse()
+}
+
+// visit left subtree, then right node, then right subtree
+func (tree AVLTree[N]) inorderTraversal() {
+	node := tree.Root
+	node.inTraverse()
+}
+
 // 12. Write a function to check if a given binary tree is a valid AVL tree.
 // 13. Write a function to print all nodes at a given level in an AVL tree.
 // 14. Implement a function to count the number of nodes in an AVL tree.
