@@ -19,7 +19,7 @@ type AVLNode[N Number] struct {
 }
 
 func (node AVLNode[N]) printValue() {
-	fmt.Print(node.value)
+	fmt.Printf("%v ", node.value)
 }
 
 // Adelson-Velsky and Landis generic tree
@@ -27,7 +27,7 @@ type AVLTree[N Number] struct {
 	Root *AVLNode[N]
 }
 
-func (tree AVLTree[A]) isEmpty() bool {
+func (tree AVLTree[A]) IsEmpty() bool {
 	return tree.Root == nil
 }
 
@@ -147,7 +147,7 @@ func (node *AVLNode[A]) rotate(rotationType string) *AVLNode[A] {
 // }
 
 // Recursive function to insert an element in a BST way and balancing it to keep the AVL structure
-func (tree AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
+func (tree *AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 	if node == nil {
 		return &AVLNode[A]{value: value}
 	}
@@ -166,7 +166,7 @@ func (tree AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
 }
 
 // Function that inserts a value in the AVL tree keeping the structure of the tree
-func (tree AVLTree[A]) insert(value A) {
+func (tree *AVLTree[A]) Insert(value A) {
 	tree.Root = tree.insertHelper(tree.Root, value)
 }
 
@@ -207,7 +207,7 @@ func (tree AVLTree[N]) search(value N) bool {
 // returns the minimum value of an AVL, returns error and 0 if the tree is empty
 func (tree AVLTree[N]) min() (N, error) {
 	var minimum N
-	if tree.isEmpty() {
+	if tree.IsEmpty() {
 		err := errors.New("tree is empty")
 		return minimum, err
 	}
@@ -223,7 +223,7 @@ func (tree AVLTree[N]) min() (N, error) {
 // returns the minimum value of an AVL, returns error and 0 if the tree is empty
 func (tree AVLTree[N]) max() (N, error) {
 	var minimum N
-	if tree.isEmpty() {
+	if tree.IsEmpty() {
 		err := errors.New("tree is empty")
 		return minimum, err
 	}
@@ -247,9 +247,10 @@ func (node *AVLNode[N]) preTraverse() {
 }
 
 // visit a node, then left subtree, then right subtree
-func (tree AVLTree[N]) preorderTraversal() {
+func (tree AVLTree[N]) PreorderTraversal() {
 	node := tree.Root
 	node.preTraverse()
+	fmt.Println()
 }
 
 // helper function to apply recursion in postorder
@@ -257,15 +258,16 @@ func (node *AVLNode[N]) postTraverse() {
 	if node == nil {
 		return
 	}
-	node.left.preTraverse()
-	node.right.preTraverse()
+	node.left.postTraverse()
+	node.right.postTraverse()
 	node.printValue()
 }
 
 // visit the left subtree, then right subtree, then node
-func (tree AVLTree[N]) postorderTraversal() {
+func (tree AVLTree[N]) PostorderTraversal() {
 	node := tree.Root
 	node.postTraverse()
+	fmt.Println()
 }
 
 // helper function to apply recursion in inorder
@@ -273,15 +275,16 @@ func (node *AVLNode[N]) inTraverse() {
 	if node == nil {
 		return
 	}
-	node.left.preTraverse()
+	node.left.inTraverse()
 	node.printValue()
-	node.right.preTraverse()
+	node.right.inTraverse()
 }
 
 // visit left subtree, then right node, then right subtree
-func (tree AVLTree[N]) inorderTraversal() {
+func (tree AVLTree[N]) InorderTraversal() {
 	node := tree.Root
 	node.inTraverse()
+	fmt.Println()
 }
 
 // 12. Write a function to check if a given binary tree is a valid AVL tree.
