@@ -215,6 +215,21 @@ func (tree AVLTree[N]) min() (N, error) {
 }
 
 // 10. Write a function to find the maximum value in an AVL tree.
+
+// returns the minimum value of an AVL, returns error and 0 if the tree is empty
+func (tree AVLTree[N]) max() (N, error) {
+	var minimum N
+	if tree.isEmpty() {
+		err := errors.New("tree is empty")
+		return minimum, err
+	}
+	node := tree.Root
+	for node.right != nil {
+		node = node.right
+	}
+	return node.value, nil
+}
+
 // 11. Implement preorder, inorder, and postorder traversals for an AVL tree.
 // 12. Write a function to check if a given binary tree is a valid AVL tree.
 // 13. Write a function to print all nodes at a given level in an AVL tree.
