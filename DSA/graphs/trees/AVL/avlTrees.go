@@ -19,7 +19,11 @@ type AVLNode[N Number] struct {
 	right *AVLNode[N]
 }
 
-func (node AVLNode[N]) printValue() {
+func (node *AVLNode[N]) printValue() {
+	if node == nil {
+		return
+	}
+
 	fmt.Printf("%v ", node.value)
 }
 
@@ -299,6 +303,39 @@ func isAVLTree(binaryTree binaryTrees.BinaryTree[int]) bool {
 }
 
 // 13. Write a function to print all nodes at a given level in an AVL tree.
+
+// helper function to print every node at a certain height
+func (node *AVLNode[N]) preTravNodes(level int, current int) {
+	if node == nil {
+		return
+	}
+	if level == current {
+		node.printValue()
+		return
+	}
+	node.left.preTravNodes(level, current+1)
+	node.right.preTravNodes(level, current+1)
+}
+
+// Print every node at the specified height, if the chosen height is empty returns an error
+func (tree AVLTree[N]) printNodesAtHeight(height int) error {
+	if height < 0 {
+		return errors.New("height must be a positive integer")
+	}
+	if tree.IsEmpty() {
+		return errors.New("tree is empty")
+	}
+	if height >= tree.Root.subtreeHeight() {
+		return errors.New("the chosen height is greater than the tree height")
+	}
+	if height == 0 {
+		tree.Root.printValue()
+		return nil
+	}
+	tree.Root.preTravNodes(height, 0)
+	return nil
+}
+
 // 14. Implement a function to count the number of nodes in an AVL tree.
 // 15. Write a function to count the number of leaf nodes in an AVL tree.
 // 16. Write a function to calculate the sum of all node values in an AVL tree.
