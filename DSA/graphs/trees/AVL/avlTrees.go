@@ -374,6 +374,26 @@ func (tree AVLTree[N]) LeafNumber() int {
 }
 
 // 16. Write a function to calculate the sum of all node values in an AVL tree.
+
+func (node *AVLNode[N]) sumNodesHelper(sum *N) N {
+	if node == nil {
+		var zero N
+		return zero
+	}
+	*sum = *sum + node.value
+	return node.left.sumNodesHelper(sum) + node.right.sumNodesHelper(sum)
+}
+
+// returns the total sum of every node in the tree
+func (tree AVLTree[N]) SumNodes() N {
+	var sum N
+	if tree.IsEmpty() {
+		return sum
+	}
+	tree.Root.sumNodesHelper(&sum)
+	return sum
+}
+
 // 17. Implement a function to find the lowest common ancestor (LCA) of two nodes in an AVL tree.
 // 18. Write a function to mirror (invert) an AVL tree.
 // 19. Write a function to print all root-to-leaf paths in an AVL tree.

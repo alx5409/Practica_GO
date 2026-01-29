@@ -15,20 +15,6 @@ func main() {
 		tree.Insert(v)
 	}
 
-	if tree.IsEmpty() {
-		fmt.Println("empty tree")
-	}
-	fmt.Print("Preorder: ")
-	tree.PreorderTraversal()
-
-	fmt.Print("Inorder: ")
-	tree.InorderTraversal()
-
-	fmt.Print("Postorder: ")
-	tree.PostorderTraversal()
-	treeSize := tree.Size()
-	fmt.Println("Size is ", treeSize)
-
-	leafNumber := tree.LeafNumber()
-	fmt.Println("The number of leafs is ", leafNumber)
+	sum := tree.SumNodes()
+	fmt.Println("The sum of the nodes is ", sum)
 }
