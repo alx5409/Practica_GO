@@ -213,7 +213,7 @@ func isBalancedHelper[T Number](node *Node[T]) bool {
 	return isBalancedHelper(node.Left) && isBalancedHelper(node.Right)
 }
 
-func (b BinaryTree[T]) isBalanced() bool {
+func (b BinaryTree[T]) IsBalanced() bool {
 	return isBalancedHelper(b.Root)
 }
 
@@ -383,7 +383,7 @@ func isValidBSTNode[T Number](node *Node[T], min, max *T) bool {
 	return isValidBSTNode(node.Left, min, &node.Value) && isValidBSTNode(node.Right, &node.Value, max)
 }
 
-func (b BinaryTree[T]) isValidBST() bool {
+func (b BinaryTree[T]) IsValidBST() bool {
 	if b.IsEmpty() {
 		return true
 	}

@@ -5,6 +5,7 @@ package avl
 
 // Adelson-Velsky and Landis generic node
 import (
+	binaryTrees "Practica_GO/DSA/graphs/trees/binaryTrees"
 	utils "Practica_GO/DSA/utils"
 	"errors"
 	"fmt"
@@ -288,6 +289,15 @@ func (tree AVLTree[N]) InorderTraversal() {
 }
 
 // 12. Write a function to check if a given binary tree is a valid AVL tree.
+
+// Return true if is an AVL tree: must be a BST and each node must have |BF| <= 1
+func isAVLTree(binaryTree binaryTrees.BinaryTree[int]) bool {
+	if !binaryTree.IsValidBST() || !binaryTree.IsBalanced() {
+		return false
+	}
+	return true
+}
+
 // 13. Write a function to print all nodes at a given level in an AVL tree.
 // 14. Implement a function to count the number of nodes in an AVL tree.
 // 15. Write a function to count the number of leaf nodes in an AVL tree.
