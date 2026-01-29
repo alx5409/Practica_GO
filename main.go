@@ -26,4 +26,6 @@ func main() {
 
 	fmt.Print("Postorder: ")
 	tree.PostorderTraversal()
+	treeSize := tree.Size()
+	fmt.Println("Size is ", treeSize)
 }

@@ -337,6 +337,21 @@ func (tree AVLTree[N]) printNodesAtHeight(height int) error {
 }
 
 // 14. Implement a function to count the number of nodes in an AVL tree.
+
+func (node *AVLNode[N]) sizeHelper() int {
+	if node == nil {
+		return 0
+	}
+	return node.left.sizeHelper() + node.right.sizeHelper() + 1
+}
+
+func (tree AVLTree[N]) Size() int {
+	if tree.IsEmpty() {
+		return 0
+	}
+	return tree.Root.sizeHelper()
+}
+
 // 15. Write a function to count the number of leaf nodes in an AVL tree.
 // 16. Write a function to calculate the sum of all node values in an AVL tree.
 // 17. Implement a function to find the lowest common ancestor (LCA) of two nodes in an AVL tree.
