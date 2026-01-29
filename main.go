@@ -28,4 +28,7 @@ func main() {
 	tree.PostorderTraversal()
 	treeSize := tree.Size()
 	fmt.Println("Size is ", treeSize)
+
+	leafNumber := tree.LeafNumber()
+	fmt.Println("The number of leafs is ", leafNumber)
 }

@@ -345,6 +345,7 @@ func (node *AVLNode[N]) sizeHelper() int {
 	return node.left.sizeHelper() + node.right.sizeHelper() + 1
 }
 
+// returns the number of nodes in the tree
 func (tree AVLTree[N]) Size() int {
 	if tree.IsEmpty() {
 		return 0
@@ -353,6 +354,25 @@ func (tree AVLTree[N]) Size() int {
 }
 
 // 15. Write a function to count the number of leaf nodes in an AVL tree.
+
+func (node *AVLNode[N]) leafNumberHelper() int {
+	if node == nil {
+		return 0
+	}
+	if node.left == nil && node.right == nil {
+		return 1
+	}
+	return node.left.leafNumberHelper() + node.right.leafNumberHelper()
+}
+
+// returns the number of leaf nodes: nodes without children
+func (tree AVLTree[N]) LeafNumber() int {
+	if tree.IsEmpty() {
+		return 0
+	}
+	return tree.Root.leafNumberHelper()
+}
+
 // 16. Write a function to calculate the sum of all node values in an AVL tree.
 // 17. Implement a function to find the lowest common ancestor (LCA) of two nodes in an AVL tree.
 // 18. Write a function to mirror (invert) an AVL tree.
