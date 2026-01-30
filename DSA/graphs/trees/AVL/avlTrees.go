@@ -510,6 +510,27 @@ func (tree AVLTree[N]) PrintAllRootToLeafPaths() {
 }
 
 // 20. Implement a function to check if two AVL trees are identical.
+
+func areNodesIdentical[N Number](node1, node2 *AVLNode[N]) bool {
+	if node1 == nil && node2 == nil {
+		return true
+	}
+	// the following checking returns false if one node is nil and the other one is not, the case when both are
+	// nil is covered above
+	if node2 == nil || node2 == nil {
+		return false
+	}
+	if node1.value != node2.value {
+		return false
+	}
+	return areNodesIdentical(node1.left, node2.left) && areNodesIdentical(node1.right, node2.right)
+}
+
+// returns true if the tree1 and tree2 are identical: have the same structure and the same node values
+func areIdentical[N Number](tree1, tree2 AVLTree[N]) bool {
+	return areNodesIdentical(tree1.Root, tree2.Root)
+}
+
 // 21. Write a function to find the diameter (longest path) of an AVL tree.
 // 22. Write a function to check if an AVL tree is balanced at every node.
 // 23. Implement a function to convert a sorted array to a balanced AVL tree.
