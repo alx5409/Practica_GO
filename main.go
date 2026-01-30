@@ -2,6 +2,7 @@ package main
 
 import (
 	"Practica_GO/DSA/graphs/trees/avl"
+	"fmt"
 )
 
 func main() {
@@ -14,6 +15,9 @@ func main() {
 		tree.Insert(v)
 	}
 
-	tree.PreorderTraversal()
-	tree.PrintAllRootToLeafPaths()
+	if isBalanced := tree.IsBalanced(); isBalanced {
+		fmt.Println("tree is balanced")
+	} else {
+		fmt.Println("tree is unbalanced")
+	}
 }

@@ -63,6 +63,9 @@ func (node *AVLNode[A]) subtreeHeight() int {
 // Computes the balance factor of a node: the height of the subtree with the left node as root -
 // the height of the subtree with the right node as root
 func (node *AVLNode[A]) balanceFactor() int {
+	if node == nil {
+		return 0
+	}
 	return node.left.subtreeHeight() - node.right.subtreeHeight()
 }
 
@@ -533,6 +536,22 @@ func areIdentical[N Number](tree1, tree2 AVLTree[N]) bool {
 
 // 21. Write a function to find the diameter (longest path) of an AVL tree.
 // 22. Write a function to check if an AVL tree is balanced at every node.
+
+func (node *AVLNode[N]) isBalancedHelper() bool {
+	if node == nil {
+		return true
+	}
+	if !node.isBalanced() {
+		return false
+	}
+	return node.right.isBalanced() && node.left.isBalanced()
+}
+
+// checks if a AVL tree is balanced: every node has balance factor of -1, 0 or 1
+func (tree AVLTree[N]) IsBalanced() bool {
+	return tree.Root.isBalancedHelper()
+}
+
 // 23. Implement a function to convert a sorted array to a balanced AVL tree.
 // 24. Write a function to convert an AVL tree to a sorted array (inorder traversal).
 // 25. Implement a function to find the predecessor and successor of a given value in an AVL tree.
