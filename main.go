@@ -15,6 +15,5 @@ func main() {
 	}
 
 	tree.PreorderTraversal()
-	tree.Invert()
-	tree.PreorderTraversal()
+	tree.PrintAllRootToLeafPaths()
 }

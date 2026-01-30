@@ -5,6 +5,7 @@ package avl
 
 // Adelson-Velsky and Landis generic node
 import (
+	"Practica_GO/DSA/generics"
 	binaryTrees "Practica_GO/DSA/graphs/trees/binaryTrees"
 	utils "Practica_GO/DSA/utils"
 	"errors"
@@ -17,6 +18,16 @@ type AVLNode[N Number] struct {
 	value N
 	left  *AVLNode[N]
 	right *AVLNode[N]
+}
+
+func (node *AVLNode[N]) isLeaf() bool {
+	if node == nil {
+		return false
+	}
+	if node.left == nil && node.right == nil {
+		return true
+	}
+	return false
 }
 
 func (node *AVLNode[N]) printValue() {
@@ -477,6 +488,27 @@ func (tree AVLTree[N]) Invert() {
 }
 
 // 19. Write a function to print all root-to-leaf paths in an AVL tree.
+
+func (node *AVLNode[N]) printAllRootToLeafPathsHelper(path *[]N) {
+	if node == nil {
+		return
+	}
+	*path = append(*path, node.value)
+	if node.isLeaf() {
+		generics.PrintSlice(*path)
+		*path = (*path)[:len(*path)-1]
+		return
+	}
+	node.left.printAllRootToLeafPathsHelper(path)
+	node.right.printAllRootToLeafPathsHelper(path)
+	*path = (*path)[:len(*path)-1]
+}
+
+func (tree AVLTree[N]) PrintAllRootToLeafPaths() {
+	var path []N
+	tree.Root.printAllRootToLeafPathsHelper(&path)
+}
+
 // 20. Implement a function to check if two AVL trees are identical.
 // 21. Write a function to find the diameter (longest path) of an AVL tree.
 // 22. Write a function to check if an AVL tree is balanced at every node.

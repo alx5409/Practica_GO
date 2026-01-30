@@ -1,6 +1,9 @@
 package generics
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // Generic Pair structure
 type Pair[A any] struct {
@@ -15,6 +18,14 @@ type Number interface {
 
 // Generic slice
 type Slice[T any] []T
+
+func PrintSlice[T any](slice []T) {
+	fmt.Print("[")
+	for _, element := range slice {
+		fmt.Print(" ", element, " ")
+	}
+	fmt.Print("]\n")
+}
 
 // Generic hashmap
 type HashMap[K comparable, V any] map[K]V
