@@ -395,6 +395,70 @@ func (tree AVLTree[N]) SumNodes() N {
 }
 
 // 17. Implement a function to find the lowest common ancestor (LCA) of two nodes in an AVL tree.
+
+func (node *AVLNode[N]) dfsHelper(value N) *AVLNode[N] {
+	if node == nil {
+		return nil
+	}
+	if value == node.value {
+		return node
+	}
+	if left := node.left.dfsHelper(value); left != nil {
+		return left
+	}
+	return node.right.dfsHelper(value)
+
+}
+
+// Deep First Search
+func (tree AVLTree[N]) DFS(value N) *AVLNode[N] {
+	if tree.IsEmpty() {
+		var nilNode *AVLNode[N]
+		return nilNode
+	}
+	node := tree.Root.dfsHelper(value)
+	return node
+}
+
+func (node *AVLNode[N]) lcaHelper(value1, value2 N) *AVLNode[N] {
+	if node == nil {
+		return nil
+	}
+	if value1 < node.value && value2 < node.value {
+		return node.left.lcaHelper(value1, value2)
+	}
+	if value1 > node.value && value2 > node.value {
+		return node.right.lcaHelper(value1, value2)
+	}
+	return node
+}
+
+// find the Lowest Common Ancestor (LCA) of two nodes
+func (tree AVLTree[N]) LCA(value1, value2 N) (N, error) {
+	if tree.IsEmpty() {
+		var zero N
+		return zero, errors.New("tree is empty")
+	}
+	// dfsearchs for the nodes with the values provided
+	node1 := tree.DFS(value1)
+	if node1 == nil {
+		var zero N
+		return zero, errors.New(fmt.Sprint("value : %v was not found", value1))
+	}
+	node2 := tree.DFS(value2)
+	if node2 == nil {
+		var zero N
+		return zero, errors.New(fmt.Sprint("value : %v was not found", value2))
+	}
+
+	lcaNode := node1.lcaHelper(value1, node1.value)
+	if lcaNode == nil {
+		var zero N
+		return zero, errors.New("there is not an LCA")
+	}
+	return lcaNode.value, nil
+}
+
 // 18. Write a function to mirror (invert) an AVL tree.
 // 19. Write a function to print all root-to-leaf paths in an AVL tree.
 // 20. Implement a function to check if two AVL trees are identical.

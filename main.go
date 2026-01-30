@@ -17,4 +17,9 @@ func main() {
 
 	sum := tree.SumNodes()
 	fmt.Println("The sum of the nodes is ", sum)
+	lca, err := tree.LCA(10, 50)
+	if err != nil {
+		fmt.Println("there is no lca")
+	}
+	fmt.Println("the lca is ", lca)
 }
