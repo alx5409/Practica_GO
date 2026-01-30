@@ -443,12 +443,12 @@ func (tree AVLTree[N]) LCA(value1, value2 N) (N, error) {
 	node1 := tree.DFS(value1)
 	if node1 == nil {
 		var zero N
-		return zero, errors.New(fmt.Sprint("value : %v was not found", value1))
+		return zero, fmt.Errorf("value : %v was not found", value1)
 	}
 	node2 := tree.DFS(value2)
 	if node2 == nil {
 		var zero N
-		return zero, errors.New(fmt.Sprint("value : %v was not found", value2))
+		return zero, fmt.Errorf("value : %v was not found", value2)
 	}
 
 	lcaNode := node1.lcaHelper(value1, node1.value)
@@ -460,6 +460,22 @@ func (tree AVLTree[N]) LCA(value1, value2 N) (N, error) {
 }
 
 // 18. Write a function to mirror (invert) an AVL tree.
+
+func (node *AVLNode[N]) invertHelper() {
+	if node == nil {
+		return
+	}
+	// swaps the left subtree and the right subtree
+	node.left, node.right = node.right, node.left
+	node.left.invertHelper()
+	node.right.invertHelper()
+}
+
+// invert an AVL tree, each node swaps his left subtree and right subtree
+func (tree AVLTree[N]) Invert() {
+	tree.Root.invertHelper()
+}
+
 // 19. Write a function to print all root-to-leaf paths in an AVL tree.
 // 20. Implement a function to check if two AVL trees are identical.
 // 21. Write a function to find the diameter (longest path) of an AVL tree.
