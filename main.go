@@ -2,7 +2,6 @@ package main
 
 import (
 	"Practica_GO/DSA/graphs/trees/avl"
-	"fmt"
 )
 
 func main() {
@@ -10,14 +9,11 @@ func main() {
 	tree := avl.AVLTree[int]{}
 
 	// Insert some values
-	values := []int{30, 20, 40, 10, 25, 35, 50}
+	values := []int{30, 20, 40, 10, 25, 35, 50, 5, 8, 9}
 	for _, v := range values {
 		tree.Insert(v)
 	}
 
-	if isBalanced := tree.IsBalanced(); isBalanced {
-		fmt.Println("tree is balanced")
-	} else {
-		fmt.Println("tree is unbalanced")
-	}
+	diam := tree.Diameter()
+	diam++
 }

@@ -535,6 +535,35 @@ func areIdentical[N Number](tree1, tree2 AVLTree[N]) bool {
 }
 
 // 21. Write a function to find the diameter (longest path) of an AVL tree.
+
+// helper function to get the diameter of the tree, it follows the post-order traversal
+func (node *AVLNode[N]) diameterHelper(currentDiameter *int) int {
+	if node == nil {
+		return 0
+	}
+	leftHeight := node.left.diameterHelper(currentDiameter)
+	rightHeight := node.right.diameterHelper(currentDiameter)
+	// Update the max diameter if the path through this node is larger
+	if leftHeight+rightHeight > *currentDiameter {
+		*currentDiameter = leftHeight + rightHeight
+	}
+	// Return height of this node
+	if leftHeight > rightHeight {
+		return leftHeight + 1
+	}
+	return rightHeight + 1
+}
+
+// Diameter returns of the tree: the length (number of edges) of the longest path between any two leafs
+func (tree AVLTree[N]) Diameter() int {
+	if tree.IsEmpty() {
+		return 0
+	}
+	var diameter int
+	tree.Root.diameterHelper(&diameter)
+	return diameter
+}
+
 // 22. Write a function to check if an AVL tree is balanced at every node.
 
 func (node *AVLNode[N]) isBalancedHelper() bool {
