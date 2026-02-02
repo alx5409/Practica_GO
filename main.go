@@ -1,19 +1,15 @@
 package main
 
 import (
-	"Practica_GO/DSA/graphs/trees/avl"
+	avl "Practica_GO/DSA/graphs/trees/avl"
+	"fmt"
 )
 
 func main() {
-	// Create an AVL tree of int
-	tree := avl.AVLTree[int]{}
-
-	// Insert some values
-	values := []int{30, 20, 40, 10, 25, 35, 50, 5, 8, 9}
-	for _, v := range values {
-		tree.Insert(v)
+	values := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	tree, err := avl.SortedArrayToAVL(values)
+	if err != nil {
+		fmt.Println("error at creating the tree")
 	}
-
-	diam := tree.Diameter()
-	diam++
+	tree.InorderTraversal()
 }

@@ -27,6 +27,22 @@ func PrintSlice[T any](slice []T) {
 	fmt.Print("]\n")
 }
 
+// Generic orderable slice
+type ComparableSlice[N Number] []N
+
+// returns true if the slice is ordered in non-decreasing order
+func (slice ComparableSlice[N]) IsOrdered() bool {
+	if len(slice) == 0 || len(slice) == 1 {
+		return true
+	}
+	for i := 0; i < len(slice)-1; i++ {
+		if slice[i] > slice[i+1] {
+			return false
+		}
+	}
+	return true
+}
+
 // Generic hashmap
 type HashMap[K comparable, V any] map[K]V
 

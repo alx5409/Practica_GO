@@ -1,4 +1,4 @@
-package avl
+package AVL
 
 // ===================== AVL TREE EXERCISES =====================
 // 1. Implement an AVL tree node structure in Go.
@@ -520,7 +520,7 @@ func areNodesIdentical[N Number](node1, node2 *AVLNode[N]) bool {
 	}
 	// the following checking returns false if one node is nil and the other one is not, the case when both are
 	// nil is covered above
-	if node2 == nil || node2 == nil {
+	if node1 == nil || node2 == nil {
 		return false
 	}
 	if node1.value != node2.value {
@@ -582,6 +582,52 @@ func (tree AVLTree[N]) IsBalanced() bool {
 }
 
 // 23. Implement a function to convert a sorted array to a balanced AVL tree.
+
+// Converts a generic numeric slice into an avl tree in O(n·log(n)) time complexity.
+func ArrayToAVL[N Number](array generics.Slice[N]) AVLTree[N] {
+	var avlTree AVLTree[N]
+	for _, element := range array {
+		avlTree.Insert(element)
+	}
+	return avlTree
+}
+
+// insertSortedHelper recursively builds a balanced AVL tree from a sorted array.
+// Returns the root node of the subtree.
+func insertSortedHelper[N Number](arr []N, left, right int) *AVLNode[N] {
+	if left > right {
+		return nil
+	}
+	mid := (left + right) / 2
+	node := &AVLNode[N]{value: arr[mid]}
+	node.left = insertSortedHelper(arr, left, mid-1)
+	node.right = insertSortedHelper(arr, mid+1, right)
+	return node
+}
+
+// InsertSorted builds the AVL tree from a sorted array in O(n) time.
+func (tree *AVLTree[N]) InsertSorted(sortedArray []N) {
+	if len(sortedArray) == 0 {
+		tree.Root = nil
+		return
+	}
+	tree.Root = insertSortedHelper(sortedArray, 0, len(sortedArray)-1)
+}
+
+// Converts a sorted array into an AVL tree efficiently, in O(n) time complexity.
+// If the array is not sorted returns an empty AVL tree and an error.
+func SortedArrayToAVL[N Number](sortedArray generics.ComparableSlice[N]) (AVLTree[N], error) {
+	if !sortedArray.IsOrdered() {
+		return AVLTree[N]{Root: nil}, errors.New("empty array")
+	}
+	if len(sortedArray) == 0 {
+		return AVLTree[N]{Root: nil}, nil
+	}
+	var avlTree AVLTree[N]
+	avlTree.InsertSorted(sortedArray)
+	return avlTree, nil
+}
+
 // 24. Write a function to convert an AVL tree to a sorted array (inorder traversal).
 // 25. Implement a function to find the predecessor and successor of a given value in an AVL tree.
 // 26. Write a function to find the kth smallest element in an AVL tree.
