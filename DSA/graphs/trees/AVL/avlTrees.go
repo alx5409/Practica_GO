@@ -1,11 +1,11 @@
-package AVL
+package avl
 
 // ===================== AVL TREE EXERCISES =====================
 // 1. Implement an AVL tree node structure in Go.
 
 // Adelson-Velsky and Landis generic node
 import (
-	"Practica_GO/DSA/generics"
+	generics "Practica_GO/DSA/generics"
 	binaryTrees "Practica_GO/DSA/graphs/trees/binaryTrees"
 	utils "Practica_GO/DSA/utils"
 	"errors"
@@ -191,7 +191,7 @@ func (tree *AVLTree[A]) Insert(value A) {
 
 // 3. Write a function to delete a value from an AVL tree and maintain balance.
 
-func (tree AVLTree[A]) delete(value A) error {
+func (tree AVLTree[A]) Delete(value A) error {
 	return nil
 }
 
@@ -629,6 +629,23 @@ func SortedArrayToAVL[N Number](sortedArray generics.ComparableSlice[N]) (AVLTre
 }
 
 // 24. Write a function to convert an AVL tree to a sorted array (inorder traversal).
+
+func (node *AVLNode[N]) convertToSortedArrayHelper(currentArray *[]N) {
+	if node == nil {
+		return
+	}
+	node.left.convertToSortedArrayHelper(currentArray)
+	*currentArray = append(*currentArray, node.value)
+	node.right.convertToSortedArrayHelper(currentArray)
+}
+
+// Inorder traverse the AVL tree to return a sorted array
+func (tree AVLTree[N]) ConvertToSortedArray() []N {
+	var sortedArray []N
+	tree.Root.convertToSortedArrayHelper(&sortedArray)
+	return sortedArray
+}
+
 // 25. Implement a function to find the predecessor and successor of a given value in an AVL tree.
 // 26. Write a function to find the kth smallest element in an AVL tree.
 // 27. Write a function to find the kth largest element in an AVL tree.
