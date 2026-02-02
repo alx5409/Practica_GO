@@ -213,7 +213,7 @@ func isBalancedHelper[T Number](node *Node[T]) bool {
 	return isBalancedHelper(node.Left) && isBalancedHelper(node.Right)
 }
 
-func (b BinaryTree[T]) isBalanced() bool {
+func (b BinaryTree[T]) IsBalanced() bool {
 	return isBalancedHelper(b.Root)
 }
 
@@ -225,7 +225,7 @@ func Main6() {
 		tree1.insertValue(v)
 	}
 	fmt.Print("Example 1: ")
-	if tree1.isBalanced() {
+	if tree1.IsBalanced() {
 		fmt.Println("The tree is balanced.")
 	} else {
 		fmt.Println("The tree is not balanced.")
@@ -238,7 +238,7 @@ func Main6() {
 		tree2.insertValue(v)
 	}
 	fmt.Print("Example 2: ")
-	if tree2.isBalanced() {
+	if tree2.IsBalanced() {
 		fmt.Println("The tree is balanced.")
 	} else {
 		fmt.Println("The tree is not balanced.")
@@ -251,7 +251,7 @@ func Main6() {
 		tree3.insertValue(v)
 	}
 	fmt.Print("Example 3: ")
-	if tree3.isBalanced() {
+	if tree3.IsBalanced() {
 		fmt.Println("The tree is balanced.")
 	} else {
 		fmt.Println("The tree is not balanced.")
@@ -264,7 +264,7 @@ func Main6() {
 		tree4.insertValue(v)
 	}
 	fmt.Print("Example 4: ")
-	if tree4.isBalanced() {
+	if tree4.IsBalanced() {
 		fmt.Println("The tree is balanced.")
 	} else {
 		fmt.Println("The tree is not balanced.")
@@ -383,7 +383,7 @@ func isValidBSTNode[T Number](node *Node[T], min, max *T) bool {
 	return isValidBSTNode(node.Left, min, &node.Value) && isValidBSTNode(node.Right, &node.Value, max)
 }
 
-func (b BinaryTree[T]) isValidBST() bool {
+func (b BinaryTree[T]) IsValidBST() bool {
 	if b.IsEmpty() {
 		return true
 	}
@@ -399,7 +399,7 @@ func Main9() {
 		tree.insertValue(v)
 	}
 	fmt.Print("Valid BST: ")
-	if tree.isValidBST() {
+	if tree.IsValidBST() {
 		fmt.Println("Tree is a valid BST.")
 	} else {
 		fmt.Println("Tree is NOT a valid BST.")
@@ -414,7 +414,7 @@ func Main9() {
 	badTree.Root.Left.Right = &Node[int]{Value: 9} // 9 > 8, should not be in left subtree
 
 	fmt.Print("Invalid BST: ")
-	if badTree.isValidBST() {
+	if badTree.IsValidBST() {
 		fmt.Println("Tree is a valid BST.")
 	} else {
 		fmt.Println("Tree is NOT a valid BST.")

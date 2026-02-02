@@ -531,7 +531,7 @@ func (l *LRU[K, V]) Size() int {
 // 32. Given a slice of integers, find all pairs that sum to a target value using a hash map.
 
 // Function that returns the first 2 numbers that sums a given cuantity
-func twoSums(slice []int, sum int) (Pair[int], error) {
+func twoSumsb(slice []int, sum int) (Pair[int], error) {
 	hmap := make(map[int]int)
 	for _, number := range slice {
 		complement := sum - number
