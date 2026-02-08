@@ -647,6 +647,45 @@ func (tree AVLTree[N]) ConvertToSortedArray() []N {
 }
 
 // 25. Implement a function to find the predecessor and successor of a given value in an AVL tree.
+
+func (node *AVLNode[N]) predecessorHelper(value N) (*AVLNode[N], error) {
+	target := node.dfsHelper(value)
+	if target == nil {
+		return nil, fmt.Errorf("nil node")
+	}
+	// Case 1: : predecessor is the rightmost node in left subtree
+	if target.left != nil {
+		pred := target.left
+		for pred.right != nil {
+			pred = pred.right
+		}
+		return pred, nil
+	}
+	// Case 2: predecessor is the last ancestor where we moed right
+	var pred *AVLNode[N]
+	curr := node
+	for curr != nil {
+		if value > curr.value {
+			pred = curr
+			curr = curr.right
+		} else if value < curr.value {
+			curr = curr.left
+		} else {
+			break
+		}
+	}
+	return pred, nil
+}
+
+func (tree AVLTree[N]) Predecessor(value N) (N, error) {
+	var zero N
+	predNode, err := tree.Root.predecessorHelper(value)
+	if err != nil {
+		return zero, fmt.Errorf("no predecessor for value %v: ", value)
+	}
+	return predNode.value, nil
+}
+
 // 26. Write a function to find the kth smallest element in an AVL tree.
 // 27. Write a function to find the kth largest element in an AVL tree.
 // 28. Implement a function to clone (deep copy) an AVL tree.
