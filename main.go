@@ -1,15 +1,24 @@
 package main
 
 import (
-	avl "Practica_GO/DSA/graphs/trees/avl"
+	avl "Practica_GO/DSA/graphs/trees/AVL"
 	"fmt"
 )
 
 func main() {
-	values := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-	tree, err := avl.SortedArrayToAVL(values)
-	if err != nil {
-		fmt.Println("error at creating the tree")
+	values := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
+	tree := avl.ArrayToAVL(values)
+	k := 2
+	kmin, merror := tree.KthSmallestElement(k)
+	kmax, Merror := tree.KthLargestElement(k)
+	if merror != nil {
+		fmt.Println("error at kth smallest element")
+		return
 	}
-	tree.InorderTraversal()
+	if Merror != nil {
+		fmt.Println("error at kth largest element")
+		return
+	}
+	fmt.Println(k, "-th smallest = ", kmin)
+	fmt.Println(k, "-th largest = ", kmax)
 }

@@ -1,11 +1,11 @@
-package AVL
+package avl
 
 // ===================== AVL TREE EXERCISES =====================
 // 1. Implement an AVL tree node structure in Go.
 
 // Adelson-Velsky and Landis generic node
 import (
-	"Practica_GO/DSA/generics"
+	generics "Practica_GO/DSA/generics"
 	binaryTrees "Practica_GO/DSA/graphs/trees/binaryTrees"
 	utils "Practica_GO/DSA/utils"
 	"errors"
@@ -148,22 +148,23 @@ func (node *AVLNode[A]) rotate(rotationType string) *AVLNode[A] {
 	}
 }
 
-// AVLBalance checks the balance of the AVL tree and performs the necessary rotations to maintain the AVL property.
-// func (a *AVLTree[A]) AVLBalance() {
-// 	parentNode := a.Root
-// 	for parentNode != nil {
-// 		parentBalanceFactor := balanceFactor(parentNode)
-// 		// if the node is balanced just jump to the next node
-// 		if parentBalanceFactor >= -1 && parentBalanceFactor <= 1 {
-// 			parentNode = parentNode.left
-// 		}
-// 		leftChild := parentNode.left
-// 		leftChildBalanceFactor := balanceFactor(leftChild)
-// 		rightChild := parentNode.right
-// 		rightChildBalanceFactor := balanceFactor(rightChild)
+func (tree *AVLTree[A]) balanceHelper(node *AVLNode[A]) *AVLNode[A] {
+	if node == nil {
+		return nil
+	}
+	node.left = tree.balanceHelper(node.left)
+	node.right = tree.balanceHelper(node.right)
+	if !node.isBalanced() {
+		rType := node.rotationType()
+		node = node.rotate(rType)
+	}
+	return node
+}
 
-// 	}
-// }
+// AVLBalance checks the balance of the AVL tree and performs the necessary rotations to maintain the AVL property.
+func (tree *AVLTree[A]) AVLBalance() {
+	tree.Root = tree.balanceHelper(tree.Root)
+}
 
 // Recursive function to insert an element in a BST way and balancing it to keep the AVL structure
 func (tree *AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
@@ -191,7 +192,58 @@ func (tree *AVLTree[A]) Insert(value A) {
 
 // 3. Write a function to delete a value from an AVL tree and maintain balance.
 
-func (tree AVLTree[A]) delete(value A) error {
+func (tree *AVLTree[A]) deleteHelper(node *AVLNode[A], value A) (*AVLNode[A], error) {
+	if node == nil {
+		return nil, fmt.Errorf("value %v not found", value)
+	}
+	if value < node.value {
+		left, err := tree.deleteHelper(node.left, value)
+		if err != nil {
+			return nil, err
+		}
+		node.left = left
+	} else if value > node.value {
+		right, err := tree.deleteHelper(node.right, value)
+		if err != nil {
+			return nil, err
+		}
+		node.right = right
+	} else {
+		// Node to delete found
+		if node.left == nil {
+			return node.right, nil
+		} else if node.right == nil {
+			return node.left, nil
+		} else {
+			// Two children: find inorder successor (leftmost in right subtree)
+			succ := node.right
+			for succ.left != nil {
+				succ = succ.left
+			}
+			// Replace value with successor's value
+			node.value = succ.value
+			// Delete successor
+			right, err := tree.deleteHelper(node.right, succ.value)
+			if err != nil {
+				return nil, err
+			}
+			node.right = right
+		}
+	}
+	// Rebalance if necessary
+	if !node.isBalanced() {
+		rType := node.rotationType()
+		node = node.rotate(rType)
+	}
+	return node, nil
+}
+
+func (tree *AVLTree[A]) Delete(value A) error {
+	root, err := tree.deleteHelper(tree.Root, value)
+	if err != nil {
+		return err
+	}
+	tree.Root = root
 	return nil
 }
 
@@ -629,10 +681,176 @@ func SortedArrayToAVL[N Number](sortedArray generics.ComparableSlice[N]) (AVLTre
 }
 
 // 24. Write a function to convert an AVL tree to a sorted array (inorder traversal).
+
+func (node *AVLNode[N]) convertToSortedArrayHelper(currentArray *[]N) {
+	if node == nil {
+		return
+	}
+	node.left.convertToSortedArrayHelper(currentArray)
+	*currentArray = append(*currentArray, node.value)
+	node.right.convertToSortedArrayHelper(currentArray)
+}
+
+// Inorder traverse the AVL tree to return a sorted array
+func (tree AVLTree[N]) ConvertToSortedArray() []N {
+	var sortedArray []N
+	tree.Root.convertToSortedArrayHelper(&sortedArray)
+	return sortedArray
+}
+
 // 25. Implement a function to find the predecessor and successor of a given value in an AVL tree.
+
+func (node *AVLNode[N]) predecessorHelper(value N) (*AVLNode[N], error) {
+	target := node.dfsHelper(value)
+	if target == nil {
+		return nil, fmt.Errorf("nil node")
+	}
+	// Case 1: : predecessor is the rightmost node in left subtree
+	if target.left != nil {
+		pred := target.left
+		for pred.right != nil {
+			pred = pred.right
+		}
+		return pred, nil
+	}
+	// Case 2: predecessor is the last ancestor where we moved right
+	var pred *AVLNode[N]
+	curr := node
+	for curr != nil {
+		if value > curr.value {
+			pred = curr
+			curr = curr.right
+		} else if value < curr.value {
+			curr = curr.left
+		} else {
+			break
+		}
+	}
+	return pred, nil
+}
+
+// Returns the in-order predecessor of the given value: the largest value in the tree that is less than the given value.
+// If the value does not exist in the tree or has no predecessor, an error is returned
+func (tree AVLTree[N]) Predecessor(value N) (N, error) {
+	var zero N
+	predNode, err := tree.Root.predecessorHelper(value)
+	if err != nil {
+		return zero, fmt.Errorf("no predecessor for value %v: ", value)
+	}
+	return predNode.value, nil
+}
+
+func (node *AVLNode[N]) ancestorHelper(value N) (*AVLNode[N], error) {
+	target := node.dfsHelper(value)
+	if target == nil {
+		return nil, fmt.Errorf("value %v not found", value)
+	}
+	// Case 1: successor is the leftmost node in right subtree
+	if target.right != nil {
+		succ := target.right
+		for succ.left != nil {
+			succ = succ.left
+		}
+		return succ, nil
+	}
+	// Case 2: successor is the last ancestor where we moved left
+	var succ *AVLNode[N]
+	curr := node
+	for curr != nil {
+		if value < curr.value {
+			succ = curr
+			curr = curr.left
+		} else if value > curr.value {
+			curr = curr.right
+		} else {
+			break
+		}
+	}
+	if succ == nil {
+		return nil, fmt.Errorf("no successor for value %v", value)
+	}
+	return succ, nil
+}
+
+// Returns the in-order ancestor of the given value: the lowest value in the tree that is greater than the given value.
+// / If the value does not exist in the tree or has no ancestor, an error is returned
+func (tree AVLTree[N]) Ancestor(value N) (N, error) {
+	var zero N
+	ancestorNode, err := tree.Root.ancestorHelper(value)
+	if err != nil {
+		return zero, fmt.Errorf("no predecessor for value %v: ", value)
+	}
+	return ancestorNode.value, nil
+}
+
 // 26. Write a function to find the kth smallest element in an AVL tree.
+
+func inorderMinCollect[N Number](node *AVLNode[N], result *[]N, maxLength int) {
+	if node == nil || len(*result) >= maxLength {
+		return
+	}
+	inorderMinCollect(node.left, result, maxLength)
+	*result = append(*result, node.value)
+	inorderMinCollect(node.right, result, maxLength)
+}
+
+// Returns the kth smallest element in the AVL tree.
+// If the k is greater than the size of the tree returns an error.
+func (tree AVLTree[N]) KthSmallestElement(k int) (N, error) {
+	var zero N
+	if k <= 0 {
+		return zero, fmt.Errorf("k must be positive")
+	}
+	var result []N
+	inorderMinCollect(tree.Root, &result, k)
+	if k > len(result) {
+		return zero, fmt.Errorf("k (%d) exceeds tree size (%d)", k, len(result))
+	}
+	return result[k-1], nil
+}
+
 // 27. Write a function to find the kth largest element in an AVL tree.
+
+func inorderMaxCollect[N Number](node *AVLNode[N], result *[]N, maxLength int) {
+	if node == nil || len(*result) >= maxLength {
+		return
+	}
+	inorderMaxCollect(node.right, result, maxLength)
+	*result = append(*result, node.value)
+	inorderMaxCollect(node.left, result, maxLength)
+}
+
+func (tree AVLTree[N]) KthLargestElement(k int) (N, error) {
+	var zero N
+	if k <= 0 {
+		return zero, fmt.Errorf("k must be positive")
+	}
+	var result []N
+	inorderMaxCollect(tree.Root, &result, k)
+	if k > len(result) {
+		return zero, fmt.Errorf("k (%d) exceeds tree size (%d)", k, len(result))
+	}
+	return result[k-1], nil
+}
+
 // 28. Implement a function to clone (deep copy) an AVL tree.
+
+func (node *AVLNode[N]) cloneNode() *AVLNode[N] {
+	if node == nil {
+		return nil
+	}
+	copiedNode := &AVLNode[N]{value: node.value}
+	copiedNode.left = node.left.cloneNode()
+	copiedNode.right = node.right.cloneNode()
+	return copiedNode
+}
+
+func (tree AVLTree[N]) Clone() AVLTree[N] {
+	var treeCopy AVLTree[N]
+	treeCopy.Root = tree.Root.cloneNode()
+	return treeCopy
+}
+
 // 29. Write a function to merge two AVL trees into a single balanced AVL tree.
 // 30. Write a function to split an AVL tree into two AVL trees based on a value.
 // 31. Implement a function to print the AVL tree in level order (breadth-first traversal).
