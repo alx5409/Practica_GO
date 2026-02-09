@@ -148,22 +148,23 @@ func (node *AVLNode[A]) rotate(rotationType string) *AVLNode[A] {
 	}
 }
 
-// AVLBalance checks the balance of the AVL tree and performs the necessary rotations to maintain the AVL property.
-// func (a *AVLTree[A]) AVLBalance() {
-// 	parentNode := a.Root
-// 	for parentNode != nil {
-// 		parentBalanceFactor := balanceFactor(parentNode)
-// 		// if the node is balanced just jump to the next node
-// 		if parentBalanceFactor >= -1 && parentBalanceFactor <= 1 {
-// 			parentNode = parentNode.left
-// 		}
-// 		leftChild := parentNode.left
-// 		leftChildBalanceFactor := balanceFactor(leftChild)
-// 		rightChild := parentNode.right
-// 		rightChildBalanceFactor := balanceFactor(rightChild)
+func (tree *AVLTree[A]) balanceHelper(node *AVLNode[A]) *AVLNode[A] {
+	if node == nil {
+		return nil
+	}
+	node.left = tree.balanceHelper(node.left)
+	node.right = tree.balanceHelper(node.right)
+	if !node.isBalanced() {
+		rType := node.rotationType()
+		node = node.rotate(rType)
+	}
+	return node
+}
 
-// 	}
-// }
+// AVLBalance checks the balance of the AVL tree and performs the necessary rotations to maintain the AVL property.
+func (tree *AVLTree[A]) AVLBalance() {
+	tree.Root = tree.balanceHelper(tree.Root)
+}
 
 // Recursive function to insert an element in a BST way and balancing it to keep the AVL structure
 func (tree *AVLTree[A]) insertHelper(node *AVLNode[A], value A) *AVLNode[A] {
@@ -191,7 +192,58 @@ func (tree *AVLTree[A]) Insert(value A) {
 
 // 3. Write a function to delete a value from an AVL tree and maintain balance.
 
-func (tree AVLTree[A]) Delete(value A) error {
+func (tree *AVLTree[A]) deleteHelper(node *AVLNode[A], value A) (*AVLNode[A], error) {
+	if node == nil {
+		return nil, fmt.Errorf("value %v not found", value)
+	}
+	if value < node.value {
+		left, err := tree.deleteHelper(node.left, value)
+		if err != nil {
+			return nil, err
+		}
+		node.left = left
+	} else if value > node.value {
+		right, err := tree.deleteHelper(node.right, value)
+		if err != nil {
+			return nil, err
+		}
+		node.right = right
+	} else {
+		// Node to delete found
+		if node.left == nil {
+			return node.right, nil
+		} else if node.right == nil {
+			return node.left, nil
+		} else {
+			// Two children: find inorder successor (leftmost in right subtree)
+			succ := node.right
+			for succ.left != nil {
+				succ = succ.left
+			}
+			// Replace value with successor's value
+			node.value = succ.value
+			// Delete successor
+			right, err := tree.deleteHelper(node.right, succ.value)
+			if err != nil {
+				return nil, err
+			}
+			node.right = right
+		}
+	}
+	// Rebalance if necessary
+	if !node.isBalanced() {
+		rType := node.rotationType()
+		node = node.rotate(rType)
+	}
+	return node, nil
+}
+
+func (tree *AVLTree[A]) Delete(value A) error {
+	root, err := tree.deleteHelper(tree.Root, value)
+	if err != nil {
+		return err
+	}
+	tree.Root = root
 	return nil
 }
 

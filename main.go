@@ -1,7 +1,7 @@
 package main
 
 import (
-	avl "Practica_GO/DSA/graphs/trees/avl"
+	avl "Practica_GO/DSA/graphs/trees/AVL"
 	"fmt"
 )
 
