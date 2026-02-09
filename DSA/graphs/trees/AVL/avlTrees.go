@@ -834,6 +834,23 @@ func (tree AVLTree[N]) KthLargestElement(k int) (N, error) {
 }
 
 // 28. Implement a function to clone (deep copy) an AVL tree.
+
+func (node *AVLNode[N]) cloneNode() *AVLNode[N] {
+	if node == nil {
+		return nil
+	}
+	copiedNode := &AVLNode[N]{value: node.value}
+	copiedNode.left = node.left.cloneNode()
+	copiedNode.right = node.right.cloneNode()
+	return copiedNode
+}
+
+func (tree AVLTree[N]) Clone() AVLTree[N] {
+	var treeCopy AVLTree[N]
+	treeCopy.Root = tree.Root.cloneNode()
+	return treeCopy
+}
+
 // 29. Write a function to merge two AVL trees into a single balanced AVL tree.
 // 30. Write a function to split an AVL tree into two AVL trees based on a value.
 // 31. Implement a function to print the AVL tree in level order (breadth-first traversal).
