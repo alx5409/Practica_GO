@@ -661,7 +661,7 @@ func (node *AVLNode[N]) predecessorHelper(value N) (*AVLNode[N], error) {
 		}
 		return pred, nil
 	}
-	// Case 2: predecessor is the last ancestor where we moed right
+	// Case 2: predecessor is the last ancestor where we moved right
 	var pred *AVLNode[N]
 	curr := node
 	for curr != nil {
@@ -677,6 +677,8 @@ func (node *AVLNode[N]) predecessorHelper(value N) (*AVLNode[N], error) {
 	return pred, nil
 }
 
+// Returns the in-order predecessor of the given value: the largest value in the tree that is less than the given value.
+// If the value does not exist in the tree or has no predecessor, an error is returned
 func (tree AVLTree[N]) Predecessor(value N) (N, error) {
 	var zero N
 	predNode, err := tree.Root.predecessorHelper(value)
@@ -684,6 +686,49 @@ func (tree AVLTree[N]) Predecessor(value N) (N, error) {
 		return zero, fmt.Errorf("no predecessor for value %v: ", value)
 	}
 	return predNode.value, nil
+}
+
+func (node *AVLNode[N]) ancestorHelper(value N) (*AVLNode[N], error) {
+	target := node.dfsHelper(value)
+	if target == nil {
+		return nil, fmt.Errorf("value %v not found", value)
+	}
+	// Case 1: successor is the leftmost node in right subtree
+	if target.right != nil {
+		succ := target.right
+		for succ.left != nil {
+			succ = succ.left
+		}
+		return succ, nil
+	}
+	// Case 2: successor is the last ancestor where we moved left
+	var succ *AVLNode[N]
+	curr := node
+	for curr != nil {
+		if value < curr.value {
+			succ = curr
+			curr = curr.left
+		} else if value > curr.value {
+			curr = curr.right
+		} else {
+			break
+		}
+	}
+	if succ == nil {
+		return nil, fmt.Errorf("no successor for value %v", value)
+	}
+	return succ, nil
+}
+
+// Returns the in-order ancestor of the given value: the lowest value in the tree that is greater than the given value.
+// / If the value does not exist in the tree or has no ancestor, an error is returned
+func (tree AVLTree[N]) Ancestor(value N) (N, error) {
+	var zero N
+	ancestorNode, err := tree.Root.ancestorHelper(value)
+	if err != nil {
+		return zero, fmt.Errorf("no predecessor for value %v: ", value)
+	}
+	return ancestorNode.value, nil
 }
 
 // 26. Write a function to find the kth smallest element in an AVL tree.
