@@ -784,7 +784,55 @@ func (tree AVLTree[N]) Ancestor(value N) (N, error) {
 }
 
 // 26. Write a function to find the kth smallest element in an AVL tree.
+
+func inorderMinCollect[N Number](node *AVLNode[N], result *[]N, maxLength int) {
+	if node == nil || len(*result) >= maxLength {
+		return
+	}
+	inorderMinCollect(node.left, result, maxLength)
+	*result = append(*result, node.value)
+	inorderMinCollect(node.right, result, maxLength)
+}
+
+// Returns the kth smallest element in the AVL tree.
+// If the k is greater than the size of the tree returns an error.
+func (tree AVLTree[N]) KthSmallestElement(k int) (N, error) {
+	var zero N
+	if k <= 0 {
+		return zero, fmt.Errorf("k must be positive")
+	}
+	var result []N
+	inorderMinCollect(tree.Root, &result, k)
+	if k > len(result) {
+		return zero, fmt.Errorf("k (%d) exceeds tree size (%d)", k, len(result))
+	}
+	return result[k-1], nil
+}
+
 // 27. Write a function to find the kth largest element in an AVL tree.
+
+func inorderMaxCollect[N Number](node *AVLNode[N], result *[]N, maxLength int) {
+	if node == nil || len(*result) >= maxLength {
+		return
+	}
+	inorderMaxCollect(node.right, result, maxLength)
+	*result = append(*result, node.value)
+	inorderMaxCollect(node.left, result, maxLength)
+}
+
+func (tree AVLTree[N]) KthLargestElement(k int) (N, error) {
+	var zero N
+	if k <= 0 {
+		return zero, fmt.Errorf("k must be positive")
+	}
+	var result []N
+	inorderMaxCollect(tree.Root, &result, k)
+	if k > len(result) {
+		return zero, fmt.Errorf("k (%d) exceeds tree size (%d)", k, len(result))
+	}
+	return result[k-1], nil
+}
+
 // 28. Implement a function to clone (deep copy) an AVL tree.
 // 29. Write a function to merge two AVL trees into a single balanced AVL tree.
 // 30. Write a function to split an AVL tree into two AVL trees based on a value.
