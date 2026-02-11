@@ -922,6 +922,26 @@ func (tree AVLTree[N]) PrintInLevel() {
 }
 
 // 32. Write a function to check if an AVL tree contains only unique values.
+
+func (node *AVLNode[N]) uniqueValuesHelper(seenMap map[N]bool) bool {
+	if node == nil {
+		return true
+	}
+	if seenMap[node.value] {
+		return false
+	}
+	seenMap[node.value] = true
+	return node.left.uniqueValuesHelper(seenMap) && node.right.uniqueValuesHelper(seenMap)
+}
+
+func (tree AVLTree[N]) HasUniqueValues() bool {
+	if tree.IsEmpty() {
+		return true
+	}
+	seenMap := make(map[N]bool)
+	return tree.Root.uniqueValuesHelper(seenMap)
+}
+
 // 33. Implement a function to remove all leaf nodes from an AVL tree.
 // 34. Write a function to find the distance between two nodes in an AVL tree.
 // 35. Implement a function to serialize and deserialize an AVL tree.
