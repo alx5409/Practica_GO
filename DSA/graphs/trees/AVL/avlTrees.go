@@ -852,6 +852,20 @@ func (tree AVLTree[N]) Clone() AVLTree[N] {
 }
 
 // 29. Write a function to merge two AVL trees into a single balanced AVL tree.
+
+// Returns an AVL tree which correspond to the merge of the two AVL trees.
+func MergeAVLTrees[N Number](tree1, tree2 AVLTree[N]) AVLTree[N] {
+	// convert the trees into sorted array, merge them and then build the new tree
+	sortedSlice1 := tree1.ConvertToSortedArray()
+	sortedSlice2 := tree2.ConvertToSortedArray()
+	// Cast to ComparableSlice[N] to use OrderedMerge
+	compSlice1 := generics.ComparableSlice[N](sortedSlice1)
+	compSlice2 := generics.ComparableSlice[N](sortedSlice2)
+	mergedSlice := compSlice1.OrderedMerge(compSlice2)
+	mergedTree, _ := SortedArrayToAVL(mergedSlice)
+	return mergedTree
+}
+
 // 30. Write a function to split an AVL tree into two AVL trees based on a value.
 // 31. Implement a function to print the AVL tree in level order (breadth-first traversal).
 // 32. Write a function to check if an AVL tree contains only unique values.
