@@ -897,6 +897,30 @@ func (tree AVLTree[N]) Split(value N) (AVLTree[N], AVLTree[N], error) {
 }
 
 // 31. Implement a function to print the AVL tree in level order (breadth-first traversal).
+
+// prints the node values in level order
+func (tree AVLTree[N]) PrintInLevel() {
+	if tree.IsEmpty() {
+		return
+	}
+	queue := generics.Queue[*AVLNode[N]]{}
+	queue.Enqueue(tree.Root)
+	for !queue.IsEmpty() {
+		levelSize := len(queue.Data)
+		for i := 0; i < levelSize; i++ {
+			node, _ := queue.Dequeue()
+			fmt.Printf("%v ", node.value)
+			if node.left != nil {
+				queue.Enqueue(node.left)
+			}
+			if node.right != nil {
+				queue.Enqueue(node.right)
+			}
+		}
+		fmt.Println()
+	}
+}
+
 // 32. Write a function to check if an AVL tree contains only unique values.
 // 33. Implement a function to remove all leaf nodes from an AVL tree.
 // 34. Write a function to find the distance between two nodes in an AVL tree.
