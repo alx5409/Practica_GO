@@ -867,6 +867,35 @@ func MergeAVLTrees[N Number](tree1, tree2 AVLTree[N]) AVLTree[N] {
 }
 
 // 30. Write a function to split an AVL tree into two AVL trees based on a value.
+
+// splits the current AVL tree into two AVL trees where the first AVL tree consists of all
+// the nodes which are less than value and the second AVL tree consists of all
+// the nodes which are greater than or equal to value.
+func (tree AVLTree[N]) Split(value N) (AVLTree[N], AVLTree[N], error) {
+	if tree.IsEmpty() {
+		return tree, tree, errors.New("empty tree")
+	}
+	var nilTree AVLTree[N]
+	nodeValue := tree.Root.dfsHelper(value)
+	if nodeValue == nil {
+		return nilTree, nilTree, errors.New("value not found")
+	}
+	// converto to sorted array to find where to split
+	sortedArray := tree.ConvertToSortedArray()
+	index := -1
+	for i, v := range sortedArray {
+		if v == value {
+			index = i
+			break
+		}
+	}
+	lessArray := sortedArray[:index]
+	greaterArray := sortedArray[index:]
+	leftTree, _ := SortedArrayToAVL(generics.ComparableSlice[N](lessArray))
+	rightTree, _ := SortedArrayToAVL(generics.ComparableSlice[N](greaterArray))
+	return leftTree, rightTree, nil
+}
+
 // 31. Implement a function to print the AVL tree in level order (breadth-first traversal).
 // 32. Write a function to check if an AVL tree contains only unique values.
 // 33. Implement a function to remove all leaf nodes from an AVL tree.
