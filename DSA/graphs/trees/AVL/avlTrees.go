@@ -517,7 +517,7 @@ func (tree AVLTree[N]) LCA(value1, value2 N) (N, error) {
 		return zero, fmt.Errorf("value : %v was not found", value2)
 	}
 
-	lcaNode := node1.lcaHelper(value1, node1.value)
+	lcaNode := tree.Root.lcaHelper(value1, value2)
 	if lcaNode == nil {
 		var zero N
 		return zero, errors.New("there is not an LCA")
@@ -966,6 +966,49 @@ func (tree *AVLTree[N]) RemoveAllLeafs() {
 }
 
 // 34. Write a function to find the distance between two nodes in an AVL tree.
+
+func nodeDepthHelper[N Number](current *AVLNode[N], target *AVLNode[N], depth int) int {
+	if current == nil {
+		return -1
+	}
+	if current == target {
+		return depth
+	}
+	if target.value < current.value {
+		return nodeDepthHelper(current.left, target, depth+1)
+	} else {
+		return nodeDepthHelper(current.right, target, depth+1)
+	}
+}
+
+// returns the depth of the node in the avl tree starting from the root
+func (tree *AVLTree[N]) nodeDepth(node *AVLNode[N]) (int, error) {
+	return nodeDepthHelper(tree.Root, node, 0), nil
+}
+
+func (tree *AVLTree[N]) NodeDistance(nodeValue1, nodeValue2 N) (int, error) {
+	node1 := tree.Root.dfsHelper(nodeValue1)
+	if node1 == nil {
+		return 0, fmt.Errorf("nodeValue: %v not found", nodeValue1)
+	}
+	node2 := tree.Root.dfsHelper(nodeValue2)
+	if node2 == nil {
+		return 0, fmt.Errorf("nodeValue: %v not found", nodeValue2)
+	}
+	// find the LCA of both nodes
+	lcaValue, err := tree.LCA(nodeValue1, nodeValue2)
+	if err != nil {
+		return 0, err
+	}
+	lcaNode := tree.Root.dfsHelper(lcaValue)
+
+	// compute the depths to find the distance
+	node1Depth, _ := tree.nodeDepth(node1)
+	node2Depth, _ := tree.nodeDepth(node2)
+	lcaDepth, _ := tree.nodeDepth(lcaNode)
+	return node1Depth + node2Depth - 2*lcaDepth, nil
+}
+
 // 35. Implement a function to serialize and deserialize an AVL tree.
 // 36. Write a function to check if an AVL tree is a complete binary tree.
 // 37. Write a function to check if an AVL tree is a perfect binary tree.
