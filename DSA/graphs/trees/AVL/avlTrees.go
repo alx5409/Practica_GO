@@ -1011,6 +1011,76 @@ func (tree *AVLTree[N]) NodeDistance(nodeValue1, nodeValue2 N) (int, error) {
 
 // 35. Implement a function to serialize and deserialize an AVL tree.
 // 36. Write a function to check if an AVL tree is a complete binary tree.
+// A complete binary tree has all levels fully filled except possibly the last,
+// with nodes packed to the left.
+
+// checkNodeForCompleteness validates a single node based on the completeness flag.
+func (tree AVLTree[N]) checkNodeForCompleteness(node *AVLNode[N], hasSeenMissingChild bool) (bool, bool) {
+	updatedFlag := hasSeenMissingChild
+
+	// Check left child
+	if node.left != nil {
+		if updatedFlag {
+			return false, false
+		}
+	} else {
+		updatedFlag = true
+	}
+
+	// Check right child
+	if node.right != nil {
+		if updatedFlag {
+			return false, false // Invalid: child after missing one
+		}
+	} else {
+		updatedFlag = true
+	}
+
+	return true, updatedFlag
+}
+
+// processLevel handles one level of BFS, checking nodes and updating the flag.
+func (tree AVLTree[N]) processLevel(queue []*AVLNode[N], hasSeenMissingChild bool) (bool, []*AVLNode[N], bool) {
+	newQueue := []*AVLNode[N]{}
+	updatedFlag := hasSeenMissingChild
+
+	for _, node := range queue {
+		isValid, tempFlag := tree.checkNodeForCompleteness(node, updatedFlag)
+		if !isValid {
+			return false, nil, false
+		}
+		updatedFlag = tempFlag
+
+		// Enqueue children for next level
+		if node.left != nil {
+			newQueue = append(newQueue, node.left)
+		}
+		if node.right != nil {
+			newQueue = append(newQueue, node.right)
+		}
+	}
+	return true, newQueue, updatedFlag
+}
+
+func (tree AVLTree[N]) IsComplete() bool {
+	if tree.Root == nil {
+		return true
+	}
+
+	queue := []*AVLNode[N]{tree.Root}
+	hasSeenMissingChild := false
+
+	for len(queue) > 0 {
+		ok, newQueue, updatedFlag := tree.processLevel(queue, hasSeenMissingChild)
+		if !ok {
+			return false
+		}
+		queue = newQueue
+		hasSeenMissingChild = updatedFlag
+	}
+	return true
+}
+
 // 37. Write a function to check if an AVL tree is a perfect binary tree.
 // 38. Implement a function to print the boundary nodes of an AVL tree.
 // 39. Write a function to find the sum of all nodes at a given depth in an AVL tree.

@@ -6,12 +6,11 @@ import (
 )
 
 func main() {
-	values := []int{9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 10, 16, 13}
+	values := []int{4, 2, 6, 1, 3, 5, 7}
 	tree := avl.ArrayToAVL(values)
-	d, err := tree.NodeDistance(3, 8)
-	if err != nil {
-		fmt.Println(err)
+	if tree.IsComplete() {
+		fmt.Println("complete tree")
 		return
 	}
-	fmt.Println("The distance between the node values is: ", d)
+	fmt.Println("incomplete tree")
 }
