@@ -652,8 +652,8 @@ func insertSortedHelper[N Number](arr []N, left, right int) *AVLNode[N] {
 	}
 	mid := (left + right) / 2
 	node := &AVLNode[N]{value: arr[mid]}
-	node.left = insertSortedHelper(arr, left, mid-1)
-	node.right = insertSortedHelper(arr, mid+1, right)
+	node.left = insertSortedHelper[N](arr, left, mid-1)
+	node.right = insertSortedHelper[N](arr, mid+1, right)
 	return node
 }
 
@@ -943,6 +943,28 @@ func (tree AVLTree[N]) HasUniqueValues() bool {
 }
 
 // 33. Implement a function to remove all leaf nodes from an AVL tree.
+
+func (node *AVLNode[N]) removeLeafsHelper() *AVLNode[N] {
+	if node == nil {
+		return nil
+	}
+	if node.isLeaf() {
+		return nil
+	}
+	node.left = node.left.removeLeafsHelper()
+	node.right = node.right.removeLeafsHelper()
+	if !node.isBalanced() {
+		rType := node.rotationType()
+		node = node.rotate(rType)
+	}
+	return node
+}
+
+// Removes all leafs nodes in the tree
+func (tree *AVLTree[N]) RemoveAllLeafs() {
+	tree.Root = tree.Root.removeLeafsHelper()
+}
+
 // 34. Write a function to find the distance between two nodes in an AVL tree.
 // 35. Implement a function to serialize and deserialize an AVL tree.
 // 36. Write a function to check if an AVL tree is a complete binary tree.
