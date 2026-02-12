@@ -1097,6 +1097,61 @@ func (tree AVLTree[N]) IsPerfect() bool {
 }
 
 // 38. Implement a function to print the boundary nodes of an AVL tree.
+
+// prints every boundary node values: the root node, the left boundary, the right boundary and the leafs
+func (tree AVLTree[N]) PrintBoundaryNodes() {
+	if tree.IsEmpty() {
+		return
+	}
+
+	var boundary []N
+	boundary = append(boundary, tree.Root.value)
+	tree.addLeftBoundary(tree.Root.left, &boundary)
+	tree.addLeaves(tree.Root, &boundary)
+	tree.addRightBoundary(tree.Root.right, &boundary)
+
+	for _, v := range boundary {
+		fmt.Printf("%v ", v)
+	}
+	fmt.Println()
+}
+
+func (tree AVLTree[N]) addLeftBoundary(node *AVLNode[N], boundary *[]N) {
+	if node == nil || node.isLeaf() {
+		return
+	}
+	*boundary = append(*boundary, node.value)
+	if node.left != nil {
+		tree.addLeftBoundary(node.left, boundary)
+	} else {
+		tree.addLeftBoundary(node.right, boundary)
+	}
+}
+
+func (tree AVLTree[N]) addLeaves(node *AVLNode[N], boundary *[]N) {
+	if node == nil {
+		return
+	}
+	if node.isLeaf() {
+		*boundary = append(*boundary, node.value)
+		return
+	}
+	tree.addLeaves(node.left, boundary)
+	tree.addLeaves(node.right, boundary)
+}
+
+func (tree AVLTree[N]) addRightBoundary(node *AVLNode[N], boundary *[]N) {
+	if node == nil || node.isLeaf() {
+		return
+	}
+	if node.right != nil {
+		tree.addRightBoundary(node.right, boundary)
+	} else {
+		tree.addRightBoundary(node.left, boundary)
+	}
+	*boundary = append(*boundary, node.value)
+}
+
 // 39. Write a function to find the sum of all nodes at a given depth in an AVL tree.
 // 40. Implement a function to find the maximum width of an AVL tree.
 // ==============================================================
