@@ -10,6 +10,8 @@ import (
 	utils "Practica_GO/DSA/utils"
 	"errors"
 	"fmt"
+	"math"
+	"strings"
 )
 
 type Number utils.Number
@@ -517,7 +519,7 @@ func (tree AVLTree[N]) LCA(value1, value2 N) (N, error) {
 		return zero, fmt.Errorf("value : %v was not found", value2)
 	}
 
-	lcaNode := node1.lcaHelper(value1, node1.value)
+	lcaNode := tree.Root.lcaHelper(value1, value2)
 	if lcaNode == nil {
 		var zero N
 		return zero, errors.New("there is not an LCA")
@@ -652,8 +654,8 @@ func insertSortedHelper[N Number](arr []N, left, right int) *AVLNode[N] {
 	}
 	mid := (left + right) / 2
 	node := &AVLNode[N]{value: arr[mid]}
-	node.left = insertSortedHelper(arr, left, mid-1)
-	node.right = insertSortedHelper(arr, mid+1, right)
+	node.left = insertSortedHelper[N](arr, left, mid-1)
+	node.right = insertSortedHelper[N](arr, mid+1, right)
 	return node
 }
 
@@ -852,15 +854,403 @@ func (tree AVLTree[N]) Clone() AVLTree[N] {
 }
 
 // 29. Write a function to merge two AVL trees into a single balanced AVL tree.
+
+// Returns an AVL tree which correspond to the merge of the two AVL trees.
+func MergeAVLTrees[N Number](tree1, tree2 AVLTree[N]) AVLTree[N] {
+	// convert the trees into sorted array, merge them and then build the new tree
+	sortedSlice1 := tree1.ConvertToSortedArray()
+	sortedSlice2 := tree2.ConvertToSortedArray()
+	// Cast to ComparableSlice[N] to use OrderedMerge
+	compSlice1 := generics.ComparableSlice[N](sortedSlice1)
+	compSlice2 := generics.ComparableSlice[N](sortedSlice2)
+	mergedSlice := compSlice1.OrderedMerge(compSlice2)
+	mergedTree, _ := SortedArrayToAVL(mergedSlice)
+	return mergedTree
+}
+
 // 30. Write a function to split an AVL tree into two AVL trees based on a value.
+
+// splits the current AVL tree into two AVL trees where the first AVL tree consists of all
+// the nodes which are less than value and the second AVL tree consists of all
+// the nodes which are greater than or equal to value.
+func (tree AVLTree[N]) Split(value N) (AVLTree[N], AVLTree[N], error) {
+	if tree.IsEmpty() {
+		return tree, tree, errors.New("empty tree")
+	}
+	var nilTree AVLTree[N]
+	nodeValue := tree.Root.dfsHelper(value)
+	if nodeValue == nil {
+		return nilTree, nilTree, errors.New("value not found")
+	}
+	// converto to sorted array to find where to split
+	sortedArray := tree.ConvertToSortedArray()
+	index := -1
+	for i, v := range sortedArray {
+		if v == value {
+			index = i
+			break
+		}
+	}
+	lessArray := sortedArray[:index]
+	greaterArray := sortedArray[index:]
+	leftTree, _ := SortedArrayToAVL(generics.ComparableSlice[N](lessArray))
+	rightTree, _ := SortedArrayToAVL(generics.ComparableSlice[N](greaterArray))
+	return leftTree, rightTree, nil
+}
+
 // 31. Implement a function to print the AVL tree in level order (breadth-first traversal).
+
+// prints the node values in level order
+func (tree AVLTree[N]) PrintInLevel() {
+	if tree.IsEmpty() {
+		return
+	}
+	queue := generics.Queue[*AVLNode[N]]{}
+	queue.Enqueue(tree.Root)
+	for !queue.IsEmpty() {
+		levelSize := len(queue.Data)
+		for i := 0; i < levelSize; i++ {
+			node, _ := queue.Dequeue()
+			fmt.Printf("%v ", node.value)
+			if node.left != nil {
+				queue.Enqueue(node.left)
+			}
+			if node.right != nil {
+				queue.Enqueue(node.right)
+			}
+		}
+		fmt.Println()
+	}
+}
+
 // 32. Write a function to check if an AVL tree contains only unique values.
+
+func (node *AVLNode[N]) uniqueValuesHelper(seenMap map[N]bool) bool {
+	if node == nil {
+		return true
+	}
+	if seenMap[node.value] {
+		return false
+	}
+	seenMap[node.value] = true
+	return node.left.uniqueValuesHelper(seenMap) && node.right.uniqueValuesHelper(seenMap)
+}
+
+func (tree AVLTree[N]) HasUniqueValues() bool {
+	if tree.IsEmpty() {
+		return true
+	}
+	seenMap := make(map[N]bool)
+	return tree.Root.uniqueValuesHelper(seenMap)
+}
+
 // 33. Implement a function to remove all leaf nodes from an AVL tree.
+
+func (node *AVLNode[N]) removeLeafsHelper() *AVLNode[N] {
+	if node == nil {
+		return nil
+	}
+	if node.isLeaf() {
+		return nil
+	}
+	node.left = node.left.removeLeafsHelper()
+	node.right = node.right.removeLeafsHelper()
+	if !node.isBalanced() {
+		rType := node.rotationType()
+		node = node.rotate(rType)
+	}
+	return node
+}
+
+// Removes all leafs nodes in the tree
+func (tree *AVLTree[N]) RemoveAllLeafs() {
+	tree.Root = tree.Root.removeLeafsHelper()
+}
+
 // 34. Write a function to find the distance between two nodes in an AVL tree.
+
+func nodeDepthHelper[N Number](current *AVLNode[N], target *AVLNode[N], depth int) int {
+	if current == nil {
+		return -1
+	}
+	if current == target {
+		return depth
+	}
+	if target.value < current.value {
+		return nodeDepthHelper(current.left, target, depth+1)
+	} else {
+		return nodeDepthHelper(current.right, target, depth+1)
+	}
+}
+
+// returns the depth of the node in the avl tree starting from the root
+func (tree *AVLTree[N]) nodeDepth(node *AVLNode[N]) (int, error) {
+	return nodeDepthHelper(tree.Root, node, 0), nil
+}
+
+func (tree *AVLTree[N]) NodeDistance(nodeValue1, nodeValue2 N) (int, error) {
+	node1 := tree.Root.dfsHelper(nodeValue1)
+	if node1 == nil {
+		return 0, fmt.Errorf("nodeValue: %v not found", nodeValue1)
+	}
+	node2 := tree.Root.dfsHelper(nodeValue2)
+	if node2 == nil {
+		return 0, fmt.Errorf("nodeValue: %v not found", nodeValue2)
+	}
+	// find the LCA of both nodes
+	lcaValue, err := tree.LCA(nodeValue1, nodeValue2)
+	if err != nil {
+		return 0, err
+	}
+	lcaNode := tree.Root.dfsHelper(lcaValue)
+
+	// compute the depths to find the distance
+	node1Depth, _ := tree.nodeDepth(node1)
+	node2Depth, _ := tree.nodeDepth(node2)
+	lcaDepth, _ := tree.nodeDepth(lcaNode)
+	return node1Depth + node2Depth - 2*lcaDepth, nil
+}
+
 // 35. Implement a function to serialize and deserialize an AVL tree.
+
+func serializeHelper[N Number](node *AVLNode[N], result *[]string) {
+	if node == nil {
+		*result = append(*result, "nil")
+		return
+	}
+	*result = append(*result, fmt.Sprintf("%v", node.value))
+	serializeHelper(node.left, result)
+	serializeHelper(node.right, result)
+}
+
+// converts the AVL tree to a string using preorder traversal.
+// null nodes are represented as "nil".
+func (tree AVLTree[N]) Serialize() string {
+	var result []string
+	serializeHelper(tree.Root, &result)
+	return strings.Join(result, " ")
+}
+
+func deserializeHelper[N Number](index *int, tokens []string) *AVLNode[N] {
+	if *index >= len(tokens) || tokens[*index] == "nil" {
+		*index++
+		return nil
+	}
+	var value N
+	fmt.Sscanf(tokens[*index], "%v", &value)
+	*index++
+	node := &AVLNode[N]{value: value}
+	node.left = deserializeHelper[N](index, tokens)
+	node.right = deserializeHelper[N](index, tokens)
+	return node
+}
+
+// reconstructs an AVL tree from a serialized string.
+// the string should be space-separeted values from preorder traversal.
+func Deserialize[N Number](data string) AVLTree[N] {
+	tokens := strings.Fields(data)
+	index := 0
+	root := deserializeHelper[N](&index, tokens)
+	return AVLTree[N]{Root: root}
+}
+
 // 36. Write a function to check if an AVL tree is a complete binary tree.
-// 37. Write a function to check if an AVL tree is a perfect binary tree.
+
+// checkNodeForCompleteness validates a single node based on the completeness flag.
+func (tree AVLTree[N]) checkNodeForCompleteness(node *AVLNode[N], hasSeenMissingChild bool) (bool, bool) {
+	updatedFlag := hasSeenMissingChild
+
+	// Check left child
+	if node.left != nil {
+		if updatedFlag {
+			return false, false
+		}
+	} else {
+		updatedFlag = true
+	}
+
+	// Check right child
+	if node.right != nil {
+		if updatedFlag {
+			return false, false // Invalid: child after missing one
+		}
+	} else {
+		updatedFlag = true
+	}
+
+	return true, updatedFlag
+}
+
+// processLevel handles one level of BFS, checking nodes and updating the flag.
+func (tree AVLTree[N]) processLevel(queue []*AVLNode[N], hasSeenMissingChild bool) (bool, []*AVLNode[N], bool) {
+	newQueue := []*AVLNode[N]{}
+	updatedFlag := hasSeenMissingChild
+
+	for _, node := range queue {
+		isValid, tempFlag := tree.checkNodeForCompleteness(node, updatedFlag)
+		if !isValid {
+			return false, nil, false
+		}
+		updatedFlag = tempFlag
+
+		// Enqueue children for next level
+		if node.left != nil {
+			newQueue = append(newQueue, node.left)
+		}
+		if node.right != nil {
+			newQueue = append(newQueue, node.right)
+		}
+	}
+	return true, newQueue, updatedFlag
+}
+
+// checks if the AVL tree is complete: a complete binary tree has all levels fully filled except possibly the last,
+// with nodes packed to the left.
+func (tree AVLTree[N]) IsComplete() bool {
+	if tree.Root == nil {
+		return true
+	}
+
+	queue := []*AVLNode[N]{tree.Root}
+	hasSeenMissingChild := false
+
+	for len(queue) > 0 {
+		ok, newQueue, updatedFlag := tree.processLevel(queue, hasSeenMissingChild)
+		if !ok {
+			return false
+		}
+		queue = newQueue
+		hasSeenMissingChild = updatedFlag
+	}
+	return true
+}
+
+// 37. Write a function to check if an AVL tree is a perfect binary tree:
+
+// checks if the AVL tree is perfect: every level of the tree is full.
+func (tree AVLTree[N]) IsPerfect() bool {
+	if tree.Root == nil {
+		return true
+	}
+	height := tree.Root.subtreeHeight()
+	size := tree.Size()
+	// since every level is full there are 1 + 2 + 4 + ... + 2^{height - 1} = 2^{height} - 1
+	expectedSize := int(math.Pow(2, float64(height))) - 1
+	return size == expectedSize
+}
+
 // 38. Implement a function to print the boundary nodes of an AVL tree.
+
+// prints every boundary node values: the root node, the left boundary, the right boundary and the leafs
+func (tree AVLTree[N]) PrintBoundaryNodes() {
+	if tree.IsEmpty() {
+		return
+	}
+
+	var boundary []N
+	boundary = append(boundary, tree.Root.value)
+	tree.addLeftBoundary(tree.Root.left, &boundary)
+	tree.addLeaves(tree.Root, &boundary)
+	tree.addRightBoundary(tree.Root.right, &boundary)
+
+	for _, v := range boundary {
+		fmt.Printf("%v ", v)
+	}
+	fmt.Println()
+}
+
+func (tree AVLTree[N]) addLeftBoundary(node *AVLNode[N], boundary *[]N) {
+	if node == nil || node.isLeaf() {
+		return
+	}
+	*boundary = append(*boundary, node.value)
+	if node.left != nil {
+		tree.addLeftBoundary(node.left, boundary)
+	} else {
+		tree.addLeftBoundary(node.right, boundary)
+	}
+}
+
+func (tree AVLTree[N]) addLeaves(node *AVLNode[N], boundary *[]N) {
+	if node == nil {
+		return
+	}
+	if node.isLeaf() {
+		*boundary = append(*boundary, node.value)
+		return
+	}
+	tree.addLeaves(node.left, boundary)
+	tree.addLeaves(node.right, boundary)
+}
+
+func (tree AVLTree[N]) addRightBoundary(node *AVLNode[N], boundary *[]N) {
+	if node == nil || node.isLeaf() {
+		return
+	}
+	if node.right != nil {
+		tree.addRightBoundary(node.right, boundary)
+	} else {
+		tree.addRightBoundary(node.left, boundary)
+	}
+	*boundary = append(*boundary, node.value)
+}
+
 // 39. Write a function to find the sum of all nodes at a given depth in an AVL tree.
+
+// helper function to sum every node at a certain height
+func (node *AVLNode[N]) preSumTravNodes(level int, current int, sum *N) {
+	if node == nil {
+		return
+	}
+	if level == current {
+		*sum += node.value
+		return
+	}
+	node.left.preSumTravNodes(level, current+1, sum)
+	node.right.preSumTravNodes(level, current+1, sum)
+}
+
+// Sums every node at the specified height, if the chosen height is empty returns an error
+func (tree AVLTree[N]) SumNodesAtHeight(height int) (N, error) {
+	var zero N
+	if height < 0 {
+		return zero, errors.New("height must be a positive integer")
+	}
+	if tree.IsEmpty() {
+		return zero, errors.New("tree is empty")
+	}
+	if height >= tree.Root.subtreeHeight() {
+		return zero, errors.New("the chosen height is greater than the tree height")
+	}
+	var sum N
+	current := 0
+	tree.Root.preSumTravNodes(height, current, &sum)
+	return sum, nil
+}
+
 // 40. Implement a function to find the maximum width of an AVL tree.
-// ==============================================================
+
+// returns the maximum number of nodes at any level in the AVL tree.
+func (tree AVLTree[N]) MaxWidth() int {
+	if tree.Root == nil {
+		return 0
+	}
+	maxWidth := 0
+	queue := []*AVLNode[N]{tree.Root}
+	// bfs to find the maximum width
+	for len(queue) > 0 {
+		levelSize := len(queue)
+		maxWidth = max(maxWidth, levelSize)
+		for i := 0; i < levelSize; i++ {
+			node := queue[0]
+			queue = queue[1:]
+			if node.left != nil {
+				queue = append(queue, node.left)
+			}
+			if node.right != nil {
+				queue = append(queue, node.right)
+			}
+		}
+	}
+	return maxWidth
+}

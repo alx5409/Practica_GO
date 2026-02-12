@@ -43,6 +43,27 @@ func (slice ComparableSlice[N]) IsOrdered() bool {
 	return true
 }
 
+// Returns the ordered merge of the current slice with the input slice
+func (slice ComparableSlice[N]) OrderedMerge(slice2 ComparableSlice[N]) ComparableSlice[N] {
+	result := make(ComparableSlice[N], 0, len(slice)+len(slice2))
+	i, j := 0, 0
+
+	for i < len(slice) && j < len(slice2) {
+		if slice[i] <= slice2[j] {
+			result = append(result, slice[i])
+			i++
+		} else {
+			result = append(result, slice2[j])
+			j++
+		}
+	}
+
+	result = append(result, slice[i:]...)
+	result = append(result, slice2[j:]...)
+
+	return result
+}
+
 // Generic hashmap
 type HashMap[K comparable, V any] map[K]V
 

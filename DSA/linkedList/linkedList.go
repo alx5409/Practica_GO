@@ -62,7 +62,7 @@ func (l *LinkedList) insertAfter(value int, position *Node) {
 // 5. Delete a node at the beginning of the linked list.
 func (l *LinkedList) deleteFront() error {
 	if l.isEmpty() {
-		err := errors.New("The linked list is empty")
+		err := errors.New("the linked list is empty")
 		return err
 	}
 	l.head = l.head.next
@@ -76,7 +76,7 @@ func (l *LinkedList) deleteFront() error {
 // 6. Delete a node at the end of the linked list.
 func (l *LinkedList) deleteBack() error {
 	if l.isEmpty() {
-		err := errors.New("The linked list is empty")
+		err := errors.New("the linked list is empty")
 		return err
 	}
 	// If only one node
@@ -97,7 +97,7 @@ func (l *LinkedList) deleteBack() error {
 // 7. Delete a node the first node with value.
 func (l *LinkedList) deleteFirstNodeWithValue(value int) error {
 	if l.isEmpty() {
-		err := errors.New("The linked list is empty")
+		err := errors.New("the linked list is empty")
 		return err
 	}
 	node := l.head
@@ -105,7 +105,7 @@ func (l *LinkedList) deleteFirstNodeWithValue(value int) error {
 		node = node.next
 		// If value not found
 		if node == nil {
-			err := errors.New("Value not found in the linked list")
+			err := errors.New("value not found in the linked list")
 			return err
 		}
 	}
@@ -156,7 +156,7 @@ func (l LinkedList) middleNode() (*Node, error) {
 	middlePos := l.len() / 2
 	counter := 0
 	if l.isEmpty() {
-		err := errors.New("The linked list is empty")
+		err := errors.New("the linked list is empty")
 		return nil, err
 	}
 	node := l.head
@@ -167,14 +167,14 @@ func (l LinkedList) middleNode() (*Node, error) {
 		counter++
 		node = node.next
 	}
-	err := errors.New("The middle node was not found")
+	err := errors.New("the middle node was not found")
 	return nil, err
 }
 
 // 11. Convert a linked list to a slice.
 func (l LinkedList) toSlice() ([]int, error) {
 	if l.isEmpty() {
-		err := errors.New("The linked list is empty")
+		err := errors.New("the linked list is empty")
 		return nil, err
 	}
 	slice := []int{}
@@ -198,7 +198,7 @@ func sliceToLinkedList(slice []int) LinkedList {
 // 13. Print all elements of the linked list.
 func (l LinkedList) printElements() error {
 	if l.isEmpty() {
-		err := errors.New("The linked list is empty")
+		err := errors.New("the linked list is empty")
 		return err
 	}
 	node := l.head
@@ -211,7 +211,7 @@ func (l LinkedList) printElements() error {
 
 func swapValues(node1 *Node, node2 *Node) error {
 	if node1 == nil || node2 == nil {
-		err := errors.New("One of the pointers is nil")
+		err := errors.New("one of the pointers is nil")
 		return err
 	}
 	node1.value, node2.value = node2.value, node1.value
@@ -221,7 +221,7 @@ func swapValues(node1 *Node, node2 *Node) error {
 // 14. Sort a linked list.
 func (l *LinkedList) sort() error {
 	if l.isEmpty() {
-		err := errors.New("The linked list is empty")
+		err := errors.New("the linked list is empty")
 		return err
 	}
 	for nodei := l.head; nodei != nil; nodei = nodei.next {
@@ -237,7 +237,7 @@ func (l *LinkedList) sort() error {
 // 15. Reverse a linked list
 func (l *LinkedList) reverse() error {
 	if l.isEmpty() {
-		err := errors.New("The linked list is empty")
+		err := errors.New("the linked list is empty")
 		return err
 	}
 	// Initialize three pointers
@@ -300,18 +300,18 @@ func intersection(l1 LinkedList, l2 LinkedList) (LinkedList, error) {
 			return result, nil
 		}
 	}
-	err := errors.New("Not found")
+	err := errors.New("not found")
 	return result, err
 }
 
 // 19. Implement a function to merge alternatelively two linked lists.
 func (l *LinkedList) merge(l2 *LinkedList) error {
 	if l.isEmpty() {
-		err := errors.New("Linked list is empty")
+		err := errors.New("linked list is empty")
 		return err
 	}
 	if l2.isEmpty() {
-		err := errors.New("Linked lists trying to merge is empty")
+		err := errors.New("linked lists trying to merge is empty")
 		return err
 	}
 	node1 := l.head
@@ -351,7 +351,7 @@ func (l LinkedList) isSortedAscend() bool {
 
 func mergeSortedLinkedLists(l1 *LinkedList, l2 *LinkedList) (LinkedList, error) {
 	if !l1.isSortedAscend() || !l2.isSortedAscend() {
-		err := errors.New("Linked lists are not sorted")
+		err := errors.New("linked lists are not sorted")
 		return LinkedList{}, err
 	}
 	node1 := l1.head
@@ -420,7 +420,7 @@ func convertTaskToInt(task string) (int, error) {
 func (q *Queue) addTask(task string) error {
 	num, err := convertTaskToInt(task)
 	if err != nil {
-		return errors.New("Could not convert task at adding task")
+		return errors.New("could not convert task at adding task")
 	}
 	q.linkedList.insertBack(num)
 	return nil
@@ -430,7 +430,7 @@ func (q *Queue) addTask(task string) error {
 func (q *Queue) removeTask() error {
 	err := q.linkedList.deleteFront()
 	if err != nil {
-		return errors.New("Could not delete the task")
+		return errors.New("could not delete the task")
 	}
 	return nil
 }
