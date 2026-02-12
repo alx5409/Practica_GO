@@ -10,6 +10,7 @@ import (
 	utils "Practica_GO/DSA/utils"
 	"errors"
 	"fmt"
+	"math"
 )
 
 type Number utils.Number
@@ -1081,7 +1082,20 @@ func (tree AVLTree[N]) IsComplete() bool {
 	return true
 }
 
-// 37. Write a function to check if an AVL tree is a perfect binary tree.
+// 37. Write a function to check if an AVL tree is a perfect binary tree:
+// every level of the tree is full.
+
+func (tree AVLTree[N]) IsPerfect() bool {
+	if tree.Root == nil {
+		return true
+	}
+	height := tree.Root.subtreeHeight()
+	size := tree.Size()
+	// since every level is full there are 1 + 2 + 4 + ... + 2^{height - 1} = 2^{height} - 1
+	expectedSize := int(math.Pow(2, float64(height))) - 1
+	return size == expectedSize
+}
+
 // 38. Implement a function to print the boundary nodes of an AVL tree.
 // 39. Write a function to find the sum of all nodes at a given depth in an AVL tree.
 // 40. Implement a function to find the maximum width of an AVL tree.
