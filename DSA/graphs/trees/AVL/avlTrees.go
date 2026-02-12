@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"strings"
 )
 
 type Number utils.Number
@@ -1011,9 +1012,49 @@ func (tree *AVLTree[N]) NodeDistance(nodeValue1, nodeValue2 N) (int, error) {
 }
 
 // 35. Implement a function to serialize and deserialize an AVL tree.
+
+func serializeHelper[N Number](node *AVLNode[N], result *[]string) {
+	if node == nil {
+		*result = append(*result, "nil")
+		return
+	}
+	*result = append(*result, fmt.Sprintf("%v", node.value))
+	serializeHelper(node.left, result)
+	serializeHelper(node.right, result)
+}
+
+// converts the AVL tree to a string using preorder traversal.
+// null nodes are represented as "nil".
+func (tree AVLTree[N]) Serialize() string {
+	var result []string
+	serializeHelper(tree.Root, &result)
+	return strings.Join(result, " ")
+}
+
+func deserializeHelper[N Number](index *int, tokens []string) *AVLNode[N] {
+	if *index >= len(tokens) || tokens[*index] == "nil" {
+		*index++
+		return nil
+	}
+	var value N
+	fmt.Sscanf(tokens[*index], "%v", &value)
+	*index++
+	node := &AVLNode[N]{value: value}
+	node.left = deserializeHelper[N](index, tokens)
+	node.right = deserializeHelper[N](index, tokens)
+	return node
+}
+
+// reconstructs an AVL tree from a serialized string.
+// the string should be space-separeted values from preorder traversal.
+func Deserialize[N Number](data string) AVLTree[N] {
+	tokens := strings.Fields(data)
+	index := 0
+	root := deserializeHelper[N](&index, tokens)
+	return AVLTree[N]{Root: root}
+}
+
 // 36. Write a function to check if an AVL tree is a complete binary tree.
-// A complete binary tree has all levels fully filled except possibly the last,
-// with nodes packed to the left.
 
 // checkNodeForCompleteness validates a single node based on the completeness flag.
 func (tree AVLTree[N]) checkNodeForCompleteness(node *AVLNode[N], hasSeenMissingChild bool) (bool, bool) {
@@ -1063,6 +1104,8 @@ func (tree AVLTree[N]) processLevel(queue []*AVLNode[N], hasSeenMissingChild boo
 	return true, newQueue, updatedFlag
 }
 
+// checks if the AVL tree is complete: a complete binary tree has all levels fully filled except possibly the last,
+// with nodes packed to the left.
 func (tree AVLTree[N]) IsComplete() bool {
 	if tree.Root == nil {
 		return true
@@ -1083,8 +1126,8 @@ func (tree AVLTree[N]) IsComplete() bool {
 }
 
 // 37. Write a function to check if an AVL tree is a perfect binary tree:
-// every level of the tree is full.
 
+// checks if the AVL tree is perfect: every level of the tree is full.
 func (tree AVLTree[N]) IsPerfect() bool {
 	if tree.Root == nil {
 		return true
