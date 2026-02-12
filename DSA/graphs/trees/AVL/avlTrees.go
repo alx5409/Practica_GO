@@ -1196,5 +1196,37 @@ func (tree AVLTree[N]) addRightBoundary(node *AVLNode[N], boundary *[]N) {
 }
 
 // 39. Write a function to find the sum of all nodes at a given depth in an AVL tree.
+
+// helper function to sum every node at a certain height
+func (node *AVLNode[N]) preSumTravNodes(level int, current int, sum *N) {
+	if node == nil {
+		return
+	}
+	if level == current {
+		*sum += node.value
+		return
+	}
+	node.left.preSumTravNodes(level, current+1, sum)
+	node.right.preSumTravNodes(level, current+1, sum)
+}
+
+// Sums every node at the specified height, if the chosen height is empty returns an error
+func (tree AVLTree[N]) SumNodesAtHeight(height int) (N, error) {
+	var zero N
+	if height < 0 {
+		return zero, errors.New("height must be a positive integer")
+	}
+	if tree.IsEmpty() {
+		return zero, errors.New("tree is empty")
+	}
+	if height >= tree.Root.subtreeHeight() {
+		return zero, errors.New("the chosen height is greater than the tree height")
+	}
+	var sum N
+	current := 0
+	tree.Root.preSumTravNodes(height, current, &sum)
+	return sum, nil
+}
+
 // 40. Implement a function to find the maximum width of an AVL tree.
 // ==============================================================
