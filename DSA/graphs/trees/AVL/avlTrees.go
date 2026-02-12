@@ -1229,4 +1229,28 @@ func (tree AVLTree[N]) SumNodesAtHeight(height int) (N, error) {
 }
 
 // 40. Implement a function to find the maximum width of an AVL tree.
-// ==============================================================
+
+// returns the maximum number of nodes at any level in the AVL tree.
+func (tree AVLTree[N]) MaxWidth() int {
+	if tree.Root == nil {
+		return 0
+	}
+	maxWidth := 0
+	queue := []*AVLNode[N]{tree.Root}
+	// bfs to find the maximum width
+	for len(queue) > 0 {
+		levelSize := len(queue)
+		maxWidth = max(maxWidth, levelSize)
+		for i := 0; i < levelSize; i++ {
+			node := queue[0]
+			queue = queue[1:]
+			if node.left != nil {
+				queue = append(queue, node.left)
+			}
+			if node.right != nil {
+				queue = append(queue, node.right)
+			}
+		}
+	}
+	return maxWidth
+}
